@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <dirs>
+    <entry loc="/Users/hansol/Desktop/SpringToolSuite4.app/Contents/Eclipse/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.macosx.aarch64_21.0.6.v20250130-0529/jre" stamp="1739477368000"/>
+    <entry loc="/Users/hansol/Library/Java/JavaVirtualMachines/openjdk-22/Contents/Home" stamp="1711258812292"/>
+    <entry loc="/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home" stamp="1720568679000"/>
     <entry loc="C:\SSAFY-SETUP\sts-4.22.1.RELEASE\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.11.v20240426-1830\jre" stamp="1737008248076"/>
     <entry loc="C:\Program Files\BellSoft\LibericaJDK-17" stamp="1730094541005"/>
     <entry loc="C:\SSAFY-SETUP\sts-4.22.1.RELEASE\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.11.v20240426-1830" stamp="1737008248089"/>
+    <entry loc="/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home" stamp="1618964067000"/>
+    <entry loc="/Users/hansol/Desktop/SpringToolSuite4.app/Contents/Eclipse/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.macosx.aarch64_21.0.6.v20250130-0529" stamp="1739477368000"/>
+    <entry loc="/Users/hansol/Library/Java/JavaVirtualMachines/openjdk-23.0.2/Contents/Home" stamp="1738380857120"/>
 </dirs>
