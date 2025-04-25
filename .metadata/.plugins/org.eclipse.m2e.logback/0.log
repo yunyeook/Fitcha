@@ -1,0 +1,11 @@
+2025-04-25 17:50:22,993 [Worker-8: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2025-04-25 17:50:38,518 [Worker-0: Importing Maven projects] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.ssafy:FITCHA:0.0.1-SNAPSHOT @ C:\SSAFY\final-fitcha\FITCHA_BACKEND\pom.xml.
+2025-04-25 17:50:42,155 [Worker-0: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /FITCHA_BACKEND/src/main/java
+2025-04-25 17:50:42,162 [Worker-0: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /FITCHA_BACKEND/src/main/resources
+2025-04-25 17:50:42,165 [Worker-0: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /FITCHA_BACKEND/src/main/resources
+2025-04-25 17:50:42,169 [Worker-0: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /FITCHA_BACKEND/src/test/java
+2025-04-25 17:50:42,171 [Worker-0: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /FITCHA_BACKEND/src/test/resources
+2025-04-25 17:50:42,762 [Worker-0: Importing Maven projects] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Imported and configured 1 project(s) in 7 sec
+2025-04-25 17:50:44,823 [Worker-5: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-04-25 17:50:44,911 [Worker-5: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 6 resources from src\main\resources to target\classes
+2025-04-25 17:50:44,933 [Worker-5: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory C:\SSAFY\final-fitcha\FITCHA_BACKEND\src\test\resources
