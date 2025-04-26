@@ -1,5 +1,7 @@
 package com.ssafy.fitcha.model.dao;
 
-public class ProofDao {
+public interface ProofDao {
+
+	void deleteProofBoard(int challengeFileId);
 
 }

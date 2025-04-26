@@ -5,7 +5,15 @@ import com.ssafy.fitcha.model.dto.File;
 
 
 public class Challenge {
+
+	public String getUserId() {
+		return UserId;
+	}
+	public void setUserId(String userId) {
+		UserId = userId;
+	}
 	private int challengeBoardId;
+	private String UserId;
 	private String title;
 	private String content;
 	private String writer;
@@ -17,13 +25,13 @@ public class Challenge {
 	private int viewCount;
 	private int likeCount;
 	private String regDate;
-	private List<File> file;
+	private List<ChallengeFile> files;
 	
-	public List<File> getFile() {
-		return file;
+	public List<ChallengeFile> getFiles() {
+		return files;
 	}
-	public void setFile(List<File> file) {
-		this.file = file;
+	public void setFiles(List<ChallengeFile> files) {
+		this.files = files;
 	}
 	public int getChallengeBoardId() {
 		return challengeBoardId;
@@ -97,4 +105,6 @@ public class Challenge {
 	public void setRegDate(String regDate) {
 		this.regDate = regDate;
 	}
+
+
 }
