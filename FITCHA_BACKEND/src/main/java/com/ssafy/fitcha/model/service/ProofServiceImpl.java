@@ -21,29 +21,25 @@ public class ProofServiceImpl implements ProofService {
 	// 인증글 검색 조회 ( 검색 없으실 전체 조회 )
 	@Override
 	public List<Proof> getSearchProofs(Search search) {
-		// TODO Auto-generated method stub
-		return null;
+		return proofDao.selectSearchProofList(search);
 	}
 
 	// 인증글 상세 조회 
 	@Override
 	public Proof getProofDetails(int proofBoardId) {
-		// TODO Auto-generated method stub
-		return null;
+		return proofDao.selectProofBoard(proofBoardId);
 	}
 
 	// 인증글 등록
 	@Override
 	public boolean registProof(Proof proof) {
-		// TODO Auto-generated method stub
-		return false;
+		return 1 == proofDao.insertProofBoard(proof);
 	}
 
 	// 인증글 수정
 	@Override
 	public boolean updateProof(Proof proof) {
-		// TODO Auto-generated method stub
-		return false;
+		return 1 == proofDao.updateProofBoard(proof) ;
 	}
 	
 	// 인증 글 삭제
