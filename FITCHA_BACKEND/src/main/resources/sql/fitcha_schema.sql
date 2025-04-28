@@ -13,7 +13,7 @@ age INT,
 gender VARCHAR(300)
 );
 
-CREATE TABLE user_file(()
+CREATE TABLE user_file(
 user_file_id INT PRIMARY KEY AUTO_INCREMENT,
 user_board_id INT,
 file_upload_name VARCHAR(300) NOT NULL,

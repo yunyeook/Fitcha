@@ -71,7 +71,7 @@ public class ChallengeController {
 		challengeService.updateChallenge(challenge,files,deleteChallengeFileIds);		
 		
 		
-	    URI redirectUri = URI.create("/challenge" + challengeBoardId);
+	    URI redirectUri = URI.create("/challenge/" + challengeBoardId);
 	    return ResponseEntity.status(HttpStatus.SEE_OTHER)
 	                         .location(redirectUri)
 	                         .build();
@@ -98,7 +98,7 @@ public class ChallengeController {
 		challenge.setWriter(user.getNickName());
 		challengeService.registChallenge(challenge,files);
 
-	    URI redirectUri = URI.create("/challenge" + challenge.getChallengeBoardId());
+	    URI redirectUri = URI.create("/challenge/" + challenge.getChallengeBoardId());
 	    return ResponseEntity.status(HttpStatus.SEE_OTHER)
 	                         .location(redirectUri)
 	                         .build();

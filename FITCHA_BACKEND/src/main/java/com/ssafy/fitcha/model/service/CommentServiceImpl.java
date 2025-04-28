@@ -15,7 +15,8 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void deleteChallengeComment(int challengeBoardId) {
 		commentDao.deleteChallengeComment(challengeBoardId);
-		
 	}
-
+	
+	
+	
 }
