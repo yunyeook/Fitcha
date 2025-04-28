@@ -53,6 +53,7 @@ public class Search {
 	public void setParticipantCount(int participantCount) {
 		this.participantCount = participantCount;
 	}
+
 	
 	
 	

@@ -11,7 +11,7 @@
 	</delete>
 	
 	<!--  챌린지 댓글 조회 -->
-	<select id="selectChallnegeCommentList" parameterType="int">
+	<select id="selectChallengeCommentList" parameterType="int">
 		SELECT *
 		  FROM challenge_comment
 		 WHERE challenge_board_id = #{id}
