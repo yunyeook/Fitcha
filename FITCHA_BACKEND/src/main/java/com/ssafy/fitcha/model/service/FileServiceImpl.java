@@ -62,7 +62,6 @@ public class FileServiceImpl implements FileService {
 				
 			}
 		}
-		
 	}
 	//파일의 중복 이름 저장방지 
 	private String generateUniqueName(String originalName) {

@@ -3,8 +3,33 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.fitcha.model.dao.CommentDao">
+
+	<!-- 챌린지 댓글 삭제 -->
 	<delete id="deleteChallengeComment" parameterType="int">
 		DELETE FROM challenge_comment
 			  WHERE challenge_board_id = #{id}
 	</delete>
+	
+	<!--  챌린지 댓글 조회 -->
+	<select id="selectChallnegeCommentList" parameterType="int">
+		SELECT *
+		  FROM challenge_comment
+		 WHERE challenge_board_id = #{id}
+	
+	</select>
+	
+	<!-- 챌린지 댓글 등록 -->
+	<insert id="insertChallengeComment" parameterType="comment">
+		INSERT INTO challenge_comment (challenge_board_id, user_id, content, writer)
+             VALUES (#{boardId},#{userId},#{content},#{writer})
+	</insert>
+	
+	<!-- 챌린지 댓글 수정 -->
+	<update id="updateChallengeComment" parameterType="comment">
+		UPDATE challenge_comment
+		   SET content = #{content}
+		 WHERE challenge_comment_id = #{commentId}
+		   AND challenge_board_id = #{boardId}
+	</update>
+	
 </mapper>
