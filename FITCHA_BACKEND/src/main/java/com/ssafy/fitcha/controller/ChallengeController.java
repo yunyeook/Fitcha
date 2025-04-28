@@ -138,5 +138,4 @@ public class ChallengeController {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();     
 
 	}
-
-}
+} 
