@@ -12,112 +12,131 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.fitcha.model.dto.Challenge;
+import com.ssafy.fitcha.model.dto.Comment;
 import com.ssafy.fitcha.model.dto.Search;
 import com.ssafy.fitcha.model.dto.User;
 import com.ssafy.fitcha.model.service.ChallengeService;
+import com.ssafy.fitcha.model.service.CommentService;
 
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequestMapping("/challenge")
 public class ChallengeController {
 	private ChallengeService challengeService;
-	public ChallengeController(ChallengeService challengeService) {
-		this.challengeService=challengeService;
+	private CommentService commentService;
+
+	public ChallengeController(ChallengeService challengeService, CommentService commentService) {
+		this.challengeService = challengeService;
+		this.commentService = commentService;
 	}
-	
-	//검색 목록 조회(검색어 없을 시 전체 조회).
+
+	// 검색 목록 조회(검색어 없을 시 전체 조회).
 	@GetMapping
-	public ResponseEntity<List<Challenge>> getSearchChallenges(@ModelAttribute Search search) {
-	    List<Challenge> challenges=null;
+	public ResponseEntity<List<Challenge>> getSearchChallenges(@RequestBody Search search) {
+		List<Challenge> challenges = null;
 		try {
 			challenges = challengeService.getSearchChallenges(search);
 			if (challenges == null || challenges.isEmpty()) {
-	        return ResponseEntity.noContent().build();
-	    }
+				return ResponseEntity.noContent().build();
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    return ResponseEntity.ok(challenges);
+		return ResponseEntity.ok(challenges);
 
-	
 	}
-	//상세 조회 
+
+	// 상세 조회
 	@GetMapping("/{challengeBoardId}")
-	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId){
+	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId) {
 		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId);
-		if(challenge ==null) return ResponseEntity.noContent().build();
+		if (challenge == null)
+			return ResponseEntity.noContent().build();
 		return ResponseEntity.ok(challenge);
 	}
-	//수정 (이후 상세화면으로 이동)
+
+	// 수정 (이후 상세화면으로 이동)
 	@PutMapping("/{challengeBoardId}")
-	public ResponseEntity<Void> updateChallenge(
-			@PathVariable("challengeBoardId") int challengeBoardId, 
+	public ResponseEntity<Void> updateChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
 			@ModelAttribute Challenge challenge,
-			@RequestParam(value = "files", required = false) List<MultipartFile> files, //추가된 파일 
-	        @RequestParam(value = "deleteChallengeFileIds", required = false) List<Integer> deleteChallengeFileIds //삭제할 파일 
-			) throws Exception {
-		
+			@RequestParam(value = "files", required = false) List<MultipartFile> files, // 추가된 파일
+			@RequestParam(value = "deleteChallengeFileIds", required = false) List<Integer> deleteChallengeFileIds // 삭제할
+																													// 파일
+	) throws Exception {
+
 		challenge.setChallengeBoardId(challengeBoardId);
-		challengeService.updateChallenge(challenge,files,deleteChallengeFileIds);		
-		
-		
-	    URI redirectUri = URI.create("/challenge" + challengeBoardId);
-	    return ResponseEntity.status(HttpStatus.SEE_OTHER)
-	                         .location(redirectUri)
-	                         .build();
+		challengeService.updateChallenge(challenge, files, deleteChallengeFileIds);
+
+		URI redirectUri = URI.create("/challenge/" + challengeBoardId);
+		return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
 	}
-	
-	//삭제 
-	@DeleteMapping("/{challenge_board_id}/{writer}") 
-	public ResponseEntity<Void> deleteChallenge(@PathVariable("challengeBoardId") int challengeBoardId,HttpSession session,@PathVariable ("writer")String writer){
-		challengeService.deleteChallenge(challengeBoardId,(User)session.getAttribute("user"),writer);
-		
+
+	// 삭제
+	@DeleteMapping("/{challenge_board_id}")
+	public ResponseEntity<Void> deleteChallenge(@PathVariable("challengeBoardId") int challengeBoardId) {
+		challengeService.deleteChallenge(challengeBoardId);
+    
 		URI redirectUri = URI.create("/challenge");
 		return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
 	}
-	
-	//등록
-	@PostMapping()
-	public ResponseEntity<Void> registChallenge(
-			@ModelAttribute Challenge challenge,
-			@RequestParam(value = "files", required = false) List<MultipartFile> files,
-			HttpSession session
-			) throws Exception {
-		User user = (User)session.getAttribute("user");
-		challenge.setUserId(user.getUserId());
-		challenge.setWriter(user.getNickName());
-		challengeService.registChallenge(challenge,files);
 
-	    URI redirectUri = URI.create("/challenge" + challenge.getChallengeBoardId());
-	    return ResponseEntity.status(HttpStatus.SEE_OTHER)
-	                         .location(redirectUri)
-	                         .build();
+	// 등록
+	@PostMapping()
+	public ResponseEntity<Void> registChallenge(@RequestBody Challenge challenge,
+			@RequestParam(value = "files", required = false) List<MultipartFile> files)
+			throws Exception {
+		challengeService.registChallenge(challenge, files);
+
+		URI redirectUri = URI.create("/challenge/" + challenge.getChallengeBoardId());
+		return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+	}
+
+	// ---댓글-------------------------------------------------------------------------------
+
+	// 챌린지 댓글 등록
+	@PostMapping("/comment/{challengeBoardId}")
+	public ResponseEntity<Void> registChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId,@RequestBody  Comment comment) {
+
+		if (commentService.registChallengeComment(challengeBoardId, comment)) {
+			URI redirectUri = URI.create("/challenge/" + challengeBoardId);
+			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+		}return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();                
+
+	}
+	
+	//챌린지 댓글 삭제
+	@DeleteMapping("/comment/{challengeBoardId}/{challengeCommentId}")
+	public ResponseEntity<Void> deleteChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId,@PathVariable("challengeCommentId") int challengeCommentId) {
+	if(	commentService.deleteChallengeComment(challengeCommentId )) {
+
+		URI redirectUri = URI.create("/challenge/" + challengeBoardId);
+		return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();		
+	}
+	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();     
+		
+
+	}
+	
+	//챌린지 댓글 수정 
+	@PutMapping("/comment/{challengeBoardId}")
+	public ResponseEntity<Void> updateChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId, @RequestBody  Comment comment) {
+		if(commentService.updateChallengeComment(comment)) {
+			URI redirectUri = URI.create("/challenge/" + challengeBoardId);
+			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();		
+		}
+		
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();     
+
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

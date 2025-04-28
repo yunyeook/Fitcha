@@ -10,6 +10,7 @@ import com.ssafy.fitcha.model.dao.ChallengeDao;
 import com.ssafy.fitcha.model.dao.FileDao;
 import com.ssafy.fitcha.model.dto.Challenge;
 import com.ssafy.fitcha.model.dto.ChallengeFile;
+import com.ssafy.fitcha.model.dto.Comment;
 import com.ssafy.fitcha.model.dto.File;
 import com.ssafy.fitcha.model.dto.Search;
 import com.ssafy.fitcha.model.dto.User;
@@ -46,6 +47,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 		Challenge challenge = challengeDao.selectChallengeBoard(challengeBoardId);
 		List<ChallengeFile> files = fileService.getChallengeFileList(challengeBoardId);
 		challenge.setFiles(files);
+		List<Comment> comments = commentService.getChallengeCommentList(challengeBoardId);
+		challenge.setComments(comments);
 		return challenge;
 	}
 
@@ -59,17 +62,15 @@ public class ChallengeServiceImpl implements ChallengeService {
 		fileService.insertChallengeFile(files,challenge.getChallengeBoardId(),challenge.getWriter());
 
 	}
-	
+	 
 	//삭제
 	@Override
-	public void deleteChallenge(int challengeBoardId,User user,String writer) {
+	public void deleteChallenge(int challengeBoardId) {
 		//내가쓴 챌린지글과 파일 삭제
 		challengeDao.deleteChallengeBoard(challengeBoardId);
 		//내가쓴 인증글과 파일 삭제 
-		if(user.getNickName().equals(writer)) proofService.deleteProofBoard(challengeBoardId);
+		 proofService.deleteProofBoard(challengeBoardId);
 		
-		//챌린지 글의 댓글 삭제
-		commentService.deleteChallengeComment(challengeBoardId);
 
 		
 	}

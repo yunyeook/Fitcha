@@ -26,7 +26,14 @@ public class Challenge {
 	private int likeCount;
 	private String regDate;
 	private List<ChallengeFile> files;
+	private List<Comment> comments;
 	
+	public List<Comment> getComments() {
+		return comments;
+	}
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
 	public List<ChallengeFile> getFiles() {
 		return files;
 	}
