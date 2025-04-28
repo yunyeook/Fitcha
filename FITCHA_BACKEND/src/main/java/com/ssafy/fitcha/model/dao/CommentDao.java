@@ -10,7 +10,7 @@ public interface CommentDao {
 	int deleteChallengeComment(int challengeBoardId);
 
 	//챌린지 댓글목록 조회 
-	List<Comment> selectChallnegeCommentList(int challengeBoardId);
+	List<Comment> selectChallengeCommentList(int challengeBoardId);
 
 	//챌린지 댓글 등록 
 	int insertChallengeComment(Comment comment);

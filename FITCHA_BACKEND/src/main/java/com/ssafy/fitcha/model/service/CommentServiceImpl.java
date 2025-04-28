@@ -19,7 +19,7 @@ public class CommentServiceImpl implements CommentService {
 	// 챌린지 댓글 조회
 	@Override
 	public List<Comment> getChallengeCommentList(int challengeBoardId) {
-		return commentDao.selectChallnegeCommentList(challengeBoardId);
+		return commentDao.selectChallengeCommentList(challengeBoardId);
 
 	}
 

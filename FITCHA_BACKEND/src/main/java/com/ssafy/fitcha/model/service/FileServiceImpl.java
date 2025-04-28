@@ -17,8 +17,8 @@ import com.ssafy.fitcha.model.dto.ChallengeFile;
 
 @Service
 public class FileServiceImpl implements FileService {
-	@Value("${challenge-file.upload.dirctory}")
-	private String challengeFileUploadDir;
+	@Value("${challenge.file.upload-dir}")
+	private String uploadDirPath;
 	private FileDao fileDao;
 	private ResourceLoader resourceLoader;
 	public FileServiceImpl(FileDao fileDao,ResourceLoader resourceLoader) {
@@ -42,37 +42,48 @@ public class FileServiceImpl implements FileService {
 	}
 	
 	//챌린지 파일 등록
-	@Override
-	public void insertChallengeFile(List<MultipartFile> files, int challengeBoardId, String writer) throws Exception {
-		Resource resource = resourceLoader.getResource(challengeFileUploadDir);
-		for(MultipartFile mfile : files) {
-			if(!mfile.isEmpty()) {
-				String originalFileName = mfile.getOriginalFilename();
-				String uploadFileName = generateUniqueName(originalFileName);
-				mfile.transferTo(new File(challengeFileUploadDir,uploadFileName));
+    @Override
+    public void insertChallengeFile(List<MultipartFile> files, int challengeBoardId, String writer) throws Exception {
+        if (files == null || files.isEmpty()) {
+            return;
+        }
 
-				ChallengeFile challengeFile = new ChallengeFile();
-				challengeFile.setChallengeBoardId(challengeBoardId);
-				challengeFile.setFileOriginalName(originalFileName);
-				challengeFile.setFileUploadName(uploadFileName);
-				challengeFile.setFileUrl(challengeFileUploadDir+uploadFileName);
-				challengeFile.setWriter(writer);
-				fileDao.insertChallengeFile(challengeFile);
-				
-				
-			}
-		}
-	}
-	//파일의 중복 이름 저장방지 
-	private String generateUniqueName(String originalName) {
-		String timeStr = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-		String uniqueStr = UUID.randomUUID().toString().substring(0, 8);
-		int index = originalName.lastIndexOf(".");
-		String extName = "";
-		if (index != -1) {
-			extName = originalName.substring(index);
-		}
-		return timeStr + "_" + uniqueStr + extName;
-	}
+        File uploadDir = new File(uploadDirPath);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                String originalFileName = file.getOriginalFilename();
+                String uploadFileName = generateUniqueName(originalFileName);
+                file.transferTo(new File(uploadDir, uploadFileName));
+                
+                System.out.println(new File(uploadDir, uploadFileName));
+                
+                ChallengeFile challengeFile = new ChallengeFile();
+                challengeFile.setChallengeBoardId(challengeBoardId);
+                challengeFile.setFileOriginalName(originalFileName);
+                challengeFile.setFileUploadName(uploadFileName);
+                challengeFile.setFileUrl(uploadDirPath + uploadFileName); // 경로 저장
+                challengeFile.setWriter(writer);
+
+                fileDao.insertChallengeFile(challengeFile);
+            }
+        }
+    }
+
+    private String generateUniqueName(String originalName) {
+        String timeStr = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String uuid = UUID.randomUUID().toString().substring(0, 8);
+        String ext = "";
+
+        int idx = originalName.lastIndexOf('.');
+        if (idx != -1) {
+            ext = originalName.substring(idx);
+        }
+
+        return timeStr + "_" + uuid + ext;
+    }
 
 }

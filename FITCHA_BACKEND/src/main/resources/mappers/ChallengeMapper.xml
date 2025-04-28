@@ -8,15 +8,14 @@
 	SELECT *
 	  FROM challenge_board
 	WHERE 1 = 1
-
-	<if test="key eq 'title'">
+	<if test="key == 'title'">
 	 AND title LIKE concat('%', #{word}, '%')
 	</if>
-	<if test="key eq 'both'">
+	<if test="key == 'both'">
 	 AND (title LIKE concat('%', #{word}, '%')
 	      OR content LIKE concat('%', #{word}, '%'))
 	</if>
-	<if test="key eq 'writer'">
+	<if test="key == 'writer'">
 	 AND writer LIKE concat('%', #{word}, '%')
 	</if>
 
@@ -35,6 +34,7 @@
 	<if test="participantCount != 0">
 	 AND participant_count = #{participantCount}
 	</if>
+	
 	
 </select>
 	

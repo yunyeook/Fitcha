@@ -10,11 +10,11 @@
 		WHERE challenge_board_id = #{id}
 	</select> 
 	<delete id="deleteChallengeFile" parameterType="int">
-		DELETE FROM challeng_file
+		DELETE FROM challenge_file
 		WHERE challenge_file_id =#{id}
 	</delete>
 	<insert id="insertChallengeFile" parameterType="challengeFile">
-		INSERT INTO (challenge_board_id, file_upload_name, file_original_name, file_url, writer)
+		INSERT INTO challenge_file(challenge_board_id, file_upload_name, file_original_name, file_url, writer)
 			 VALUES (#{challengeBoardId},#{fileUploadName},#{fileOriginalName},#{fileUrl},#{writer})
 	</insert>
 
