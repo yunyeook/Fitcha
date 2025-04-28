@@ -1,5 +1,5 @@
 package com.ssafy.fitcha.model.dao;
 
-public class SearchDao {
+public interface SearchDao {
 
 }
