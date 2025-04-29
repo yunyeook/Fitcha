@@ -17,9 +17,9 @@ public interface CommentService {
 	boolean registChallengeComment(int challengeBoardId, Comment comment);
 	
 	//챌린지 댓글 삭제
-	boolean deleteChallengeComment(int challengeCommentId);
+	boolean deleteChallengeComment(int challengeBoardId,int challengeCommentId);
 
 
 	//챌린지 댓글 수정
-	boolean updateChallengeComment(Comment comment);
+	public boolean updateChallengeComment(int challengeBoardId,int challengeCommentId,Comment comment);
 }
