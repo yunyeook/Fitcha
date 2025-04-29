@@ -27,6 +27,15 @@ public class Challenge {
 	private String regDate;
 	private List<ChallengeFile> challengeFiles;
 	private List<Comment> comments;
+	private boolean isLiked;
+
+	public boolean isLiked() {
+		return isLiked;
+	}
+
+	public void setLiked(boolean isLiked) {
+		this.isLiked = isLiked;
+	}
 
 	public List<Comment> getComments() {
 		return comments;

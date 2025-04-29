@@ -20,18 +20,25 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.fitcha.model.dto.Challenge;
 import com.ssafy.fitcha.model.dto.Comment;
 import com.ssafy.fitcha.model.dto.SearchChallenge;
+import com.ssafy.fitcha.model.dto.User;
 import com.ssafy.fitcha.model.service.ChallengeService;
 import com.ssafy.fitcha.model.service.CommentService;
+import com.ssafy.fitcha.model.service.LikeService;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/challenge")
 public class ChallengeController {
 	private ChallengeService challengeService;
 	private CommentService commentService;
+	private LikeService likeService;
 
-	public ChallengeController(ChallengeService challengeService, CommentService commentService) {
+	public ChallengeController(ChallengeService challengeService, CommentService commentService,
+			LikeService likeService) {
 		this.challengeService = challengeService;
 		this.commentService = commentService;
+		this.likeService = likeService;
 	}
 
 	// 검색 목록 조회(검색어 없을 시 전체 조회).
@@ -53,8 +60,10 @@ public class ChallengeController {
 
 	// 상세 조회
 	@GetMapping("/{challengeBoardId}")
-	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId) {
-		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId);
+	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
+			HttpSession session) {
+		User user = (User) session.getAttribute("loginUser");
+		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId, user.getNickName());
 		if (challenge == null)
 			return ResponseEntity.noContent().build();
 		return ResponseEntity.ok(challenge);
@@ -139,5 +148,16 @@ public class ChallengeController {
 
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
+	}
+
+	// ----- 좋아요-----
+	// 프론트에서 좋아요 버튼 누르면 파라미터로 like=true전달
+	@PostMapping("/{challengeBoardId}/like")
+	public ResponseEntity<Void> updateChallengeLike(@PathVariable("challengeBoardId") int challengeBoardId,
+			@RequestParam("like") boolean isLiked, HttpSession session) {
+		User user = (User) session.getAttribute("loginUser");
+		if (likeService.updateChallengeLike(isLiked, challengeBoardId, user.getNickName()))
+			return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
 }
