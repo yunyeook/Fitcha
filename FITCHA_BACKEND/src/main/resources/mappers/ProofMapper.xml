@@ -35,4 +35,11 @@
 		DELETE FROM proof_board
 			  WHERE proof_board_id = #{id}
 	</delete>
+	
+	<!--  챌린지글 삭제시 내 인증글 삭제 --> 
+	<delete id="deleteMyProofBoard" parameterType="proof">
+		DELETE FROM proof_board
+			  WHERE challenge_board_id = #{challengeBoardId}
+			    AND writer = #{writer}
+	</delete>
 </mapper>

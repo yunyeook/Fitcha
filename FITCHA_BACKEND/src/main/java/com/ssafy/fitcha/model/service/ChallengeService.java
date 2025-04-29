@@ -20,7 +20,7 @@ public interface ChallengeService {
 	void updateChallenge(Challenge challenge, List<MultipartFile> files,List<Integer> deleteChallengeFileIds) throws Exception;
 	
 	//삭제 
-	void deleteChallenge(int challengeBoardId);
+	boolean deleteChallenge(int challengeBoardId, String writer);
 
 	//등록
 	void registChallenge(Challenge challenge, List<MultipartFile> files)throws Exception ;

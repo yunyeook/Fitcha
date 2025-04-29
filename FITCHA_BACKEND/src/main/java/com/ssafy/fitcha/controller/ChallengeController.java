@@ -77,9 +77,10 @@ public class ChallengeController {
 	}
 
 	// 삭제
-	@DeleteMapping("/{challenge_board_id}")
-	public ResponseEntity<Void> deleteChallenge(@PathVariable("challengeBoardId") int challengeBoardId) {
-		challengeService.deleteChallenge(challengeBoardId);
+	@DeleteMapping("/{challengeBoardId}/{writer}")
+	public ResponseEntity<Void> deleteChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
+			@PathVariable("writer") String writer  ) {
+		challengeService.deleteChallenge(challengeBoardId,writer);
 
 		URI redirectUri = URI.create("/challenge");
 		return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();

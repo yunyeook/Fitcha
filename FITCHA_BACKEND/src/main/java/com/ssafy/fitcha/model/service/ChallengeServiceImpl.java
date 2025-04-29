@@ -9,6 +9,7 @@ import com.ssafy.fitcha.model.dao.ChallengeDao;
 import com.ssafy.fitcha.model.dto.Challenge;
 import com.ssafy.fitcha.model.dto.ChallengeFile;
 import com.ssafy.fitcha.model.dto.Comment;
+import com.ssafy.fitcha.model.dto.Proof;
 import com.ssafy.fitcha.model.dto.Search;
 
 @Service
@@ -55,19 +56,30 @@ public class ChallengeServiceImpl implements ChallengeService {
 			throws Exception {
 		challengeDao.updateChallengeBoard(challenge);
 		// 챌린지 파일 삭제
-		fileService.deleteChallengeFile(deleteChallengeFileIds);
-		// 챌린지 파일 등록 (새로 추가된것만 등록..?)
-		fileService.insertChallengeFile(files, challenge.getChallengeBoardId(), challenge.getWriter());
+		if(deleteChallengeFileIds!=null&& deleteChallengeFileIds.size()>0) {
+			fileService.deleteChallengeFile(deleteChallengeFileIds);
+			
+		}
+		// 챌린지 파일 등록 (새로 추가된것 등록)
+		if(files!=null&& files.size()>0) {
+			fileService.insertChallengeFile(files, challenge.getChallengeBoardId(), challenge.getWriter());
+			
+		}
 
 	}
 
 	// 삭제
 	@Override
-	public void deleteChallenge(int challengeBoardId) {
+	public boolean deleteChallenge(int challengeBoardId,String writer) {
+	
+		// 챌린지 삭제시 내가쓴 인증글과 파일 삭제
+		Proof deleteProof = new Proof();
+		deleteProof.setChallengeBoardId(challengeBoardId);
+		deleteProof.setWriter(writer);
+		proofService.deleteMyProofBoard(deleteProof);
+		
 		// 내가쓴 챌린지글과 파일 삭제
-		challengeDao.deleteChallengeBoard(challengeBoardId);
-		// 내가쓴 인증글과 파일 삭제
-		proofService.deleteProofBoard(challengeBoardId);
+	return	1==challengeDao.deleteChallengeBoard(challengeBoardId);
 
 	}
 
