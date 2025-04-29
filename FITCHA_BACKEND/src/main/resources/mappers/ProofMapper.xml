@@ -24,7 +24,7 @@
 	</insert>
 	
 	<!-- 인증글 수정 -->
-	<update id="updateProofBoard">
+	<update id="updateProofBoard" parameterType="Proof">
 	UPDATE proof_board
 	   SET title = #{title},
 	   	 content = #{content}
