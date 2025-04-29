@@ -155,7 +155,8 @@ VALUES
 (7, 'fituser1', '상체 운동 완료', '오늘은 등 운동 추가했습니다.', '길동이'),
 (8, 'fituser2', '러닝 3km', '해질녘 러닝 너무 좋네요.', '영희짱'),
 (9, 'fituser1', '요가로 몸 풀기', '심신 안정되는 하루였어요.', '길동이'),
-(10, 'fituser2', '하체 강화 도전!', '스쿼트 50개 완료!', '영희짱');
+(10, 'fituser2', '하체 강화 도전!', '스쿼트 50개 완료!', '영희짱'),
+(10, 'fituser1', '하체 강화 도전!', '스쿼트 50개 완료!', '길동이');
 
 -- 5. proof_file (10개)
 INSERT INTO proof_file (proof_board_id, file_upload_name, file_original_name, file_url, writer)
@@ -169,7 +170,8 @@ VALUES
 (7, 'upper_proof.jpg', 'upper_proof.jpg', '/static/file/proof/upper_proof.jpg', '길동이'),
 (8, 'running_proof.jpg', 'running_proof.jpg', '/static/file/proof/running_proof.jpg', '영희짱'),
 (9, 'yoga_proof.jpg', 'yoga_proof.jpg', '/static/file/proof/yoga_proof.jpg', '길동이'),
-(10, 'squat_proof.jpg', 'squat_proof.jpg', '/static/file/proof/squat_proof.jpg', '영희짱');
+(10, 'squat_proof.jpg', 'squat_proof.jpg', '/static/file/proof/squat_proof.jpg', '영희짱'),
+(10, 'squat_proof.jpg', 'squat_proof.jpg', '/static/file/proof/squat_proof.jpg', '길동이');
 
 -- 6. challenge_comment (10개)
 INSERT INTO challenge_comment (challenge_board_id, user_id, content, writer)
@@ -199,7 +201,25 @@ VALUES
 (9, 'fituser2', '요가 덕분에 스트레스 해소됐어요.', '영희짱'),
 (10, 'fituser1', '하체 스쿼트 챌린지, 완주했습니다!', '길동이');
 
+CREATE TABLE challenge_like(
+challenge_board_id INT,
+writer varchar(300),
+CONSTRAINT challenge_like_pk FOREIGN KEY (challenge_board_id) REFERENCES challenge_board (challenge_board_id)
+ON DELETE CASCADE 
+);
+
+CREATE TABLE proof_like(
+proof_board_id int,
+writer varchar(300),
+CONSTRAINT proof_like_pk FOREIGN KEY (proof_board_id) REFERENCES proof_board (proof_board_id) 
+ON DELETE CASCADE 
+);
+
 select * from challenge_board;
 select * from challenge_file;
+select * from proof_board;
+select * from challenge_comment;
+select * from challenge_like;
+
 
 

@@ -1,5 +1,16 @@
 package com.ssafy.fitcha.model.dao;
 
+import com.ssafy.fitcha.model.dto.Like;
+
 public interface LikeDao {
+
+	// 로그인 유저의 챌린지글 좋아요 여부.
+	Like selectChallengeLike(Like like);
+
+	// 로그인 유저의 챌린지글 좋아요 등록
+	int insertChallengeLike(Like like);
+
+	// 로그인 유저의 챌린지 글 좋아요 취소
+	int deleteChallengeLike(Like like);
 
 }
