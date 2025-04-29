@@ -7,7 +7,7 @@ import com.ssafy.fitcha.model.dto.Comment;
 public interface CommentDao {
 
 	//챌린지 댓글 삭제
-	int deleteChallengeComment(int challengeBoardId);
+	int deleteChallengeComment(Comment comment);
 
 	//챌린지 댓글목록 조회 
 	List<Comment> selectChallengeCommentList(int challengeBoardId);

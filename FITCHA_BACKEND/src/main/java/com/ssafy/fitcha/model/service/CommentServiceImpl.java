@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.fitcha.model.dao.CommentDao;
 import com.ssafy.fitcha.model.dto.Comment;
-import com.ssafy.fitcha.model.dto.User;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -27,29 +26,26 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public boolean registChallengeComment(int challengeBoardId, Comment comment) {
 		comment.setBoardId(challengeBoardId);
-		if (commentDao.insertChallengeComment(comment) != 0)
-			return true;
-		return false;
+		return 1 == commentDao.insertChallengeComment(comment);
+
 	}
 
 	// 챌린지 글의 댓글 삭제
 	@Override
-	public boolean deleteChallengeComment(int challengeCommentId) {
-
-		if (commentDao.deleteChallengeComment(challengeCommentId) != 0)
-			return true;
-		return false;
+	public boolean deleteChallengeComment(int challengeBoardId, int challengeCommentId) {
+		Comment comment = new Comment();
+		comment.setBoardId(challengeBoardId);
+		comment.setCommentId(challengeCommentId);
+		return 1 == commentDao.deleteChallengeComment(comment);
 
 	}
 
 	// 챌린지 글의 댓글 수정
 	@Override
-	public boolean updateChallengeComment(Comment comment) {
-		if (commentDao.updateChallengeComment(comment) != 0)
-			return true;
-		return false;
+	public boolean updateChallengeComment(int challengeBoardId, int challengeCommentId, Comment comment) {
+		comment.setBoardId(challengeBoardId);
+		comment.setCommentId(challengeCommentId);
+		return 1 == commentDao.updateChallengeComment(comment);
 	}
-	
-	
-	
+
 }

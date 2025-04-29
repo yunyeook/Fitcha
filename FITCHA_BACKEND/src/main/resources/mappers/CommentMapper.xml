@@ -5,9 +5,10 @@
 <mapper namespace="com.ssafy.fitcha.model.dao.CommentDao">
 
 	<!-- 챌린지 댓글 삭제 -->
-	<delete id="deleteChallengeComment" parameterType="int">
+	<delete id="deleteChallengeComment" parameterType="comment">
 		DELETE FROM challenge_comment
-			  WHERE challenge_board_id = #{id}
+		 WHERE challenge_board_id = #{boardId}
+		   AND challenge_comment_id = #{commentId}
 	</delete>
 	
 	<!--  챌린지 댓글 조회 -->

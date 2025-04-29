@@ -79,8 +79,8 @@ public class ChallengeController {
 	// 삭제
 	@DeleteMapping("/{challengeBoardId}/{writer}")
 	public ResponseEntity<Void> deleteChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
-			@PathVariable("writer") String writer  ) {
-		challengeService.deleteChallenge(challengeBoardId,writer);
+			@PathVariable("writer") String writer) {
+		challengeService.deleteChallenge(challengeBoardId, writer);
 
 		URI redirectUri = URI.create("/challenge");
 		return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
@@ -100,7 +100,7 @@ public class ChallengeController {
 	// ---댓글-------------------------------------------------------------------------------
 
 	// 챌린지 댓글 등록
-	@PostMapping("/comment/{challengeBoardId}")
+	@PostMapping("/{challengeBoardId}/comment")
 	public ResponseEntity<Void> registChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId,
 			@RequestBody Comment comment) {
 
@@ -113,10 +113,12 @@ public class ChallengeController {
 	}
 
 	// 챌린지 댓글 삭제
-	@DeleteMapping("/comment/{challengeBoardId}/{challengeCommentId}")
+	@DeleteMapping("{challengeBoardId}/comment/{challengeCommentId}")
 	public ResponseEntity<Void> deleteChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId,
 			@PathVariable("challengeCommentId") int challengeCommentId) {
-		if (commentService.deleteChallengeComment(challengeCommentId)) {
+		System.out.println(challengeCommentId);
+
+		if (commentService.deleteChallengeComment(challengeBoardId, challengeCommentId)) {
 
 			URI redirectUri = URI.create("/challenge/" + challengeBoardId);
 			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
@@ -126,10 +128,11 @@ public class ChallengeController {
 	}
 
 	// 챌린지 댓글 수정
-	@PutMapping("/comment/{challengeBoardId}")
+	@PutMapping("/{challengeBoardId}/comment/{challengeCommentId}")
 	public ResponseEntity<Void> updateChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId,
-			@RequestBody Comment comment) {
-		if (commentService.updateChallengeComment(comment)) {
+			@PathVariable("challengeCommentId") int challengeCommentId, @RequestBody Comment comment) {
+
+		if (commentService.updateChallengeComment(challengeBoardId, challengeCommentId, comment)) {
 			URI redirectUri = URI.create("/challenge/" + challengeBoardId);
 			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
 		}
@@ -137,4 +140,4 @@ public class ChallengeController {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
 	}
-} 
+}
