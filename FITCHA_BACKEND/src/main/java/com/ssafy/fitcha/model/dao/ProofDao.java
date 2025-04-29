@@ -22,4 +22,7 @@ public interface ProofDao {
 	// 인증글 삭제
 	int deleteProofBoard(int challengeFileId);
 
+	//챌린지글 삭제시 내 인증글 삭제
+	int deleteMyProofBoard(Proof proof);
+
 }

@@ -1,5 +1,5 @@
 DROP database fitcha;
-CREATE DATABASE IF NOT EXISTS fitcha;
+CREATE DATABASE if not exists fitcha;
 USE fitcha;
 -- user --
 CREATE TABLE user_board(
@@ -16,9 +16,9 @@ gender VARCHAR(300)
 CREATE TABLE user_file(
 user_file_id INT PRIMARY KEY AUTO_INCREMENT,
 user_board_id INT,
-file_upload_name VARCHAR(300) NOT NULL,
-file_original_name VARCHAR(300) NOT NULL,
-file_url VARCHAR(300) NOT NULL,
+file_upload_name VARCHAR(3000) NOT NULL,
+file_original_name VARCHAR(3000) NOT NULL,
+file_url VARCHAR(3000) NOT NULL,
 CONSTRAINT user_file_pk FOREIGN KEY (user_board_id) REFERENCES user_board (user_board_id)
 ON DELETE CASCADE
 );
@@ -45,10 +45,10 @@ ON DELETE CASCADE
 CREATE TABLE challenge_file(
 challenge_file_id INT PRIMARY KEY AUTO_INCREMENT,
 challenge_board_id INT,
-file_upload_name VARCHAR(300) NOT NULL,
-file_original_name VARCHAR(300) NOT NULL,
-file_url VARCHAR(300) NOT NULL,
-writer VARCHAR(300) NOT NULL,
+file_upload_name VARCHAR(3000) NOT NULL,
+file_original_name VARCHAR(3000) NOT NULL,
+file_url VARCHAR(3000) NOT NULL,
+writer VARCHAR(3000) NOT NULL,
 CONSTRAINT challenge_file_pk FOREIGN KEY (challenge_board_id) REFERENCES challenge_board (challenge_board_id)
 ON DELETE CASCADE 
 );
@@ -71,10 +71,10 @@ ON DELETE SET NULL
 CREATE TABLE proof_file(
 proof_file_id INT PRIMARY KEY AUTO_INCREMENT,
 proof_board_id INT,
-file_upload_name VARCHAR(300) NOT NULL,
-file_original_name VARCHAR(300) NOT NULL,
-file_url VARCHAR(300) NOT NULL,
-writer VARCHAR(300) NOT NULL,
+file_upload_name VARCHAR(3000) NOT NULL,
+file_original_name VARCHAR(3000) NOT NULL,
+file_url VARCHAR(3000) NOT NULL,
+writer VARCHAR(3000) NOT NULL,
 CONSTRAINT proof_file_pk FOREIGN KEY (proof_board_id) REFERENCES proof_board (proof_board_id) 
 ON DELETE CASCADE 
 );
@@ -198,4 +198,8 @@ VALUES
 (8, 'fituser1', '저녁 러닝 최고에요!', '길동이'),
 (9, 'fituser2', '요가 덕분에 스트레스 해소됐어요.', '영희짱'),
 (10, 'fituser1', '하체 스쿼트 챌린지, 완주했습니다!', '길동이');
+
+select * from challenge_board;
+select * from challenge_file;
+
 

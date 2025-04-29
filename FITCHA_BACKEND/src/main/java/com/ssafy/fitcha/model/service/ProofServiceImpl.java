@@ -47,4 +47,11 @@ public class ProofServiceImpl implements ProofService {
 	public boolean deleteProofBoard(int challengeFileId) {
 		return 1 == proofDao.deleteProofBoard(challengeFileId);
 	}
+
+	//챌린지 글 삭제시 내 인증글 삭제 
+	@Override
+	public boolean deleteMyProofBoard(Proof proof) {
+		return 1== proofDao.deleteMyProofBoard(proof);
+		
+	}
 }
