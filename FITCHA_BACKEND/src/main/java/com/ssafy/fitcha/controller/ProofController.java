@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.fitcha.model.dto.Proof;
-import com.ssafy.fitcha.model.dto.Search;
+import com.ssafy.fitcha.model.dto.SearchProof;
 import com.ssafy.fitcha.model.service.ProofService;
 
 @RestController
@@ -28,9 +28,9 @@ public class ProofController {
 		this.proofService = proofService;
 	}
 
-	// 검색 목록 조회 ( 없을시 전체 조회 )
+	// 검색 목록 조회 ( 검색 Dto 없을시 전체 조회 )
 	@GetMapping
-	public ResponseEntity<List<Proof>> getSearchProofs(@ModelAttribute Search search) {
+	public ResponseEntity<List<Proof>> getSearchProofs(@ModelAttribute SearchProof search) {
 		List<Proof> proofList = null; // 인증글 전체 리스트
 		try {
 			proofList = proofService.getSearchProofs(search);

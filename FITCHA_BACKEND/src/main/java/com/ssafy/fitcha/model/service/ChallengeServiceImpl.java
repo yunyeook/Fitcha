@@ -10,7 +10,7 @@ import com.ssafy.fitcha.model.dto.Challenge;
 import com.ssafy.fitcha.model.dto.ChallengeFile;
 import com.ssafy.fitcha.model.dto.Comment;
 import com.ssafy.fitcha.model.dto.Proof;
-import com.ssafy.fitcha.model.dto.Search;
+import com.ssafy.fitcha.model.dto.SearchChallenge;
 
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
@@ -29,7 +29,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 	@Override
 	// 검색 목록 조회 (검색어 없을 시 전체 조회)
-	public List<Challenge> getSearchChallenges(Search search) {
+	public List<Challenge> getSearchChallenges(SearchChallenge search) {
 		List<Challenge> challengeBoardList = challengeDao.selectSearchChallengeBoardList(search);
 
 		for (Challenge challenge : challengeBoardList) {

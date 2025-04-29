@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.fitcha.model.dto.Challenge;
-import com.ssafy.fitcha.model.dto.Search;
+import com.ssafy.fitcha.model.dto.SearchChallenge;
 import com.ssafy.fitcha.model.dto.User;
 
 public interface ChallengeService {
 
 	//검색 목록 조회 (검색어 없을 시 전체 조회)
-	List<Challenge> getSearchChallenges(Search search)throws Exception ;
+	List<Challenge> getSearchChallenges(SearchChallenge search)throws Exception ;
 
 	//상세 정보 
 	Challenge getChallengeDetail(int challengeBoardId);

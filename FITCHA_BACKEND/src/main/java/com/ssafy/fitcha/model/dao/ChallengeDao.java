@@ -6,12 +6,12 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.ssafy.fitcha.model.dto.Challenge;
 import com.ssafy.fitcha.model.dto.File;
-import com.ssafy.fitcha.model.dto.Search;
+import com.ssafy.fitcha.model.dto.SearchChallenge;
 
 
 public interface ChallengeDao {
 	//검색한 챌린지보드 목록 조회 
-	public List<Challenge> selectSearchChallengeBoardList(Search search);
+	public List<Challenge> selectSearchChallengeBoardList(SearchChallenge search);
 	
 
 	//챌린지보드 상세 조회

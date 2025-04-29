@@ -2,16 +2,14 @@ package com.ssafy.fitcha.model.service;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
 import com.ssafy.fitcha.model.dto.Proof;
-import com.ssafy.fitcha.model.dto.Search;
+import com.ssafy.fitcha.model.dto.SearchProof;
 
 
 public interface ProofService {
 	
 	// 인증글 검색 조회 (검색 없으면 전체 조회)
-	List<Proof> getSearchProofs(Search search);
+	List<Proof> getSearchProofs(SearchProof search);
 	
 	// 인증글 상세 조회 
 	Proof getProofDetails(int proofBoardId);

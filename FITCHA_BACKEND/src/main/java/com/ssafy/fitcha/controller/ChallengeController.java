@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.fitcha.model.dto.Challenge;
 import com.ssafy.fitcha.model.dto.Comment;
-import com.ssafy.fitcha.model.dto.Search;
+import com.ssafy.fitcha.model.dto.SearchChallenge;
 import com.ssafy.fitcha.model.service.ChallengeService;
 import com.ssafy.fitcha.model.service.CommentService;
 
@@ -36,7 +36,7 @@ public class ChallengeController {
 
 	// 검색 목록 조회(검색어 없을 시 전체 조회).
 	@GetMapping
-	public ResponseEntity<List<Challenge>> getSearchChallenges(@ModelAttribute Search search) {
+	public ResponseEntity<List<Challenge>> getSearchChallenges(@ModelAttribute SearchChallenge search) {
 
 		List<Challenge> challenges = null;
 		try {

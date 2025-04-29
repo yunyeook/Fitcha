@@ -1,6 +1,6 @@
 package com.ssafy.fitcha.model.dto;
 
-public class Search {
+public class SearchChallenge {
 	//직접 입력하여 검색 
 	private String key; //title, content, both(title,content),writer
 	private String word;

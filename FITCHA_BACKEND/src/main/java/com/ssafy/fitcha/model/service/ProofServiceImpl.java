@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.fitcha.model.dao.ProofDao;
 import com.ssafy.fitcha.model.dto.Proof;
-import com.ssafy.fitcha.model.dto.Search;
+import com.ssafy.fitcha.model.dto.SearchProof;
 
 @Service
 public class ProofServiceImpl implements ProofService {
@@ -20,7 +20,7 @@ public class ProofServiceImpl implements ProofService {
 
 	// 인증글 검색 조회 ( 검색 없으실 전체 조회 )
 	@Override
-	public List<Proof> getSearchProofs(Search search) {
+	public List<Proof> getSearchProofs(SearchProof search) {
 		return proofDao.selectSearchProofList(search);
 	}
 
