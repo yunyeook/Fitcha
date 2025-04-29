@@ -3,12 +3,12 @@ package com.ssafy.fitcha.model.dao;
 import java.util.List;
 
 import com.ssafy.fitcha.model.dto.Proof;
-import com.ssafy.fitcha.model.dto.Search;
+import com.ssafy.fitcha.model.dto.SearchProof;
 
 public interface ProofDao {
 
 	// 인증글 검색 조회 (검색 조건 없으실 전체 조회)
-	List<Proof> selectSearchProofList(Search search);
+	List<Proof> selectSearchProofList(SearchProof search);
 
 	// 인증글 상세 조회
 	Proof selectProofBoard(int proofBoardId);

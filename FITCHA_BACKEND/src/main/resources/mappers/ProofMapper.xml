@@ -3,44 +3,75 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.fitcha.model.dao.ProofDao">
-	
+
 	<!-- 인증글 검색 조회 (검색 조건 없으면 전체 조회) -->
-	<select id="selectSearchProofList" parameterType="search" resultType="Proof">
-	SELECT *
-	FROM proof_board
+	<select id="selectSearchProofList" parameterType="SearchProof"
+		resultType="Proof">
+		SELECT *
+		FROM proof_board
+		<where>
+			<choose>
+				<!-- 제목 검색 -->
+				<when test="key == 'title'">
+					title LIKE concat('%', #{word}, '%')
+				</when>
+				<!-- 내용 검색 -->
+				<when test="key == 'content'">
+					content LIKE concat('%', #{word}, '%')
+				</when>
+				<!-- 제목 + 내용 검색 -->
+				<when test="key == 'both'">
+					title LIKE concat('%', #{word}, '%') OR content LIKE concat('%',
+					#{word}, '%')
+				</when>
+				<!-- 작성자 검색 -->
+				<when test="key == 'writer'">
+					writer LIKE concat('%', #{word}, '%')
+				</when>
+			</choose>
+		</where>
+		<!-- 정렬 -->
+		<if test="orderBy != null">
+			ORDER BY ${orderBy} ${orderByDir}
+		</if>
 	</select>
-	
+
 	<!-- 인증글 상세 조회 -->
-	<select id="selectProofBoard" parameterType="int" resultType="Proof">
-	SELECT *
-	FROM proof_board
-	WHERE proof_board_id = #{id}
+	<select id="selectProofBoard" parameterType="int"
+		resultType="Proof">
+		SELECT *
+		FROM proof_board
+		WHERE proof_board_id = #{id}
 	</select>
-	
+
 	<!-- 인증글 등록 -->
-	<insert id="insertProofBoard" parameterType="Proof" useGeneratedKeys="true" keyProperty="proofBoardId">
-	INSERT INTO proof_board (challenge_board_id, user_id, title, content, writer)
-		 VALUES (#{challengeBoardId}, #{userId}, #{title}, #{content}, #{writer})
+	<insert id="insertProofBoard" parameterType="Proof"
+		useGeneratedKeys="true" keyProperty="proofBoardId">
+		INSERT INTO proof_board (challenge_board_id, user_id, title, content,
+		writer)
+		VALUES (#{challengeBoardId}, #{userId}, #{title}, #{content}, #{writer})
 	</insert>
-	
+
 	<!-- 인증글 수정 -->
 	<update id="updateProofBoard" parameterType="Proof">
-	UPDATE proof_board
-	   SET title = #{title},
-	   	 content = #{content}
-	 WHERE proof_board_id = #{proofBoardId}
+		UPDATE proof_board
+		SET title = #{title},
+		content = #{content}
+		WHERE proof_board_id = #{proofBoardId}
 	</update>
 
-	<!-- 인증글 삭제-->
+	<!-- 인증글 삭제 -->
 	<delete id="deleteProofBoard" parameterType="int">
-		DELETE FROM proof_board
-			  WHERE proof_board_id = #{id}
+		DELETE FROM
+		proof_board
+		WHERE proof_board_id = #{id}
 	</delete>
-	
-	<!--  챌린지글 삭제시 내 인증글 삭제 --> 
+
+	<!-- 챌린지글 삭제시 내 인증글 삭제 -->
 	<delete id="deleteMyProofBoard" parameterType="proof">
-		DELETE FROM proof_board
-			  WHERE challenge_board_id = #{challengeBoardId}
-			    AND writer = #{writer}
+		DELETE FROM
+		proof_board
+		WHERE challenge_board_id = #{challengeBoardId}
+		AND writer = #{writer}
 	</delete>
 </mapper>
