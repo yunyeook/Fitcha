@@ -2,6 +2,8 @@ package com.ssafy.fitcha.model.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.ssafy.fitcha.model.dto.Proof;
 import com.ssafy.fitcha.model.dto.SearchProof;
 
@@ -15,10 +17,10 @@ public interface ProofService {
 	Proof getProofDetails(int proofBoardId);
 
 	// 인증글 등록
-	boolean registProof(Proof proof);
+	boolean registProof(Proof proof,List<MultipartFile> files) throws Exception;
 	
 	// 인증글 수정
-	boolean updateProof(Proof proof);
+	boolean updateProof(Proof proof, List<MultipartFile> files, List<Integer> deleteProofFileIds) throws Exception;
 	
 	// 인증글 삭제
 	boolean deleteProofBoard(int challengeFileId);

@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.fitcha.model.dao.FileDao;
 import com.ssafy.fitcha.model.dto.ChallengeFile;
+import com.ssafy.fitcha.model.dto.ProofFile;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -21,69 +22,120 @@ public class FileServiceImpl implements FileService {
 	private String uploadDirPath;
 	private FileDao fileDao;
 	private ResourceLoader resourceLoader;
-	public FileServiceImpl(FileDao fileDao,ResourceLoader resourceLoader) {
-		this.fileDao=fileDao;
-		this.resourceLoader=resourceLoader;
+
+	public FileServiceImpl(FileDao fileDao, ResourceLoader resourceLoader) {
+		this.fileDao = fileDao;
+		this.resourceLoader = resourceLoader;
 	}
 
-	//챌린지파일 목록 조회 
+	// 챌린지파일 목록 조회
 	@Override
 	public List<ChallengeFile> getChallengeFileList(int challengeBoardId) {
 		return fileDao.selectChallengeFileList(challengeBoardId);
 	}
 
-	//챌린지 파일 리스트 삭제 
+	// 챌린지 파일 리스트 삭제
 	@Override
 	public void deleteChallengeFile(List<Integer> deleteChallengeFileIds) {
-		for(int challengeFileId : deleteChallengeFileIds) {
+		for (int challengeFileId : deleteChallengeFileIds) {
 			fileDao.deleteChallengeFile(challengeFileId);
 		}
-		
+
 	}
-	
-	//챌린지 파일 등록
-    @Override
-    public void insertChallengeFile(List<MultipartFile> files, int challengeBoardId, String writer) throws Exception {
-        if (files == null || files.isEmpty()) {
-            return;
-        }
 
-        File uploadDir = new File(uploadDirPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
+	// 챌린지 파일 등록
+	@Override
+	public void insertChallengeFile(List<MultipartFile> files, int challengeBoardId, String writer) throws Exception {
+		if (files == null || files.isEmpty()) {
+			return;
+		}
 
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                String originalFileName = file.getOriginalFilename();
-                String uploadFileName = generateUniqueName(originalFileName);
-                file.transferTo(new File(uploadDir, uploadFileName));
-                
-                System.out.println(new File(uploadDir, uploadFileName));
-                
-                ChallengeFile challengeFile = new ChallengeFile();
-                challengeFile.setChallengeBoardId(challengeBoardId);
-                challengeFile.setFileOriginalName(originalFileName);
-                challengeFile.setFileUploadName(uploadFileName);
-                challengeFile.setFileUrl(uploadDirPath + uploadFileName); // 경로 저장
-                challengeFile.setWriter(writer);
+		File uploadDir = new File(uploadDirPath);
+		if (!uploadDir.exists()) {
+			uploadDir.mkdirs();
+		}
 
-                fileDao.insertChallengeFile(challengeFile);
-            }
-        }
-    }
+		for (MultipartFile file : files) {
+			if (!file.isEmpty()) {
+				String originalFileName = file.getOriginalFilename();
+				String uploadFileName = generateUniqueName(originalFileName);
+				file.transferTo(new File(uploadDir, uploadFileName));
 
-    private String generateUniqueName(String originalName) {
-        String timeStr = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String uuid = UUID.randomUUID().toString().substring(0, 8);
-        String ext = "";
+				System.out.println(new File(uploadDir, uploadFileName));
 
-        int idx = originalName.lastIndexOf('.');
-        if (idx != -1) {
-            ext = originalName.substring(idx);
-        }
+				ChallengeFile challengeFile = new ChallengeFile();
+				challengeFile.setChallengeBoardId(challengeBoardId);
+				challengeFile.setFileOriginalName(originalFileName);
+				challengeFile.setFileUploadName(uploadFileName);
+				challengeFile.setFileUrl(uploadDirPath + uploadFileName); // 경로 저장
+				challengeFile.setWriter(writer);
 
-        return timeStr + "_" + uuid + ext;
-    }
+				fileDao.insertChallengeFile(challengeFile);
+			}
+		}
+	}
+
+	// ---------------------------------인증글
+	// 파일--------------------------------------------
+
+	// 인증글 파일 목록 조회
+	@Override
+	public List<ProofFile> getProofFileList(int proofBoardId) {
+		return fileDao.selectProofFileList(proofBoardId);
+	}
+
+	// 인증글 파일 삭제
+	@Override
+	public void deleteProofFile(List<Integer> deleteProofFileIds) {
+		for (int proofFileId : deleteProofFileIds) {
+			fileDao.deleteProofFile(proofFileId);
+		}
+	}
+
+	// 인증글 파일 등록
+	@Override
+	public void insertProofFile(List<MultipartFile> files, int proofBoardId, String writer) throws Exception {
+		if (files == null || files.isEmpty()) {
+			return;
+		}
+
+		File uploadDir = new File(uploadDirPath);
+		if (!uploadDir.exists()) {
+			uploadDir.mkdirs();
+		}
+
+		for (MultipartFile file : files) {
+			if (!file.isEmpty()) {
+				String originalFileName = file.getOriginalFilename();
+				String uploadFileName = generateUniqueName(originalFileName);
+				file.transferTo(new File(uploadDir, uploadFileName));
+
+				System.out.println(new File(uploadDir, uploadFileName));
+
+				ProofFile proofFile = new ProofFile();
+				proofFile.setProofBoardId(proofBoardId);
+				proofFile.setFileOriginalName(originalFileName);
+				proofFile.setFileUploadName(uploadFileName);
+				proofFile.setFileUrl(uploadDirPath + uploadFileName); // 경로 저장
+				proofFile.setWriter(writer);
+
+				fileDao.insertProofFile(proofFile);
+			}
+		}
+	}
+
+	// 유니크 네임 생성 함수
+	private String generateUniqueName(String originalName) {
+		String timeStr = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String uuid = UUID.randomUUID().toString().substring(0, 8);
+		String ext = "";
+
+		int idx = originalName.lastIndexOf('.');
+		if (idx != -1) {
+			ext = originalName.substring(idx);
+		}
+
+		return timeStr + "_" + uuid + ext;
+	}
 
 }
