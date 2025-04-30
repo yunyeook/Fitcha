@@ -37,18 +37,29 @@ public class ChallengeServiceImpl implements ChallengeService {
 		for (Challenge challenge : challengeBoardList) {
 			int challengeBoardId = challenge.getChallengeBoardId();
 			challenge.setChallengeFiles(fileService.getChallengeFileList(challengeBoardId));
+			challenge.setLikeCount(likeService.getChallengeLikeCount(challengeBoardId));
 		}
 		return challengeBoardList;
 	}
 
 	// 상세 조회
 	@Override
-	public Challenge getChallengeDetail(int challengeBoardId, String nickName) {
+	public Challenge getChallengeDetail(int challengeBoardId, String nickName, boolean isViewCounted) {
+		// 조회일때만 조회수 증가.
+		if (isViewCounted)
+			challengeDao.updateChallengeViewCount(challengeBoardId);
+
 		Challenge challenge = challengeDao.selectChallengeBoard(challengeBoardId);
+		// 파일 목록 조회
 		List<ChallengeFile> files = fileService.getChallengeFileList(challengeBoardId);
 		challenge.setChallengeFiles(files);
+		// 댓글 목록 조회
 		List<Comment> comments = commentService.getChallengeCommentList(challengeBoardId);
 		challenge.setComments(comments);
+		// 챌린지글 좋아요수 조회
+		challenge.setLikeCount(likeService.getChallengeLikeCount(challengeBoardId));
+
+		// 로그인 유저의 챌린지글 좋아요 여부
 		boolean isLiked = likeService.getChallengeLike(challengeBoardId, nickName);
 		challenge.setLiked(isLiked);
 

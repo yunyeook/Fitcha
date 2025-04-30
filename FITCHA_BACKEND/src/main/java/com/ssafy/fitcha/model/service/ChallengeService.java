@@ -13,7 +13,7 @@ public interface ChallengeService {
 	List<Challenge> getSearchChallenges(SearchChallenge search) throws Exception;
 
 	// 상세 정보
-	Challenge getChallengeDetail(int challengeBoardId, String nickName);
+	Challenge getChallengeDetail(int challengeBoardId, String nickName, boolean isViewCounted);
 
 	// 수정
 	void updateChallenge(Challenge challenge, List<MultipartFile> files, List<Integer> deleteChallengeFileIds)
