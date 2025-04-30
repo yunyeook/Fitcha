@@ -17,6 +17,25 @@
 		INSERT INTO challenge_file(challenge_board_id, file_upload_name, file_original_name, file_url, writer)
 			 VALUES (#{challengeBoardId},#{fileUploadName},#{fileOriginalName},#{fileUrl},#{writer})
 	</insert>
+	
+	
+	<!-- 인증글 파일 목록 조회  -->
+	<select id="selectProofFileList" parameterType="int" resultType="file">
+		SELECT *
+	 	FROM proof_file
+		WHERE proof_board_id = #{id}
+	</select> 
+	<delete id="deleteProofFile" parameterType="int">
+		DELETE 
+		FROM proof_file
+		WHERE proof_file_id =#{id}
+	</delete>
+	<insert id="insertProofFile" parameterType="proofFile">
+		INSERT INTO challenge_file(proof_board_id, file_upload_name, file_original_name, file_url, writer)
+			 VALUES (#{proofBoardId},#{fileUploadName},#{fileOriginalName},#{fileUrl},#{writer})
+	</insert>
+	
+	
 
 	
 

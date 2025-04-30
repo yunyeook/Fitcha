@@ -44,7 +44,6 @@ public class ChallengeController {
 	// 검색 목록 조회(검색어 없을 시 전체 조회).
 	@GetMapping
 	public ResponseEntity<List<Challenge>> getSearchChallenges(@ModelAttribute SearchChallenge search) {
-
 		List<Challenge> challenges = null;
 		try {
 			challenges = challengeService.getSearchChallenges(search);
@@ -55,7 +54,6 @@ public class ChallengeController {
 			e.printStackTrace();
 		}
 		return ResponseEntity.ok(challenges);
-
 	}
 
 	// 상세 조회

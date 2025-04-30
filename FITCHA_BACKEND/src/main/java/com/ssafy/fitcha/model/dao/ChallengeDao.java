@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.ssafy.fitcha.model.dto.Challenge;
-import com.ssafy.fitcha.model.dto.File;
 import com.ssafy.fitcha.model.dto.SearchChallenge;
 
 
