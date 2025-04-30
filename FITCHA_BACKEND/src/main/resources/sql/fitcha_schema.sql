@@ -221,5 +221,38 @@ select * from proof_board;
 select * from challenge_comment;
 select * from challenge_like;
 
+select count(*)
+from challenge_board
+where level ='초급'
+group by level;
 
+insert into challenge_like
+values(1, '길동이');
+insert into challenge_like
+values(1, '영희짱');
+
+		UPDATE challenge_board
+		   SET view_count = view_count+1
+		 WHERE challenge_board_id = 1;
+DROP TRIGGER IF EXISTS trg_increase_like_count;
+
+DELIMITER $$
+CREATE TRIGGER trg_increase_like_count
+AFTER INSERT ON challenge_like
+FOR EACH ROW
+BEGIN UPDATE challenge_board
+		   SET like_count = like_count+1
+		WHERE challenge_board_id = New.challenge_board_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_decrease_like_count
+AFTER DELETE ON challenge_like
+FOR EACH ROW
+BEGIN UPDATE challenge_board
+		   SET like_count = like_count-1
+		WHERE challenge_board_id = OLD.challenge_board_id;
+END $$
+DELIMITER ;
 

@@ -17,13 +17,14 @@
 		INSERT INTO challenge_like(challenge_board_id, writer)
 		     VALUES (#{boardId},#{writer})
 	</insert>
-	
+		
 	<!-- 좋아요 취소 -->
 	<delete id="deleteChallengeLike" parameterType="like">
 		DELETE FROM challenge_like
 	     WHERE challenge_board_id = #{boardId}
 		   AND writer = #{writer}
 	</delete>
+	
 		<!-- 좋아요 수 조회   -->
 	<select id="selectChallengeLikeCount" parameterType="int" resultType="java.lang.Integer">
 		SELECT count(*) like_count

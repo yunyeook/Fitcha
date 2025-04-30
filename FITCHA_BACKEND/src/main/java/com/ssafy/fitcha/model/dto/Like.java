@@ -3,6 +3,15 @@ package com.ssafy.fitcha.model.dto;
 public class Like {
 	private int boardId;
 	private String writer;
+	private boolean isLiked;
+
+	public boolean isLiked() {
+		return isLiked;
+	}
+
+	public void setLiked(boolean isLiked) {
+		this.isLiked = isLiked;
+	}
 
 	public int getBoardId() {
 		return boardId;
