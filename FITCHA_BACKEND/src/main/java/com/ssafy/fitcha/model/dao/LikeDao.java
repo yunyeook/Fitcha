@@ -13,4 +13,13 @@ public interface LikeDao {
 	// 로그인 유저의 챌린지 글 좋아요 취소
 	int deleteChallengeLike(Like like);
 
+	// 로그인 유저의 인증글 좋아요 여부.
+	Object selectProofLike(Like like);
+
+	// 로그인 유저의 인증글 좋아요 등록
+	int insertProofLike(Like like);
+
+	// 로그인 유저의 인증글 글 좋아요 취소
+	int deleteProofLike(Like like);
+
 }

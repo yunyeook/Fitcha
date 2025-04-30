@@ -18,4 +18,18 @@ public interface CommentDao {
 	//챌린지 댓글 수정
 	int updateChallengeComment(Comment comment);
 
+	// ---------------------------------인증글 댓글----------------------------------------------------------
+	
+	// 인증글 댓글 목록 조회 
+	List<Comment> selectProofCommentList(int proofBoardId);
+	
+	// 인증글 댓글 등록
+	int insertProofComment(Comment comment);
+	
+	// 인증글 댓글 삭제
+	int deleteProofComment(Comment comment);
+
+	// 인증글 댓글 수정 
+	int updateProofComment(Comment comment);
+
 }

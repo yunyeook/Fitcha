@@ -47,5 +47,38 @@ public class CommentServiceImpl implements CommentService {
 		comment.setCommentId(challengeCommentId);
 		return 1 == commentDao.updateChallengeComment(comment);
 	}
+	
+	// ------------------------------- 인증글 댓글 -----------------------------------------------------
+	
+	
+	// 인증글 댓글 목록 조회 
+	@Override
+	public List<Comment> getProofCommentList(int proofBoardId) {
+		return commentDao.selectProofCommentList(proofBoardId);
+	}
+	
+	// 인증글 댓글 등록
+	@Override
+	public boolean registProofComment(int proofBoardId, Comment comment) {
+		comment.setBoardId(proofBoardId);
+		return 1 == commentDao.insertProofComment(comment);
+	}
+	
+	// 인증글 댓글 삭제 
+	@Override
+	public boolean deleteProofComment(int proofBoardId, int proofCommentId) {
+		Comment comment = new Comment();
+		comment.setBoardId(proofBoardId);
+		comment.setCommentId(proofCommentId);
+		return 1 == commentDao.deleteProofComment(comment);
+	}
+	
+	// 인증글 댓글 수정 
+	@Override
+	public boolean updateProofComment(int proofBoardId, int proofCommentId, Comment comment) {
+		comment.setBoardId(proofBoardId);
+		comment.setCommentId(proofCommentId);
+		return 1 == commentDao.updateProofComment(comment);
+	}
 
 }

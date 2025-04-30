@@ -3,6 +3,8 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.fitcha.model.dao.LikeDao">
+	<!-- 챌린지 좋아요 -->
+	<!-- 챌린지 좋아요 여부 조회 -->
 	<select id="selectChallengeLike" parameterType="like" resultType="like">
 		SELECT * 
 	 	 FROM challenge_like
@@ -21,7 +23,30 @@
 		DELETE FROM challenge_like
 	     WHERE challenge_board_id = #{boardId}
 		   AND writer = #{writer}
+	</delete>
 	
+	
+	<!-- 인증글 좋아요 -->
+	<!-- 인증글 좋아요 여부 조회 -->
+	<select id="selectProofLike" parameterType="like" resultType="like">
+		SELECT * 
+	 	 FROM proof_like
+	    WHERE proof_board_id = #{boardId}
+		  AND writer = #{writer}
+	</select>
+
+	<!-- 좋아요 등록 -->
+	<insert id="insertProofLike" parameterType="like">
+		INSERT INTO proof_like(proof_board_id, writer)
+		     VALUES (#{boardId},#{writer})
+	</insert>
+	
+	<!-- 좋아요 취소 -->
+	<delete id="deleteProofLike" parameterType="like">
+		DELETE 
+		FROM proof_like
+	     WHERE proof_board_id = #{boardId}
+		   AND writer = #{writer}
 	</delete>
 
 </mapper>
