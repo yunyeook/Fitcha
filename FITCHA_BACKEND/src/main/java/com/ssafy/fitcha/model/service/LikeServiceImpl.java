@@ -32,9 +32,9 @@ public class LikeServiceImpl implements LikeService {
 		like.setWriter(nickName);
 
 		// 좋아요버튼눌렀다면
-		if (isLiked)
+		if (isLiked) {
 			return 1 == likeDao.insertChallengeLike(like);
-		else
+		} else
 			return 1 == likeDao.deleteChallengeLike(like);
 
 	}

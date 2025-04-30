@@ -56,8 +56,6 @@ public class ChallengeServiceImpl implements ChallengeService {
 		// 댓글 목록 조회
 		List<Comment> comments = commentService.getChallengeCommentList(challengeBoardId);
 		challenge.setComments(comments);
-		// 챌린지글 좋아요수 조회
-		challenge.setLikeCount(likeService.getChallengeLikeCount(challengeBoardId));
 
 		// 로그인 유저의 챌린지글 좋아요 여부
 		boolean isLiked = likeService.getChallengeLike(challengeBoardId, nickName);

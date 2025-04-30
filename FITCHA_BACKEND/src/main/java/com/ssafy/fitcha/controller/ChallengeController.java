@@ -62,6 +62,7 @@ public class ChallengeController {
 			@RequestParam("isViewCounted") boolean isViewCounted, HttpSession session) {
 		User user = (User) session.getAttribute("loginUser");
 		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId, user.getNickName(), isViewCounted);
+
 		if (challenge == null)
 			return ResponseEntity.noContent().build();
 		return ResponseEntity.ok(challenge);
@@ -104,7 +105,7 @@ public class ChallengeController {
 
 	}
 
-	// ---댓글-------------------------------------------------------------------------------
+	// -------- 댓 글 ------------
 
 	// 챌린지 댓글 등록
 	@PostMapping("/{challengeBoardId}/comment")
@@ -158,4 +159,5 @@ public class ChallengeController {
 			return ResponseEntity.ok().build();
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
+
 }
