@@ -39,6 +39,12 @@ public class LikeServiceImpl implements LikeService {
 
 	}
 
+	// 챌린지글의 좋아요수 조회
+	@Override
+	public int getChallengeLikeCount(int challengeBoardId) {
+		return likeDao.selectChallengeLikeCount(challengeBoardId);
+	}
+
 	// -------------------- 인증글 좋아요-------------------------------------------------
 
 	// 로그인 유저의 인증글 좋아요 여부 조회

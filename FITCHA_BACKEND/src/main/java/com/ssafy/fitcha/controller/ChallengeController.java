@@ -59,9 +59,9 @@ public class ChallengeController {
 	// 상세 조회
 	@GetMapping("/{challengeBoardId}")
 	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
-			HttpSession session) {
+			@RequestParam("isViewCounted") boolean isViewCounted, HttpSession session) {
 		User user = (User) session.getAttribute("loginUser");
-		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId, user.getNickName());
+		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId, user.getNickName(), isViewCounted);
 		if (challenge == null)
 			return ResponseEntity.noContent().build();
 		return ResponseEntity.ok(challenge);
@@ -152,7 +152,7 @@ public class ChallengeController {
 	// 프론트에서 좋아요 버튼 누르면 파라미터로 like=true전달
 	@PostMapping("/{challengeBoardId}/like")
 	public ResponseEntity<Void> updateChallengeLike(@PathVariable("challengeBoardId") int challengeBoardId,
-			@RequestParam("like") boolean isLiked, HttpSession session) {
+			@RequestParam("isLiked") boolean isLiked, HttpSession session) {
 		User user = (User) session.getAttribute("loginUser");
 		if (likeService.updateChallengeLike(isLiked, challengeBoardId, user.getNickName()))
 			return ResponseEntity.ok().build();

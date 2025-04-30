@@ -68,4 +68,11 @@
 		INSERT INTO challenge_board (user_id, title, content, writer, exercise_type, body_part, level, duration)
 			 VALUES (#{userId},#{title},#{content},#{writer}, #{exerciseType},#{bodyPart},#{level},#{duration})
 	</insert>
+	
+	<!-- 조회수 증가  -->
+	<update id="updateChallengeViewCount" parameterType="int">
+		UPDATE challenge_board
+		   SET view_count = view_count+1
+		 WHERE challenge_board_id = #{id}
+	</update>
 </mapper>
