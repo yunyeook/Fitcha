@@ -7,14 +7,32 @@ public class Proof {
 	// 생성자
 	public Proof() {
 	}
-	
-	
+
 	private int challengeBoardId; // 연동된 챌린지 게시글 아이디
 	private int proofBoardId; // 인증글 식별 id
 	private String userId; // 작성자 식별 id
 	private String title; // 제목
 	private String content; // 내용
 	private String writer; // 작성자
+	private int viewCount; // 조회수
+	private int likeCount; // 좋아요수
+
+	public int getViewCount() {
+		return viewCount;
+	}
+
+	public void setViewCount(int viewCount) {
+		this.viewCount = viewCount;
+	}
+
+	public int getLikeCount() {
+		return likeCount;
+	}
+
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
+	}
+
 	private String regDate; // 작성일
 	private List<BoardFile> files; // 인증글 파일 리스트
 
@@ -26,7 +44,7 @@ public class Proof {
 	public void setChallengeBoardId(int challengeBoardId) {
 		this.challengeBoardId = challengeBoardId;
 	}
-	
+
 	public int getProofBoardId() {
 		return proofBoardId;
 	}
@@ -89,7 +107,5 @@ public class Proof {
 				+ ", title=" + title + ", content=" + content + ", writer=" + writer + ", regDate=" + regDate
 				+ ", files=" + files + "]";
 	}
-
-	
 
 }
