@@ -108,7 +108,7 @@ public class ProofController {
 	
 	
 	// ---댓글-------------------------------------------------------------------------------
-
+		
 		// 인증글 댓글 등록
 		@PostMapping("/{proofBoardId}/comment")
 		public ResponseEntity<Void> registProofComment(@PathVariable("proofBoardId") int proofBoardId,
@@ -126,7 +126,6 @@ public class ProofController {
 		@DeleteMapping("/{proofBoardId}/comment/{proofCommentId}")
 		public ResponseEntity<Void> deleteProofComment(@PathVariable("proofBoardId") int proofBoardId,
 				@PathVariable("proofCommentId") int proofCommentId) {
-			System.out.println(proofCommentId);
 
 			if (commentService.deleteProofComment(proofBoardId, proofCommentId)) {
 
@@ -137,7 +136,7 @@ public class ProofController {
 
 		}
 
-		// 챌린지 댓글 수정
+		// 인증글 댓글 수정
 		@PutMapping("/{proofBoardId}/comment/{proofCommentId}")
 		public ResponseEntity<Void> updateProofComment(@PathVariable("proofBoardId") int proofBoardId,
 				@PathVariable("proofCommentId") int proofCommentId, @RequestBody Comment comment) {
