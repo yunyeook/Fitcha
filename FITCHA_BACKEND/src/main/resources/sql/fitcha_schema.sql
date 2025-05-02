@@ -1,5 +1,5 @@
-DROP database fitcha;
-CREATE DATABASE if not exists fitcha;
+DROP database IF EXISTS fitcha;
+CREATE DATABASE IF NOT EXISTS fitcha;
 USE fitcha;
 -- user --
 CREATE TABLE user_board(
@@ -9,7 +9,7 @@ password VARCHAR(300) NOT NULL,
 email VARCHAR(300) NOT NULL,
 name VARCHAR(300) NOT NULL,
 nick_name VARCHAR(300) NOT NULL UNIQUE,
-age INT,
+age INT CHECK (age >= 0),
 gender VARCHAR(300)
 );
 
@@ -35,8 +35,8 @@ body_part VARCHAR(300) NOT NULL DEFAULT '전체',
 level VARCHAR(300) NOT NULL DEFAULT '초급',
 duration TIMESTAMP NOT NULL,
 participant_count INT DEFAULT 1 CHECK(participant_count BETWEEN 1 AND 100),
-view_count INT DEFAULT 0,
-like_count INT DEFAULT 0,
+view_count INT DEFAULT 0 CHECK(view_count >= 0) ,
+like_count INT DEFAULT 0 CHECK(like_count >= 0),
 reg_date TIMESTAMP DEFAULT NOW(),
 CONSTRAINT challenge_board_user_pk FOREIGN KEY (user_id) REFERENCES user_board(user_id)
 ON DELETE CASCADE
@@ -61,6 +61,8 @@ user_id VARCHAR(300) ,
 title VARCHAR(300) NOT NULL,
 content VARCHAR(300) NOT NULL,
 writer VARCHAR(300) NOT NULL,
+view_count INT DEFAULT 0 CHECK (view_count >= 0),
+like_count INT DEFAULT 0 CHECK (like_count >= 0),
 reg_date TIMESTAMP DEFAULT NOW(),
 CONSTRAINT proof_board_pk FOREIGN KEY (challenge_board_id) REFERENCES challenge_board (challenge_board_id) 
 ON DELETE SET NULL,
@@ -108,6 +110,24 @@ ON DELETE CASCADE
 );
 
 USE fitcha;
+
+-- 좋아요 -------------------------------------------------
+
+CREATE TABLE challenge_like(
+challenge_board_id INT,
+writer varchar(300),
+CONSTRAINT challenge_like_pk FOREIGN KEY (challenge_board_id) REFERENCES challenge_board (challenge_board_id)
+ON DELETE CASCADE 
+);
+
+CREATE TABLE proof_like(
+proof_board_id int,
+writer varchar(300),
+CONSTRAINT proof_like_pk FOREIGN KEY (proof_board_id) REFERENCES proof_board (proof_board_id) 
+ON DELETE CASCADE 
+);
+
+-- 더미 데이터----------------------------------------------------------------------
 
 -- 1. user_board (2명)
 INSERT INTO user_board (user_id, password, email, name, nick_name, age, gender)
@@ -201,25 +221,14 @@ VALUES
 (9, 'fituser2', '요가 덕분에 스트레스 해소됐어요.', '영희짱'),
 (10, 'fituser1', '하체 스쿼트 챌린지, 완주했습니다!', '길동이');
 
-CREATE TABLE challenge_like(
-challenge_board_id INT,
-writer varchar(300),
-CONSTRAINT challenge_like_pk FOREIGN KEY (challenge_board_id) REFERENCES challenge_board (challenge_board_id)
-ON DELETE CASCADE 
-);
-
-CREATE TABLE proof_like(
-proof_board_id int,
-writer varchar(300),
-CONSTRAINT proof_like_pk FOREIGN KEY (proof_board_id) REFERENCES proof_board (proof_board_id) 
-ON DELETE CASCADE 
-);
+-- 테스트 sql문
 
 select * from challenge_board;
 select * from challenge_file;
 select * from proof_board;
 select * from challenge_comment;
 select * from challenge_like;
+select * from proof_like;
 
 select count(*)
 from challenge_board
@@ -231,13 +240,25 @@ values(1, '길동이');
 insert into challenge_like
 values(1, '영희짱');
 
-		UPDATE challenge_board
-		   SET view_count = view_count+1
-		 WHERE challenge_board_id = 1;
+insert into proof_like
+values(1, '영희짱1');
+
+delete
+from proof_like
+where proof_board_id = 1;
+
+UPDATE challenge_board
+   SET view_count = view_count+1
+ WHERE challenge_board_id = 1;
+ 
+ 
+ 
+-- 트리거 ---------------------------------------------------
+ 
 DROP TRIGGER IF EXISTS trg_increase_like_count;
 
 DELIMITER $$
-CREATE TRIGGER trg_increase_like_count
+CREATE TRIGGER trg_increase_challenge_like_count
 AFTER INSERT ON challenge_like
 FOR EACH ROW
 BEGIN UPDATE challenge_board
@@ -247,7 +268,7 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER trg_decrease_like_count
+CREATE TRIGGER trg_decrease_challenge_like_count
 AFTER DELETE ON challenge_like
 FOR EACH ROW
 BEGIN UPDATE challenge_board
@@ -255,4 +276,28 @@ BEGIN UPDATE challenge_board
 		WHERE challenge_board_id = OLD.challenge_board_id;
 END $$
 DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_increase_proof_like_count
+AFTER INSERT ON proof_like
+FOR EACH ROW
+BEGIN UPDATE proof_board
+		   SET like_count = like_count+1
+		WHERE proof_board_id = New.proof_board_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_decrease_proof_like_count
+AFTER DELETE ON proof_like
+FOR EACH ROW
+BEGIN UPDATE proof_board
+		   SET like_count = like_count-1
+		WHERE proof_board_id = OLD.proof_board_id;
+END $$
+DELIMITER ;
+
+
+
+
 
