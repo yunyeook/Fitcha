@@ -9,5 +9,9 @@ public interface UserDao {
 	
 	// 유저 탈퇴 (삭제)
 	int deleteUser(int userBoardId);
+	
+	// 유저 로그인 
+	User selectRegistedUser(User user);
+	
 
 }
