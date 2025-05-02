@@ -25,4 +25,7 @@ public interface ChallengeService {
 	// 등록
 	void registChallenge(Challenge challenge, List<MultipartFile> files) throws Exception;
 
+	//top10 챌린지 목록
+	List<Challenge> getTop10Challenges(String orderBy);
+
 }
