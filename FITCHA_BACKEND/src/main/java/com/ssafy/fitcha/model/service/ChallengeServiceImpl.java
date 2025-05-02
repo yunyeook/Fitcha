@@ -37,7 +37,6 @@ public class ChallengeServiceImpl implements ChallengeService {
 		for (Challenge challenge : challengeBoardList) {
 			int challengeBoardId = challenge.getChallengeBoardId();
 			challenge.setChallengeFiles(fileService.getChallengeFileList(challengeBoardId));
-			challenge.setLikeCount(likeService.getChallengeLikeCount(challengeBoardId));
 		}
 		return challengeBoardList;
 	}

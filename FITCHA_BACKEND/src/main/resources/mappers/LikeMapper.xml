@@ -25,13 +25,6 @@
 		   AND writer = #{writer}
 	</delete>
 	
-	<!-- 좋아요 수 조회   -->
-	<select id="selectChallengeLikeCount" parameterType="int" resultType="java.lang.Integer">
-		SELECT count(*) like_count
-		  FROM challenge_like
-		 WHERE challenge_board_id = #{boardId}	
-	</select>
-	
 	
 	<!-- 인증글 좋아요 -->
 	<!-- 인증글 좋아요 여부 조회 -->
