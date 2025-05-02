@@ -24,4 +24,7 @@ public interface ChallengeDao {
 	// 챌린지보드 조회수 증가
 	public int updateChallengeViewCount(int challengeBoardId);
 
+	//최근등록한| 참여자수 많은| 좋아요많은 | 조회수 많은 챌린지글 조회
+	public List<Challenge> selectTop10Challenges(String orderBy);
+
 }

@@ -102,5 +102,16 @@ public class ChallengeServiceImpl implements ChallengeService {
 		challengeDao.insertChallengeBoard(challenge);
 		fileService.insertChallengeFile(files, challenge.getChallengeBoardId(), challenge.getWriter());
 	}
+	
+	//최근등록한| 참여자수 많은| 좋아요많은 | 조회수 많은 챌린지글 조회
+	@Override
+	public List<Challenge> getTop10Challenges(String orderBy) {
+		List<Challenge> challengeBoardList = challengeDao.selectTop10Challenges(orderBy);
+		for (Challenge challenge : challengeBoardList) {
+			int challengeBoardId = challenge.getChallengeBoardId();
+			challenge.setChallengeFiles(fileService.getChallengeFileList(challengeBoardId));
+		}
+		return challengeBoardList;
+	}
 
 }

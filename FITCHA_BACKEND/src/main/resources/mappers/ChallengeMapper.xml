@@ -75,4 +75,29 @@
 		   SET view_count = view_count+1
 		 WHERE challenge_board_id = #{id}
 	</update>
+
+	<!-- 최근등록한| 참여자수 많은| 좋아요많은 | 조회수 많은 챌린지글 조회-->
+	<select id="selectTop10Challenges" parameterType="java.lang.String" resultType="Challenge">
+  	 	 SELECT *
+  	  	   FROM challenge_board
+  		  WHERE 1 = 1
+   	 <choose>
+        <when test="orderBy == 'recent'">
+            ORDER BY reg_date DESC
+        </when>
+        <when test="orderBy == 'participants'">
+            ORDER BY participant_count DESC
+        </when>
+        <when test="orderBy == 'likes'">
+            ORDER BY like_count DESC
+        </when>
+        <when test="orderBy == 'views'">
+            ORDER BY view_count DESC
+        </when>
+  	  </choose>
+ 	   LIMIT 10
+	</select>
+
+
+
 </mapper>
