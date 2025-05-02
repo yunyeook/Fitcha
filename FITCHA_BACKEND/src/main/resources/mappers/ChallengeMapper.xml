@@ -80,7 +80,6 @@
 	<select id="selectTop10Challenges" parameterType="java.lang.String" resultType="Challenge">
   	 	 SELECT *
   	  	   FROM challenge_board
-  		  WHERE 1 = 1
    	 <choose>
         <when test="orderBy == 'recent'">
             ORDER BY reg_date DESC
