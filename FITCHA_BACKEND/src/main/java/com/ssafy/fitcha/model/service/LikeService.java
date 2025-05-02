@@ -15,6 +15,5 @@ public interface LikeService {
 	// 인증글 좋아요 수정
 	boolean updateProofLike(boolean isLiked, int proofBoardId, String nickName);
 
-	int getChallengeLikeCount(int challengeBoardId);
 
 }

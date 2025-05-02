@@ -24,11 +24,11 @@ public class LoginInterceptor implements HandlerInterceptor {
 				→ "세션이 없으면 새로 만들어서 반환" 합니다.
 				*/
 				
-        if (session != null && session.getAttribute("user") != null) {
+        if (session != null && session.getAttribute("loginUser") != null) {
             return true; // 통과
         }
 
-        response.sendRedirect("/login"); // 로그인 페이지로 이동하라고 저장.
+        response.sendRedirect(request.getContextPath()  + "/user/login"); // 로그인 페이지로 이동하라고 저장.
         return false; // 컨트롤러로 가지 않음
     }
 
