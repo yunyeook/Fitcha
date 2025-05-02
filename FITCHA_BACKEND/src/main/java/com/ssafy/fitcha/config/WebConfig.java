@@ -14,14 +14,14 @@ public class WebConfig implements WebMvcConfigurer {
 	@Autowired
 	LoginInterceptor loginInterceptor;
 	
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		
-		registry.addInterceptor(loginInterceptor) // 인터셉터 등록
-				.addPathPatterns("/**") // 매핑할 url 지정
-				.excludePathPatterns("/user/login","/main"); // 제외할 url 지정
-	}
-	
+//	@Override
+//	public void addInterceptors(InterceptorRegistry registry) {
+//		
+//		registry.addInterceptor(loginInterceptor) // 인터셉터 등록
+//				.addPathPatterns("/**") // 매핑할 url 지정
+//				.excludePathPatterns("/user/login","/main"); // 제외할 url 지정
+//	}
+//	
 	// 교차 출처 리소스 공유(CORS) 전역 설정 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
