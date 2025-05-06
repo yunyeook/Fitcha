@@ -1,9 +1,12 @@
 package com.ssafy.fitcha.controller;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +29,6 @@ public class UserController {
 
 	// 생성자 의존성 주입
 	private final UserService userService;
-
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
@@ -83,6 +85,32 @@ public class UserController {
 		return ResponseEntity.badRequest().build();
 	}
 
+	// 카카오 로그인/회원가 버튼 누른경우.
+	@Value("${kakao.client-id}")
+	private String clientId;
+
+	@Value("${kakao.redirect-uri}")
+	private String redirectUri;
+
+	@GetMapping("/login/kakao")
+	public ResponseEntity<String> getKakaoLoginUrl() {
+		/*
+		// 카카오 로그인 URL 생성
+		String kakaoUrl = "https://kauth.kakao.com/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri="
+				+ redirectUri + "&response_type=code" + "&scope=profile_nickname,account_email,gender"
+				+ "&prompt=login"; // prompt=login : 자동로그인을 허용하고 싶으면 제거하기
+		System.out.println("카카오 로그인 URL: " + kakaoUrl);
+		System.out.println();
+		 */
+		// 카카오 로그인 URL 생성
+		String kakaoUrl = "https://kauth.kakao.com/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri="
+				+ redirectUri + "&response_type=code" + "&scope=profile_nickname,account_email"
+				+ "&prompt=login"; // prompt=login : 자동로그인을 허용하고 싶으면 제거하기
+		System.out.println("카카오 로그인 URL: " + kakaoUrl);
+		System.out.println();
+		// 프론트에 리다이렉션용 URL만 전달
+		return ResponseEntity.ok(kakaoUrl);
+=======
 	// 유저 팔로우
 	@PostMapping("/follow/{followingNickName}")
 	public ResponseEntity<Void> followUser(@PathVariable("followingNickName") String followingNickName,
@@ -150,6 +178,7 @@ public class UserController {
 		}
 		return ResponseEntity.badRequest().build();
 		
+
 	}
 
 }

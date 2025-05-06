@@ -22,7 +22,8 @@ public class YoutubeController {
 	}
 
 	@GetMapping("/search")
-	public ResponseEntity<List<Youtube>> search(@RequestParam("query") String query) {
+	public ResponseEntity<List<Youtube>> search(
+			@RequestParam(value = "query", defaultValue = "전신 운동 홈트") String query) {
 
 		List<Youtube> list = youtubeService.getSearchVideos(query);
 		return ResponseEntity.ok(list);
