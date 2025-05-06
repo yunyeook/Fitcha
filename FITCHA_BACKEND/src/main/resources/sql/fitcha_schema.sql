@@ -140,7 +140,7 @@ CREATE TABLE user_follow (
 );
 
 select * from user_follow;
-
+select * from user_board;
 
 
 
@@ -325,6 +325,8 @@ END $$
 DELIMITER ;
 
 -- 팔로우 트리거 ----------------------------------
+DROP TRIGGER IF EXISTS trg_increase_follow_count;
+DROP TRIGGER IF EXISTS trg_decrease_follow_count;
 
 DELIMITER  $$
 CREATE TRIGGER trg_increase_user_follow_count -- 팔로우 시 증가 트리거 
@@ -336,8 +338,8 @@ BEGIN
     
     UPDATE user_board SET follower_count = follower_count + 1
     WHERE nick_name = NEW.following_nick_name;
-END;
-DELIMITER;
+END $$
+DELIMITER ;
 
 DELIMITER  $$
 CREATE TRIGGER trg_decrease_user_follow_count -- 팔로우 시 감소 트리거 
@@ -349,6 +351,5 @@ BEGIN
     
     UPDATE user_board SET follower_count = follower_count - 1
     WHERE nick_name = OLD.following_nick_name;
-END;
-DELIMITER;
-
+END $$
+DELIMITER ;
