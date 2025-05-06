@@ -1,6 +1,13 @@
 package com.ssafy.fitcha.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -103,6 +110,75 @@ public class UserController {
 		System.out.println();
 		// 프론트에 리다이렉션용 URL만 전달
 		return ResponseEntity.ok(kakaoUrl);
+=======
+	// 유저 팔로우
+	@PostMapping("/follow/{followingNickName}")
+	public ResponseEntity<Void> followUser(@PathVariable("followingNickName") String followingNickName,
+			HttpSession session) {
+		User loginUser = (User) session.getAttribute("loginUser");
+		String followerNickName = loginUser.getNickName(); // 팔로워 하는 사람 (나)
+
+		if (userService.follow(followerNickName, followingNickName)) {
+			return ResponseEntity.ok().build();
+		}
+
+		return ResponseEntity.badRequest().build();
+	}
+
+	// 유저 언팔로우
+	@DeleteMapping("/follow/{followingNickName}")
+	public ResponseEntity<Void> unfollowUser(@PathVariable("followingNickName") String followingNickName,
+			HttpSession session) {
+		User loginUser = (User) session.getAttribute("loginUser");
+		String followerNickName = loginUser.getNickName(); // 팔로워 하는 사람 (나)
+
+		if (userService.unfollow(followerNickName, followingNickName)) {
+			return ResponseEntity.ok().build();
+		}
+
+		return ResponseEntity.badRequest().build();
+	}
+
+	// 팔로우 수 & 팔로잉 수 조회
+	@GetMapping("/follow/{userBoardId}")
+	public ResponseEntity<Map<String, Integer>> getFollowCount(@PathVariable("userBoardId") int userBoardId) {
+
+		Map<String, Integer> followCount = new HashMap<>(); // 맵 형태로 팔로워 수, 팔로잉 수 저장
+		followCount = userService.getFollowAllCount(userBoardId);
+
+		if (followCount != null) {
+			return ResponseEntity.ok(followCount);
+		}
+
+		return ResponseEntity.badRequest().build();
+
+	}
+
+	// 유저 팔로워 전체 조회 (리스트)
+	@GetMapping("/follow/{userNickName}/follower")
+	public ResponseEntity<List<String>> getFollowerAll(@PathVariable("userNickName") String userNickName){
+		List<String> followerAllList = new ArrayList<>();
+		followerAllList = userService.getFollowerAllList(userNickName);
+		
+		if(followerAllList != null) {
+			return ResponseEntity.ok(followerAllList);
+		}
+		return ResponseEntity.badRequest().build();
+		
+	}
+
+	// 유저 팔로잉 전체 조회 (리스트)
+	@GetMapping("/follow/{userNickName}/following")
+	public ResponseEntity<List<String>> getFollowingAll(@PathVariable("userNickName") String userNickName){
+		List<String> followingAllList = new ArrayList<>();
+		followingAllList = userService.getFollowingAllList(userNickName);
+		
+		if(followingAllList != null) {
+			return ResponseEntity.ok(followingAllList);
+		}
+		return ResponseEntity.badRequest().build();
+		
+
 	}
 
 }

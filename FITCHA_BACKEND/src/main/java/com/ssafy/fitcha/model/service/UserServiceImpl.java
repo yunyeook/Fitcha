@@ -1,5 +1,8 @@
 package com.ssafy.fitcha.model.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
 import com.ssafy.fitcha.model.dao.UserDao;
@@ -39,5 +42,41 @@ public class UserServiceImpl implements UserService {
 		}
 		return null;
 	}
+	
+	// 유저 팔로우 
+	@Override
+	public boolean follow(String followerNickName, String followingNickName) {
+		
+		return 1 == userDao.insertFollowUser(followerNickName, followingNickName);
+	}
+	
+	// 유저 언팔로우 
+	@Override
+	public boolean unfollow(String followerNickName, String followingNickName) {
+		
+		return 1 == userDao.deleteFollowUser(followerNickName, followingNickName);
+	}
+
+	// 유저 팔로우, 팔로잉 전체 수 조회 
+	@Override
+	public Map<String, Integer> getFollowAllCount(int userBoardId) {
+		return userDao.selectFollowCount(userBoardId);
+	}
+	
+	// 유저 팔로워 전체 조회 
+	@Override
+	public List<String> getFollowerAllList(String userNickName) {
+		return userDao.selectFollowerAll(userNickName);
+	}
+	
+	// 유저 팔로잉 전체 조회 
+	@Override
+	public List<String> getFollowingAllList(String userNickName) {
+		return userDao.selectFollowingAll(userNickName);
+	}
+	
+	
+	
+	
 
 }
