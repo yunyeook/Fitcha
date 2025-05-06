@@ -26,5 +26,44 @@
 		FROM user_board
 		WHERE user_id = #{userId}
 	</select>
-
+	 
+	
+	<!-- 유저 팔로우  -->
+	 <insert id="insertFollowUser">
+	 	INSERT INTO user_follow(follower_nick_name, following_nick_name)
+	 	VALUES
+	 		(#{followerNickName}, #{followingNickName})
+	 </insert>
+	 
+	 <!-- 유저 언팔로우 -->
+	<delete id="deleteFollowUser">
+		DELETE 
+		FROM user_follow
+		WHERE follower_nick_name = #{followerNickName}
+		  AND following_nick_name = #{followingNickName}
+	</delete>
+	
+	<!-- 유저 팔로우, 팔로잉 수 전체 조회 -->
+	<select id="selectFollowCount" parameterType="int" resultType="Map">
+		SELECT follower_count AS followerCount, following_count AS followingCount
+		FROM user_board
+		WHERE user_board_id = #{userBoardId}
+	</select>
+	
+	<!-- 유저 팔로워 전체 조회 -->
+	<select id="selectFollowerAll" parameterType="string" resultType="string">
+		SELECT follower_nick_name
+		FROM user_follow
+		WHERE following_nick_name = #{userNickName}
+	</select>
+	
+	
+	<!-- 유저 팔로잉 전체 조회 -->
+	<select id="selectFollowingAll" parameterType="string" resultType="string">
+		SELECT following_nick_name
+		FROM user_follow
+		WHERE follower_nick_name = #{userNickName}
+	</select>
+	
+	
 </mapper>

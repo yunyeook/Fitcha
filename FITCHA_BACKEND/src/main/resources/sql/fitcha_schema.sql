@@ -10,7 +10,9 @@ email VARCHAR(300) NOT NULL,
 name VARCHAR(300) NOT NULL,
 nick_name VARCHAR(300) NOT NULL UNIQUE,
 age INT CHECK (age >= 0),
-gender VARCHAR(300)
+gender VARCHAR(300),
+follower_count INT DEFAULT 0 CHECK (follower_count >= 0), -- 팔로우 하는 사람 (나) 
+following_count INT DEFAULT 0 CHECK (following_count >= 0) -- 팔로우 당하는 사람 (상대방)
 );
 
 CREATE TABLE user_file(
@@ -127,13 +129,38 @@ CONSTRAINT proof_like_pk FOREIGN KEY (proof_board_id) REFERENCES proof_board (pr
 ON DELETE CASCADE 
 );
 
+-- 팔로우 ------------------
+
+CREATE TABLE user_follow (
+    follower_nick_name VARCHAR(300),  -- 팔로우하는 사람 (나)
+    following_nick_name VARCHAR(300), -- 팔로우당하는 사람 (상대)
+    PRIMARY KEY (follower_nick_name, following_nick_name),
+    CONSTRAINT fk_follower FOREIGN KEY (follower_nick_name) REFERENCES user_board(nick_name) ON DELETE CASCADE,
+    CONSTRAINT fk_following FOREIGN KEY (following_nick_name) REFERENCES user_board(nick_name) ON DELETE CASCADE
+);
+
+select * from user_follow;
+select * from user_board;
+
+
+
 -- 더미 데이터----------------------------------------------------------------------
 
 -- 1. user_board (2명)
 INSERT INTO user_board (user_id, password, email, name, nick_name, age, gender)
 VALUES
 ('fituser1', 'pass1234', 'fituser1@example.com', '홍길동', '길동이', 27, 'M'),
-('fituser2', 'pass5678', 'fituser2@example.com', '김영희', '영희짱', 24, 'F');
+('fituser2', 'pass5678', 'fituser2@example.com', '김영희', '영희짱', 24, 'F'),
+('fituser3', 'pass9012', 'fituser3@example.com', '이철수', '철수킹', 29, 'M'),
+('fituser4', 'pass3456', 'fituser4@example.com', '박민지', '민지짱', 22, 'F'),
+('fituser5', 'pass7890', 'fituser5@example.com', '정우성', '우성이형', 35, 'M'),
+('fituser6', 'pass2345', 'fituser6@example.com', '한소희', '소희누나', 26, 'F'),
+('fituser7', 'pass6789', 'fituser7@example.com', '장기용', '기용맨', 31, 'M'),
+('fituser8', 'pass1122', 'fituser8@example.com', '김지원', '지원이', 28, 'F'),
+('fituser9', 'pass3344', 'fituser9@example.com', '최준혁', '준혁쓰', 23, 'M'),
+('fituser10', 'pass5566', 'fituser10@example.com', '윤지은', '지은짱', 30, 'F');
+
+select * from user_board;
 
 -- 2. challenge_board (10개)
 INSERT INTO challenge_board (user_id, title, content, writer, exercise_type, body_part, level, duration)
@@ -253,7 +280,7 @@ UPDATE challenge_board
  
  
  
--- 트리거 ---------------------------------------------------
+-- 좋아요 트리거 ---------------------------------------------------
  
 DROP TRIGGER IF EXISTS trg_increase_like_count;
 
@@ -297,7 +324,32 @@ BEGIN UPDATE proof_board
 END $$
 DELIMITER ;
 
+-- 팔로우 트리거 ----------------------------------
+DROP TRIGGER IF EXISTS trg_increase_follow_count;
+DROP TRIGGER IF EXISTS trg_decrease_follow_count;
 
+DELIMITER  $$
+CREATE TRIGGER trg_increase_user_follow_count -- 팔로우 시 증가 트리거 
+AFTER INSERT ON user_follow
+FOR EACH ROW 
+BEGIN 
+	UPDATE user_board SET following_count = following_count + 1
+    WHERE nick_name = NEW.follower_nick_name;
+    
+    UPDATE user_board SET follower_count = follower_count + 1
+    WHERE nick_name = NEW.following_nick_name;
+END $$
+DELIMITER ;
 
-
-
+DELIMITER  $$
+CREATE TRIGGER trg_decrease_user_follow_count -- 팔로우 시 감소 트리거 
+AFTER DELETE ON user_follow
+FOR EACH ROW 
+BEGIN 
+	UPDATE user_board SET following_count = following_count - 1
+    WHERE nick_name = OLD.follower_nick_name;
+    
+    UPDATE user_board SET follower_count = follower_count - 1
+    WHERE nick_name = OLD.following_nick_name;
+END $$
+DELIMITER ;

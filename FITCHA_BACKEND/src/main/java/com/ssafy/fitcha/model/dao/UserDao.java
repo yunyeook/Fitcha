@@ -1,5 +1,10 @@
 package com.ssafy.fitcha.model.dao;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.ssafy.fitcha.model.dto.User;
 
 public interface UserDao {
@@ -13,5 +18,19 @@ public interface UserDao {
 	// 유저 로그인 
 	User selectRegistedUser(User user);
 	
+	// 유저 팔로우 
+	int insertFollowUser(@Param ("followerNickName") String followerNickName, @Param("followingNickName") String followingNickName);
+
+	// 유저 언팔로우 
+	int deleteFollowUser(@Param ("followerNickName") String followerNickName, @Param("followingNickName") String followingNickName);
+	
+	// 유저 팔로우, 팔로잉 전체 수 조회 
+	Map<String, Integer> selectFollowCount(int userBoardId);
+	
+	// 유저 팔로워 전체 조회 
+	List<String> selectFollowerAll(String userNickName);
+	
+	// 유저 팔로잉 전체 조회 
+	List<String> selectFollowingAll(String userNickName);
 
 }
