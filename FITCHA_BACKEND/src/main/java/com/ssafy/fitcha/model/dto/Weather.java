@@ -3,9 +3,18 @@ package com.ssafy.fitcha.model.dto;
 public class Weather {
 	private String temperature; // 온도
 	private String humidity; // 습도
-	private String weather; // 날씨
+	private String rain; // 비
+	private String sky; // 하늘
 	
 	public Weather() {
+	}
+
+	public String getRain() {
+		return rain;
+	}
+
+	public void setRain(String rain) {
+		this.rain = rain;
 	}
 
 	public String getTemperature() {
@@ -24,13 +33,15 @@ public class Weather {
 		this.humidity = humidity;
 	}
 
-	public String getWeather() {
-		return weather;
+	public String getSky() {
+		return sky;
 	}
 
-	public void setWeather(String weather) {
-		this.weather = weather;
+	public void setSky(String sky) {
+		this.sky = sky;
 	}
+
+
 	
 	
 	
