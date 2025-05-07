@@ -12,4 +12,9 @@ public class WebClientConfig {
 		// 기본 URL을 YouTube API 루트로 고정
 		return WebClient.builder().baseUrl("https://www.googleapis.com/youtube/v3").build();
 	}
+	
+	@Bean
+	public WebClient weatherWebClient() {
+		return WebClient.builder().defaultHeader("User-Agent", "Mozilla/5.0 (compatible; FitchaApp/1.0)").build();
+	}
 }
