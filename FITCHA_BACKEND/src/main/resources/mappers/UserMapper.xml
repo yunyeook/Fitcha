@@ -65,5 +65,11 @@
 		WHERE follower_nick_name = #{userNickName}
 	</select>
 	
+	<select id="existsByNickname" parameterType="string">
+		SELECT EXISTS (
+ 			 SELECT 1 FROM user_board WHERE nick_name = #{nickName}
+					) AS is_exists;
+		
+	</select>
 	
 </mapper>
