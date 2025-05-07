@@ -48,7 +48,7 @@ public class YoutubeServiceImpl implements YoutubeService {
 			snippetMap.put(videoId, snippet);
 		}
 
-		// 2. 각 영상의 duration 정보 확인 : 15분 이상 영상만 필터
+		// 2. 각 영상의 duration 정보 확인 : 15 이상 영상만 필터
 		String detailsUrl = UriComponentsBuilder.fromHttpUrl(YOUTUBE_VIDEOS_URL).queryParam("part", "contentDetails")
 				.queryParam("id", String.join(",", videoIds)).queryParam("key", apiKey).build().toUriString();
 
