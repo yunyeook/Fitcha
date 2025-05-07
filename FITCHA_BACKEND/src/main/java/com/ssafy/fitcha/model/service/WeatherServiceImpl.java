@@ -46,14 +46,13 @@ public class WeatherServiceImpl implements WeatherService {
 		LocalTime now = LocalTime.now();
 
 		// baseTime 계산 (기상청 요구: 정시 기준, 10분 후부터 데이터 제공)
-		if (now.getMinute() < 10) {
-			// 아직 정시 데이터가 준비 안 됐으므로 이전 시간 사용
-			now = now.minusHours(1);
+		if (now.getMinute() < 40) {
+		    now = now.minusHours(1);
 		}
+		String baseTime = String.format("%02d30", now.getHour());
 
-		String baseTime = String.format("%02d00", now.getHour());
 
-		// 초단기 실황
+		// 초단기 실황 데이터
 		String url = UriComponentsBuilder
 				.fromHttpUrl("https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst")
 				.queryParam("ServiceKey", serviceKey) // 인증키
@@ -69,38 +68,74 @@ public class WeatherServiceImpl implements WeatherService {
 				.bodyToMono(String.class) // Mono로 비동기 응답처리 (String 타입으로 받음)
 				.block(); // 비동기 -> 동기로 전환
 
-		// 초단기예보
+		System.out.println("초단기실황 : " +  ncstJson);
+		
+		System.out.printf("Requesting forecast: base_date=%s, base_time=%s, nx=%d, ny=%d%n", baseDate, baseTime, nx, ny);
+
+		
+		// 초단기 예보 데이터 (하늘 상태 얻어오기 위해)
 		String fcstUrl = UriComponentsBuilder
 				.fromHttpUrl("https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst")
-				.queryParam("ServiceKey", serviceKey).queryParam("dataType", "JSON").queryParam("base_date", baseDate)
-				.queryParam("base_time", baseTime).queryParam("nx", nx).queryParam("ny", ny).build(false).toUriString();
+				.queryParam("ServiceKey", serviceKey)
+				.queryParam("dataType", "JSON")
+				.queryParam("base_date", baseDate)
+				.queryParam("base_time", "0800")
+				.queryParam("nx", nx)
+				.queryParam("ny", ny)
+				.queryParam("numOfRows", 60)
+				.build(false).toUriString();
 		String fcstJson = weatherWebClient.get().uri(fcstUrl).retrieve().bodyToMono(String.class).block();
-
+		
+		System.out.println("초단기예보 : " + fcstJson);
+		
 		// 파싱 및 병합
-		Weather weather = parseNcstWeather(ncstJson);
-
+		Weather weather = parseWeather(ncstJson, fcstJson);
+		
 		return weather;
 	}
 
 	// 기상청에서 응답 받은 json을 자바 Weather Dto로 변환 해주는 함수
-	private Weather parseNcstWeather(String json) {
+	private Weather parseWeather(String ncstJson, String fcstJson) {
 		Weather weather = new Weather();
 		try {
-			JsonNode items = new ObjectMapper().readTree(json).path("response").path("body").path("items").path("item");
-
-			for (JsonNode item : items) {
+			ObjectMapper mapper = new ObjectMapper();
+			
+			// 실황 데이터 파싱
+			JsonNode ncstItems = mapper.readTree(ncstJson).path("response").path("body").path("items").path("item");
+			for (JsonNode item : ncstItems) {
 				String category = item.get("category").asText();
 				String value = item.get("obsrValue").asText();
 				switch (category) {
-				case "T1H" -> weather.setTemperature(value);
-				case "REH" -> weather.setHumidity(value);
-				case "PTY" -> weather.setRain(ptyCodeToDesc(value));
+					case "T1H" -> weather.setTemperature(value);
+					case "REH" -> weather.setHumidity(value);
+					case "PTY" -> weather.setRain(ptyCodeToDesc(value));
+				}
+			}
+
+			// 예보 데이터 파싱 (SKY)
+			JsonNode fcstItems = mapper.readTree(fcstJson).path("response").path("body").path("items").path("item");
+			for (JsonNode item : fcstItems) {
+				String category = item.get("category").asText();
+				String value = item.get("fcstValue").asText();
+				if ("SKY".equals(category)) {
+					weather.setSky(skyCodeToDesc(value));
+					break;
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return weather;
+	}
+	
+	// 하늘 상태 파싱 
+	private String skyCodeToDesc(String code) {
+		return switch (code) {
+			case "1" -> "맑음";
+			case "3" -> "구름 많음";
+			case "4" -> "흐림";
+			default -> "정보 없음";
+		};
 	}
 
 	// 강수 상태 케이스별로 파싱 
