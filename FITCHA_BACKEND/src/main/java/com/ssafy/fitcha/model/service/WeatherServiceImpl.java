@@ -103,6 +103,7 @@ public class WeatherServiceImpl implements WeatherService {
 		return weather;
 	}
 
+	// 강수 상태 케이스별로 파싱 
 	private String ptyCodeToDesc(String code) {
 		return switch (code) {
 		case "1" -> "비";
