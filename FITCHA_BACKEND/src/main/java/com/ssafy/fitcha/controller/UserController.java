@@ -110,7 +110,7 @@ public class UserController {
 		System.out.println();
 		// 프론트에 리다이렉션용 URL만 전달
 		return ResponseEntity.ok(kakaoUrl);
-=======
+	}
 	// 유저 팔로우
 	@PostMapping("/follow/{followingNickName}")
 	public ResponseEntity<Void> followUser(@PathVariable("followingNickName") String followingNickName,
