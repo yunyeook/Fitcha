@@ -33,4 +33,7 @@ public interface UserDao {
 	// 유저 팔로잉 전체 조회 
 	List<String> selectFollowingAll(String userNickName);
 
+	//닉네임 존재여부 
+	int existsByNickname(String nickname);
+
 }
