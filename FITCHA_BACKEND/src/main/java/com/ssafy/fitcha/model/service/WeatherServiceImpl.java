@@ -1,6 +1,8 @@
 package com.ssafy.fitcha.model.service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,10 +19,6 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class WeatherServiceImpl implements WeatherService {
-	@PostConstruct
-	public void init() {
-	    System.out.println("🔑 [serviceKey 확인] " + serviceKey);
-	}
 
 	// 생성자 주입
 	private final WebClient weatherWebClient;
@@ -42,13 +40,11 @@ public class WeatherServiceImpl implements WeatherService {
 		int ny = grid[1];
 
 		// 현재 날짜를 yyyyMMdd 형식으로 포맷팅
-//		String baseDate = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
-		String baseDate = "20250507";
-
-		// 기상청 API 요구사항 : 예보 기준 시간은 40분 전으로 설정
-//		String baseTime = LocalTime.now().minusMinutes(40) // 현재 시간보다 40분 이전
-//				.format(DateTimeFormatter.ofPattern("HHmm"));
-		String baseTime = "1000";
+		String baseDate = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+		
+		LocalTime now = LocalTime.now().minusMinutes(10);
+		int hour = now.getHour();
+		String baseTime = String.format("%02d00", hour);
 
 		String url = UriComponentsBuilder
 				.fromHttpUrl("https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst")
@@ -64,17 +60,11 @@ public class WeatherServiceImpl implements WeatherService {
 		String json = weatherWebClient.get().uri(url)
 		        .retrieve()  // 응답 수신
 		        .bodyToMono(String.class)  // Mono로 비동기 응답처리 (String 타입으로 받음)
-		        .doOnTerminate(() -> System.out.println("API 호출 종료"))  // API 호출 종료 로그
 		        .block();  // 비동기 -> 동기로 전환
 		
-	    System.out.println("API 응답 데이터: " + json);  // 응답 확인
+//	    System.out.println("API 응답 데이터: " + json);  
 
-		
-		System.out.println("📡 API 호출 baseDate: " + baseDate + ", baseTime: " + baseTime);
-		System.out.println("🗺️ 위치 nx: " + nx + ", ny: " + ny);
-		System.out.println("🔑 인증키: " + serviceKey); // 보안상 실서비스엔 절대 금지
-
-		
+//		System.out.println(parseWeather(json));
 		return parseWeather(json);
 	}
 
