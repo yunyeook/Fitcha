@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +28,7 @@ public class UserController {
 
 	// 생성자 의존성 주입
 	private final UserService userService;
+
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
@@ -95,22 +95,26 @@ public class UserController {
 	@GetMapping("/login/kakao")
 	public ResponseEntity<String> getKakaoLoginUrl() {
 		/*
-		// 카카오 로그인 URL 생성
-		String kakaoUrl = "https://kauth.kakao.com/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri="
-				+ redirectUri + "&response_type=code" + "&scope=profile_nickname,account_email,gender"
-				+ "&prompt=login"; // prompt=login : 자동로그인을 허용하고 싶으면 제거하기
-		System.out.println("카카오 로그인 URL: " + kakaoUrl);
-		System.out.println();
+		 * // 카카오 로그인 URL 생성 String kakaoUrl = "https://kauth.kakao.com/oauth/authorize"
+		 * + "?client_id=" + clientId + "&redirect_uri=" + redirectUri +
+		 * "&response_type=code" + "&scope=profile_nickname,account_email,gender" +
+		 * "&prompt=login"; // prompt=login : 자동로그인을 허용하고 싶으면 제거하기
+		 * System.out.println("카카오 로그인 URL: " + kakaoUrl); System.out.println();
 		 */
 		// 카카오 로그인 URL 생성
 		String kakaoUrl = "https://kauth.kakao.com/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri="
-				+ redirectUri + "&response_type=code" + "&scope=profile_nickname,account_email"
-				+ "&prompt=login"; // prompt=login : 자동로그인을 허용하고 싶으면 제거하기
+				+ redirectUri + "&response_type=code" + "&scope=profile_nickname,account_email" + "&prompt=login"; // prompt=login
+																													// :
+																													// 자동로그인을
+																													// 허용하고
+																													// 싶으면
+																													// 제거하기
 		System.out.println("카카오 로그인 URL: " + kakaoUrl);
 		System.out.println();
 		// 프론트에 리다이렉션용 URL만 전달
 		return ResponseEntity.ok(kakaoUrl);
 	}
+
 	// 유저 팔로우
 	@PostMapping("/follow/{followingNickName}")
 	public ResponseEntity<Void> followUser(@PathVariable("followingNickName") String followingNickName,
@@ -156,28 +160,27 @@ public class UserController {
 
 	// 유저 팔로워 전체 조회 (리스트)
 	@GetMapping("/follow/{userNickName}/follower")
-	public ResponseEntity<List<String>> getFollowerAll(@PathVariable("userNickName") String userNickName){
+	public ResponseEntity<List<String>> getFollowerAll(@PathVariable("userNickName") String userNickName) {
 		List<String> followerAllList = new ArrayList<>();
 		followerAllList = userService.getFollowerAllList(userNickName);
-		
-		if(followerAllList != null) {
+
+		if (followerAllList != null) {
 			return ResponseEntity.ok(followerAllList);
 		}
 		return ResponseEntity.badRequest().build();
-		
+
 	}
 
 	// 유저 팔로잉 전체 조회 (리스트)
 	@GetMapping("/follow/{userNickName}/following")
-	public ResponseEntity<List<String>> getFollowingAll(@PathVariable("userNickName") String userNickName){
+	public ResponseEntity<List<String>> getFollowingAll(@PathVariable("userNickName") String userNickName) {
 		List<String> followingAllList = new ArrayList<>();
 		followingAllList = userService.getFollowingAllList(userNickName);
-		
-		if(followingAllList != null) {
+
+		if (followingAllList != null) {
 			return ResponseEntity.ok(followingAllList);
 		}
 		return ResponseEntity.badRequest().build();
-		
 
 	}
 
