@@ -4,7 +4,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,109 +21,65 @@ public class YoutubeServiceImpl implements YoutubeService {
 	private String apiKey;
 
 	private final String YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
-	private final String YOUTUBE_VIDEOS_URL = "https://www.googleapis.com/youtube/v3/videos";
 
 	@Override
 	public List<Youtube> getSearchVideos(String query) {
+		// RestTemplate: 외부 HTTP 요청을 보내기 위한 Spring 제공 클래스
 		RestTemplate restTemplate = new RestTemplate();
 
-		// 1. 검색 요청 (영상 ID 수집)
-		String searchUrl = UriComponentsBuilder.fromHttpUrl(YOUTUBE_SEARCH_URL).queryParam("part", "snippet")
-				.queryParam("q", query).queryParam("key", apiKey).queryParam("type", "video")
-				.queryParam("maxResults", 10).build().toUriString();
+		// YouTube 검색 API 요청 URL 생성
+		String searchUrl = UriComponentsBuilder.fromHttpUrl(YOUTUBE_SEARCH_URL)
+				.queryParam("part", "snippet")  // snippet: 제목, 채널명, 설명 등 메타정보 포함
+				.queryParam("q", query) // 검색어 입력
+				.queryParam("key", apiKey) // API 키 설정
+				.queryParam("type", "video") // 동영상만 검색 (채널/재생목록 제외)
+				.queryParam("videoDuration", "long") // 20분 이상 영상만 포함 (쇼츠 자연스럽게 제외됨)
+				.queryParam("maxResults", 10) // 최대 결과 수 설정 
+				.build().toUriString();
 
+		// API 호출 및 결과 수신 (Map 형태로 JSON 파싱)
 		Map<String, Object> searchResponse = restTemplate.getForObject(searchUrl, Map.class);
 		List<Map<String, Object>> searchItems = (List<Map<String, Object>>) searchResponse.get("items");
 
-		List<String> videoIds = new ArrayList<>();
-		Map<String, Map<String, Object>> snippetMap = new HashMap<>();
+		// 최종 반환할 Youtube 객체 리스트
+		List<Youtube> results = new ArrayList<>();
 
+		// 각 영상 정보 추출 및 Youtube 객체 생성
 		for (Map<String, Object> item : searchItems) {
 			Map<String, Object> id = (Map<String, Object>) item.get("id");
 			Map<String, Object> snippet = (Map<String, Object>) item.get("snippet");
 
+			// 영상 ID 추출
 			String videoId = (String) id.get("videoId");
-			videoIds.add(videoId);
-			snippetMap.put(videoId, snippet);
+
+			// snippet 정보를 통해 각 속성 추출
+			String title = (String) snippet.get("title"); // 제목
+			String description = (String) snippet.get("description"); // 설명
+			String thumbnailUrl = ((Map<String, Object>) ((Map<String, Object>) snippet.get("thumbnails")).get("high"))
+					.get("url").toString(); // 썸네일 (고화질)
+			String channelTitle = (String) snippet.get("channelTitle"); // 채널 이름
+			String publishedAt = convertToKoreanTime((String) snippet.get("publishedAt")); // 업로드 날짜 (한국 시간 변환)
+
+			// 영상 URL 및 iframe 코드 생성
+			String videoUrl = "https://www.youtube.com/watch?v=" + videoId;
+			String iframe = "<iframe width='560' height='315' src='https://www.youtube.com/embed/" + videoId
+					+ "' frameborder='0' allowfullscreen></iframe>";
+
+			// Youtube 객체 생성 후 리스트에 추가
+			results.add(new Youtube(videoId, title, videoUrl, iframe, description, thumbnailUrl, channelTitle,
+					publishedAt));
 		}
 
-		// 2. 각 영상의 duration 정보 확인 : 15 이상 영상만 필터
-		String detailsUrl = UriComponentsBuilder.fromHttpUrl(YOUTUBE_VIDEOS_URL).queryParam("part", "contentDetails")
-				.queryParam("id", String.join(",", videoIds)).queryParam("key", apiKey).build().toUriString();
-
-		Map<String, Object> detailResponse = restTemplate.getForObject(detailsUrl, Map.class);
-		List<Map<String, Object>> detailItems = (List<Map<String, Object>>) detailResponse.get("items");
-
-		List<Youtube> results = new ArrayList<>();
-
-		for (Map<String, Object> detailItem : detailItems) {
-			String videoId = (String) detailItem.get("id");
-			Map<String, Object> contentDetails = (Map<String, Object>) detailItem.get("contentDetails");
-			String duration = (String) contentDetails.get("duration");
-
-			if (isLongerThan15Minutes(duration)) {
-				Map<String, Object> snippet = snippetMap.get(videoId);
-
-				String title = (String) snippet.get("title");
-				String description = (String) snippet.get("description");
-				String thumbnailUrl = ((Map<String, Object>) ((Map<String, Object>) snippet.get("thumbnails"))
-						.get("high")).get("url").toString();
-				String channelTitle = (String) snippet.get("channelTitle");
-				String publishedAt = convertToKoreanTime((String) snippet.get("publishedAt"));
-
-				String videoUrl = "https://www.youtube.com/watch?v=" + videoId;
-				String iframe = "<iframe width='560' height='315' src='https://www.youtube.com/embed/" + videoId
-						+ "' frameborder='0' allowfullscreen></iframe>";
-
-				results.add(new Youtube(videoId, title, videoUrl, iframe, description, thumbnailUrl, channelTitle,
-						publishedAt));
-			}
-		}
-
+		// 최종 결과 반환
 		return results;
 	}
 
-	// 날짜포맷팅 (ex) "2024-05-01T12:34:56Z" → 한국 시간 기준: "2024년 5월 1일 오후 9시 34분")
+	// UTC 시간을 한국 시간 형식(yyyy년 M월 d일 a h시 m분)으로 변환
 	private String convertToKoreanTime(String utcString) {
-		// 1. UTC 문자열을 ZonedDateTime 객체로 변환
-		ZonedDateTime utcZoned = ZonedDateTime.parse(utcString);
-
-		// 2. 한국 시간대로 변환
-		ZonedDateTime koreaZoned = utcZoned.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-
-		// 3. 원하는 포맷 지정
+		ZonedDateTime utcZoned = ZonedDateTime.parse(utcString); // UTC 시간 파싱
+		ZonedDateTime koreaZoned = utcZoned.withZoneSameInstant(ZoneId.of("Asia/Seoul")); // 한국 시간대로 변경
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 a h시 m분")
-				.withLocale(java.util.Locale.KOREA);
-
-		// 4. 포맷 적용 후 반환
-		return koreaZoned.format(formatter);
-	}
-
-	// 15분 이상인지 확인
-	private boolean isLongerThan15Minutes(String isoDuration) {
-		int totalSeconds = parseDurationToSeconds(isoDuration);
-		return totalSeconds >= 900;
-	}
-
-	// ISO 8601 포맷 파싱
-	private int parseDurationToSeconds(String duration) {
-		int hours = 0, minutes = 0, seconds = 0;
-
-		duration = duration.replace("PT", "");
-		if (duration.contains("H")) {
-			String[] split = duration.split("H");
-			hours = Integer.parseInt(split[0]);
-			duration = split[1];
-		}
-		if (duration.contains("M")) {
-			String[] split = duration.split("M");
-			minutes = Integer.parseInt(split[0].replaceAll("[^0-9]", ""));
-			duration = split.length > 1 ? split[1] : "";
-		}
-		if (duration.contains("S")) {
-			seconds = Integer.parseInt(duration.replaceAll("[^0-9]", ""));
-		}
-
-		return hours * 3600 + minutes * 60 + seconds;
+				.withLocale(java.util.Locale.KOREA); // 한국어 포맷 지정
+		return koreaZoned.format(formatter); // 포맷팅 결과 반환
 	}
 }
