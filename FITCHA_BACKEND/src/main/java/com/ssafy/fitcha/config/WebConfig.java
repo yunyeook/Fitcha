@@ -3,7 +3,6 @@ package com.ssafy.fitcha.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.ssafy.fitcha.interceptor.LoginInterceptor;
@@ -26,8 +25,9 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-				.allowedOrigins("*") // 출처 도메인 (현재는 개발중이라 전체로 설정)-> 추후 나의 프론트엔드 도메인으로 변경 필요
-				.allowedMethods("GET","POST","PUT","DELETE");
+				.allowedOriginPatterns("*")// 출처 도메인 (현재는 개발중이라 전체로 설정)-> 추후 나의 프론트엔드 도메인으로 변경 필요
+				.allowedMethods("GET","POST","PUT","DELETE")
+				.allowCredentials(true);
 	}
 	
 
