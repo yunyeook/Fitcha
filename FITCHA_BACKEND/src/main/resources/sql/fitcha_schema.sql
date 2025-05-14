@@ -142,6 +142,16 @@ CREATE TABLE user_follow (
 select * from user_follow;
 select * from user_board;
 
+-------- 메세지 ---
+CREATE TABLE message(
+message_id INT PRIMARY KEY AUTO_INCREMENT,
+sender VARCHAR(300), -- 보낸 사람 --
+recipient VARCHAR(300), -- 받는 사람 --
+title VARCHAR(300), 
+content VARCHAR(300), 
+who_delete VARCHAR(50) DEFAULT 'nobody',
+is_read BOOLEAN DEFAULT FALSE -- TRUE = 1, FALSE = 0 으로 저장된다함.. --
+);
 
 
 -- 더미 데이터----------------------------------------------------------------------
@@ -278,7 +288,30 @@ UPDATE challenge_board
    SET view_count = view_count+1
  WHERE challenge_board_id = 1;
  
- 
+ -- 메세지 --
+-- 길동 ↔ 영희짱
+INSERT INTO message (sender, recipient, title, content, who_delete, is_read) VALUES
+('길동이', '영희짱', '안녕하세요', '처음 연락드립니다. 잘 부탁드려요.', 'nobody', FALSE),
+('영희짱', '길동이', 'Re: 안녕하세요', '반가워요, 길동님!', 'nobody', TRUE),
+('길동이', '영희짱', '회의 일정 확인', '오늘 오후 2시 회의 괜찮으신가요?', 'nobody', FALSE),
+('영희짱', '길동이', 'Re: 회의 일정 확인', '좋아요. 시간 맞춰서 들어갈게요.', 'nobody', TRUE);
+
+-- 길동 ↔ 냥냥이
+INSERT INTO message (sender, recipient, title, content, who_delete, is_read) VALUES
+('길동이', '냥냥이', '업무 문의', '냥냥이님, 이 부분 확인 부탁드립니다.', 'nobody', FALSE),
+('냥냥이', '길동이', 'Re: 업무 문의', '확인했습니다. 수정해서 다시 전달드릴게요.', 'nobody', TRUE),
+('냥냥이', '길동이', '간단한 질문', '길동님, 어제 내용 중 궁금한 게 있어요.', '길동', FALSE),
+('길동이', '냥냥이', 'Re: 간단한 질문', '네, 전화로 설명드릴게요.', 'nobody', TRUE);
+
+-- 영희짱 ↔ 냥냥이
+INSERT INTO message (sender, recipient, title, content, who_delete, is_read) VALUES
+('영희짱', '냥냥이', '자료 요청', '금일 회의 자료 요청드립니다.', 'nobody', FALSE),
+('냥냥이', '영희짱', 'Re: 자료 요청', '방금 전달드렸습니다.', 'nobody', TRUE),
+('영희짱', '냥냥이', '회의 취소 안내', '내일 회의는 취소되었습니다.', '영희짱', FALSE),
+('냥냥이', '영희짱', '확인 완료', '회의 취소 건 확인했습니다.', 'nobody', TRUE);
+
+select * from message;
+delete from message;
  
 -- 좋아요 트리거 ---------------------------------------------------
  
