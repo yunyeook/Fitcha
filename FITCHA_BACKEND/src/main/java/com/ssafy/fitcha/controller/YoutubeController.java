@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.fitcha.model.dto.Youtube;
 import com.ssafy.fitcha.model.service.YoutubeService;
 
-@RestController
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@RestController
 @RequestMapping("/youtube")
+@Tag(name="Youtube API", description="유튜브에 검색한 결과 정보 조회")
 public class YoutubeController {
 	private final YoutubeService youtubeService;
 
@@ -21,6 +24,7 @@ public class YoutubeController {
 		this.youtubeService = youtubeService;
 	}
 
+	@Operation(summary="유튜브에 검색한 결과 정보 조회",description="검색어가 없을 경우 '전신운동 홈트' 검색결과의 유튜브 정보를 가져옴.")
 	@GetMapping("/search")
 	public ResponseEntity<List<Youtube>> search(
 			@RequestParam(value = "query", defaultValue = "전신 운동 홈트") String query) {

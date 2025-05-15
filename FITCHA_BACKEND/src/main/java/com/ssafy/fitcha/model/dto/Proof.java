@@ -2,6 +2,8 @@ package com.ssafy.fitcha.model.dto;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+@Schema(description="인증 게시글 DTO")
 public class Proof {
 
 	// 생성자
@@ -34,7 +36,7 @@ public class Proof {
 	}
 
 	private String regDate; // 작성일
-	private List<BoardFile> files; // 인증글 파일 리스트
+	private List<ProofFile> files; // 인증글 파일 리스트
 
 	// getter / setter
 	public int getChallengeBoardId() {
@@ -93,11 +95,11 @@ public class Proof {
 		this.regDate = regDate;
 	}
 
-	public List<BoardFile> getFiles() {
+	public List<ProofFile> getFiles() {
 		return files;
 	}
 
-	public void setFiles(List<BoardFile> files) {
+	public void setFiles(List<ProofFile> files) {
 		this.files = files;
 	}
 

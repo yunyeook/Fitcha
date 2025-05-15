@@ -25,10 +25,13 @@ import com.ssafy.fitcha.model.service.ChallengeService;
 import com.ssafy.fitcha.model.service.CommentService;
 import com.ssafy.fitcha.model.service.LikeService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/challenge")
+@Tag(name="Challenge RESTfull API", description="운동 챌린지 게시판 CRUD ")
 public class ChallengeController {
 	private ChallengeService challengeService;
 	private CommentService commentService;
@@ -41,7 +44,7 @@ public class ChallengeController {
 		this.likeService = likeService;
 	}
 
-	// 검색 목록 조회(검색어 없을 시 전체 조회).
+	@Operation(summary = "챌린지 게시글 검색 및 전체 목록 조회")
 	@GetMapping
 	public ResponseEntity<List<Challenge>> getSearchChallenges(@ModelAttribute SearchChallenge search) {
 		List<Challenge> challenges = null;
@@ -56,7 +59,7 @@ public class ChallengeController {
 		return ResponseEntity.ok(challenges);
 	}
 
-	// 상세 조회
+	@Operation(summary ="챌린지 게시글 상세 조회")
 	@GetMapping("/{challengeBoardId}")
 	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
 			@RequestParam("isViewCounted") boolean isViewCounted, HttpSession session) {
@@ -68,7 +71,8 @@ public class ChallengeController {
 		return ResponseEntity.ok(challenge);
 	}
 
-	// 수정 (이후 상세화면으로 이동)
+
+	@Operation(summary ="챌린지 게시글 수정 " , description="게시글 수정 후 상세화면으로 이동")
 	@PutMapping("/{challengeBoardId}")
 	public ResponseEntity<Void> updateChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
 			@ModelAttribute Challenge challenge,
@@ -84,7 +88,8 @@ public class ChallengeController {
 		return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
 	}
 
-	// 삭제
+
+	@Operation(summary ="챌린지 게시글 삭제")
 	@DeleteMapping("/{challengeBoardId}/{writer}")
 	public ResponseEntity<Void> deleteChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
 			@PathVariable("writer") String writer) {
@@ -94,7 +99,8 @@ public class ChallengeController {
 		return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
 	}
 
-	// 등록
+
+	@Operation(summary ="챌린지 게시글 등록")
 	@PostMapping
 	public ResponseEntity<Void> registChallenge(
 			@RequestParam(value = "files", required = false) List<MultipartFile> files,
@@ -107,7 +113,8 @@ public class ChallengeController {
 
 	// -------- 댓 글 ------------
 
-	// 챌린지 댓글 등록
+
+	@Operation(summary ="챌린지 게시글에 댓글 등록")
 	@PostMapping("/{challengeBoardId}/comment")
 	public ResponseEntity<Void> registChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId,
 			@RequestBody Comment comment) {
@@ -120,7 +127,7 @@ public class ChallengeController {
 
 	}
 
-	// 챌린지 댓글 삭제
+	@Operation(summary ="챌린지 게시글의 댓글 삭제")
 	@DeleteMapping("{challengeBoardId}/comment/{challengeCommentId}")
 	public ResponseEntity<Void> deleteChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId,
 			@PathVariable("challengeCommentId") int challengeCommentId) {
@@ -135,7 +142,8 @@ public class ChallengeController {
 
 	}
 
-	// 챌린지 댓글 수정
+
+	@Operation(summary ="챌린지 게시글의 댓글 수정")
 	@PutMapping("/{challengeBoardId}/comment/{challengeCommentId}")
 	public ResponseEntity<Void> updateChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId,
 			@PathVariable("challengeCommentId") int challengeCommentId, @RequestBody Comment comment) {
@@ -150,7 +158,8 @@ public class ChallengeController {
 	}
 
 	// ----- 좋아요-----
-	// 프론트에서 좋아요 버튼 누르면 파라미터로 like=true전달
+
+	@Operation(summary ="챌린지 게시글 좋아요 갱신")
 	@PostMapping("/{challengeBoardId}/like")
 	public ResponseEntity<Void> updateChallengeLike(@PathVariable("challengeBoardId") int challengeBoardId,
 			@RequestParam("isLiked") boolean isLiked, HttpSession session) {

@@ -1,5 +1,9 @@
 package com.ssafy.fitcha.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="인증 게시글 파일 DTO")
+
 public class ProofFile {
 	private int proofFileId; // 인증글의 파일 식별을 위한 id
 	private int proofBoardId; // 인증글 식별 id

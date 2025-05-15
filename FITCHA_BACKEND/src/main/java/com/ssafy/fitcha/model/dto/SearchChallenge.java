@@ -1,5 +1,8 @@
 package com.ssafy.fitcha.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="챌린지 검색 DTO")
 public class SearchChallenge {
 	//직접 입력하여 검색 
 	private String key; //title, content, both(title,content),writer
