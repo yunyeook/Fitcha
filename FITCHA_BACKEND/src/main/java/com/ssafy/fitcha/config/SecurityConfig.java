@@ -30,18 +30,12 @@ public class SecurityConfig {
 		http.cors().and() // CORS 설정 활성화
 				.csrf().disable() // CSRF 보호 비활성화
 				.authorizeHttpRequests(authorize -> authorize // 요청 권한 설정 시작
-//						.requestMatchers("/**").permitAll() // 경로 모두 허용 : 
+						.requestMatchers("/**").permitAll() // 경로 모두 허용 : 
 
 						// **이어도 .html같은 건 인증안된다고 생각해 아래에 설정한 login.html로 이동시켜버려서 백엔드 개발동안만 사용..
 						.requestMatchers( "/login.html", 
 						        "/main.html", 
-						        "/signup.html", 
-						        "/oauth2/**",
-						        "/message/**",
-						        "/swagger-ui/**",
-						        "/v3/api-docs/**",
-						        "/swagger-resources/**",
-						        "/webjars/**" ).permitAll()
+						        "/signup.html" ).permitAll()
 						.anyRequest().authenticated() // 그 외 모든 요청 인증 필요
 				).oauth2Login(oauth2 -> oauth2 // OAuth2 로그인 설정 시작
 						// @Controller 나 @GetMapping("/login") 을 만들어서,

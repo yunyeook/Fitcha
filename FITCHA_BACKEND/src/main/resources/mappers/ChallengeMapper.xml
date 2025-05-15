@@ -31,10 +31,10 @@
 	<if test="duration != null and duration != ''">
 	 AND duration = #{duration}
 	</if>
-	<if test="participantCount != 0">
-	 AND participant_count = #{participantCount}
+
+	<if test="totalParticipantCount != 0">
+	 AND total_participant_count = #{totalParticipantCount}
 	</if>
-	
 	
 </select>
 	
@@ -53,7 +53,7 @@
 		    	exercise_type = #{exerciseType},
 		    	body_part = #{bodyPart},
 		   		level = #{level},
-			    participant_count = #{participantCount}
+			    total_participant_count = #{totalParticipantCount}
 		  WHERE challenge_board_id = #{challengeBoardId} 
 	</update>
 	
@@ -65,8 +65,8 @@
 
 	<!-- 등록 -->
 	<insert id="insertChallengeBoard" parameterType="challenge" useGeneratedKeys="true" keyProperty="challengeBoardId">
-		INSERT INTO challenge_board (user_id, title, content, writer, exercise_type, body_part, level, duration)
-			 VALUES (#{userId},#{title},#{content},#{writer}, #{exerciseType},#{bodyPart},#{level},#{duration})
+		INSERT INTO challenge_board (user_id, title, content, writer, exercise_type, body_part, level, duration,totalParticipantCount)
+			 VALUES (#{userId},#{title},#{content},#{writer}, #{exerciseType},#{bodyPart},#{level},#{duration},#{totalParticipantCount})
 	</insert>
 	
 	<!-- 조회수 증가  -->
