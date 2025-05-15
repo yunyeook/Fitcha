@@ -13,7 +13,7 @@ public class SearchChallenge {
 	private String bodyPart;
 	private String level;
 	private int duration;
-	private int participantCount;
+	private int totalParticipantCount;
 	public String getKey() {
 		return key;
 	}
@@ -50,11 +50,12 @@ public class SearchChallenge {
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
-	public int getParticipantCount() {
-		return participantCount;
+
+	public int getTotalParticipantCount() {
+		return totalParticipantCount;
 	}
-	public void setParticipantCount(int participantCount) {
-		this.participantCount = participantCount;
+	public void setTotalParticipantCount(int totalParticipantCount) {
+		this.totalParticipantCount = totalParticipantCount;
 	}
 
 	

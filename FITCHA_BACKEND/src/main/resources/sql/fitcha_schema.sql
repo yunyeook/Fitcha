@@ -25,18 +25,20 @@ CONSTRAINT user_file_pk FOREIGN KEY (user_board_id) REFERENCES user_board (user_
 ON DELETE CASCADE
 );
 
+
 -- challenge--
 CREATE TABLE challenge_board(
 challenge_board_id INT PRIMARY KEY AUTO_INCREMENT,
 user_id VARCHAR(300) ,
 title VARCHAR(300) NOT NULL,
-content VARCHAR(300) NOT NULL,
+content TEXT NOT NULL,
 writer VARCHAR(300) NOT NULL,
 exercise_type VARCHAR(300) NOT NULL DEFAULT '전체',
 body_part VARCHAR(300) NOT NULL DEFAULT '전체',
 level VARCHAR(300) NOT NULL DEFAULT '초급',
-duration TIMESTAMP NOT NULL,
-participant_count INT DEFAULT 1 CHECK(participant_count BETWEEN 1 AND 100),
+duration INT NOT NULL,
+participant_count INT DEFAULT 1 CHECK (participant_count >= 1 AND participant_count <= 100),
+total_participant_count INT DEFAULT 1 CHECK (total_participant_count >= 1 AND total_participant_count <= 100),
 view_count INT DEFAULT 0 CHECK(view_count >= 0) ,
 like_count INT DEFAULT 0 CHECK(like_count >= 0),
 reg_date TIMESTAMP DEFAULT NOW(),
@@ -61,7 +63,7 @@ proof_board_id INT PRIMARY KEY AUTO_INCREMENT,
 challenge_board_id INT,
 user_id VARCHAR(300) ,
 title VARCHAR(300) NOT NULL,
-content VARCHAR(300) NOT NULL,
+content TEXT NOT NULL,
 writer VARCHAR(300) NOT NULL,
 view_count INT DEFAULT 0 CHECK (view_count >= 0),
 like_count INT DEFAULT 0 CHECK (like_count >= 0),
@@ -139,16 +141,15 @@ CREATE TABLE user_follow (
     CONSTRAINT fk_following FOREIGN KEY (following_nick_name) REFERENCES user_board(nick_name) ON DELETE CASCADE
 );
 
-select * from user_follow;
-select * from user_board;
+
 
 -------- 메세지 ---
 CREATE TABLE message(
 message_id INT PRIMARY KEY AUTO_INCREMENT,
-sender VARCHAR(300), -- 보낸 사람 --
-recipient VARCHAR(300), -- 받는 사람 --
-title VARCHAR(300), 
-content VARCHAR(300), 
+sender VARCHAR(300) NOT NULL, -- 보낸 사람 --
+recipient VARCHAR(300) NOT NULL, -- 받는 사람 --
+title VARCHAR(300) NOT NULL, 
+content TEXT NOT NULL,
 who_delete VARCHAR(50) DEFAULT 'nobody',
 is_read BOOLEAN DEFAULT FALSE -- TRUE = 1, FALSE = 0 으로 저장된다함.. --
 );
@@ -170,21 +171,21 @@ VALUES
 ('fituser9', 'pass3344', 'fituser9@example.com', '최준혁', '준혁쓰', 23, 'M'),
 ('fituser10', 'pass5566', 'fituser10@example.com', '윤지은', '지은짱', 30, 'F');
 
-select * from user_board;
+
 
 -- 2. challenge_board (10개)
-INSERT INTO challenge_board (user_id, title, content, writer, exercise_type, body_part, level, duration)
+INSERT INTO challenge_board (user_id, title, content, writer, exercise_type, body_part, level, duration, total_participant_count)
 VALUES
-('fituser1', '아침 스트레칭 챌린지', '매일 아침 10분 스트레칭 도전!', '길동이', '스트레칭', '전신', '초급', NOW()),
-('fituser2', '하루 만보 걷기', '매일 10,000보 걷기 인증 도전해요.', '영희짱', '걷기', '하체', '초급', NOW()),
-('fituser1', '홈트 30일 챌린지', '집에서 간단히 하는 운동 모음입니다.', '길동이', '근력운동', '상체', '중급', NOW()),
-('fituser2', '플랭크 1분 유지하기', '매일 플랭크 1분씩 버텨봅시다.', '영희짱', '코어운동', '복근', '초급', NOW()),
-('fituser1', '자전거 타기 챌린지', '하루 5km 자전거 타기!', '길동이', '유산소', '하체', '초급', NOW()),
-('fituser2', '줄넘기 100개씩 하기', '줄넘기 매일 100개 도전!', '영희짱', '유산소', '전신', '초급', NOW()),
-('fituser1', '상체 집중 운동', '상체 근력 강화 목표입니다.', '길동이', '근력운동', '상체', '중급', NOW()),
-('fituser2', '저녁 러닝 챌린지', '저녁마다 러닝 3km!', '영희짱', '러닝', '하체', '중급', NOW()),
-('fituser1', '요가 초급 챌린지', '하루 15분 요가로 몸 풀어요.', '길동이', '요가', '전신', '초급', NOW()),
-('fituser2', '하체 강화 스쿼트', '스쿼트 50개씩 매일 하기!', '영희짱', '근력운동', '하체', '초급', NOW());
+('fituser1', '아침 스트레칭 챌린지', '매일 아침 10분 스트레칭 도전!', '길동이', '스트레칭', '전신', '초급',2,10),
+('fituser2', '하루 만보 걷기', '매일 10,000보 걷기 인증 도전해요.', '영희짱', '걷기', '하체', '초급', 7,20),
+('fituser1', '홈트 30일 챌린지', '집에서 간단히 하는 운동 모음입니다.', '길동이', '근력운동', '상체', '중급',10,30),
+('fituser2', '플랭크 1분 유지하기', '매일 플랭크 1분씩 버텨봅시다.', '영희짱', '코어운동', '복근', '초급', 20,15),
+('fituser1', '자전거 타기 챌린지', '하루 5km 자전거 타기!', '길동이', '유산소', '하체', '초급', 30,15),
+('fituser2', '줄넘기 100개씩 하기', '줄넘기 매일 100개 도전!', '영희짱', '유산소', '전신', '초급', 7,15),
+('fituser1', '상체 집중 운동', '상체 근력 강화 목표입니다.', '길동이', '근력운동', '상체', '중급', 10,10),
+('fituser2', '저녁 러닝 챌린지', '저녁마다 러닝 3km!', '영희짱', '러닝', '하체', '중급', 30,15),
+('fituser1', '요가 초급 챌린지', '하루 15분 요가로 몸 풀어요.', '길동이', '요가', '전신', '초급', 20,25),
+('fituser2', '하체 강화 스쿼트', '스쿼트 50개씩 매일 하기!', '영희짱', '근력운동', '하체', '초급',10,20);
 
 -- 3. challenge_file (10개)
 INSERT INTO challenge_file (challenge_board_id, file_upload_name, file_original_name, file_url, writer)
@@ -258,35 +259,6 @@ VALUES
 (9, 'fituser2', '요가 덕분에 스트레스 해소됐어요.', '영희짱'),
 (10, 'fituser1', '하체 스쿼트 챌린지, 완주했습니다!', '길동이');
 
--- 테스트 sql문
-
-select * from challenge_board;
-select * from challenge_file;
-select * from proof_board;
-select * from challenge_comment;
-select * from challenge_like;
-select * from proof_like;
-
-select count(*)
-from challenge_board
-where level ='초급'
-group by level;
-
-insert into challenge_like
-values(1, '길동이');
-insert into challenge_like
-values(1, '영희짱');
-
-insert into proof_like
-values(1, '영희짱1');
-
-delete
-from proof_like
-where proof_board_id = 1;
-
-UPDATE challenge_board
-   SET view_count = view_count+1
- WHERE challenge_board_id = 1;
  
  -- 메세지 --
 -- 길동 ↔ 영희짱
@@ -310,8 +282,7 @@ INSERT INTO message (sender, recipient, title, content, who_delete, is_read) VAL
 ('영희짱', '냥냥이', '회의 취소 안내', '내일 회의는 취소되었습니다.', '영희짱', FALSE),
 ('냥냥이', '영희짱', '확인 완료', '회의 취소 건 확인했습니다.', 'nobody', TRUE);
 
-select * from message;
-delete from message;
+
  
 -- 좋아요 트리거 ---------------------------------------------------
  
