@@ -1,5 +1,8 @@
 package com.ssafy.fitcha.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="메세지 DTO")
 public class Message {
 	private int messageId; //쪽지 고유 번호.
 	private String sender; // 보낸 사람.

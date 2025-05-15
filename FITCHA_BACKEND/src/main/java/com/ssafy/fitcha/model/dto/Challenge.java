@@ -2,6 +2,9 @@ package com.ssafy.fitcha.model.dto;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="챌린지 게시글 DTO")
 public class Challenge {
 
 	public String getUserId() {

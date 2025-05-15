@@ -1,6 +1,8 @@
 package com.ssafy.fitcha.model.dto;
 
-// 인증글 검색을 위한 DTO
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="인증 게시글 검색 DTO")
 public class SearchProof {
 
 	private String key; // 제목 검색, 내용 검색, 작성자 검색, 제목+내용 검색

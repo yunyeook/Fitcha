@@ -1,5 +1,7 @@
 package com.ssafy.fitcha.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 //import lombok.AllArgsConstructor;
 //import lombok.Getter;
 //import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ package com.ssafy.fitcha.model.dto;
 //@Setter
 //@NoArgsConstructor
 //@AllArgsConstructor
+@Schema(description="유튜브 정보 DTO")
 public class Youtube {
 	private String videoId; // 유튜브 영상의 고유 아이디.
 	private String title; // 영상제목

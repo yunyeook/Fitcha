@@ -1,5 +1,8 @@
 package com.ssafy.fitcha.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="좋아요 DTO")
 public class Like {
 	private int boardId;
 	private String writer;

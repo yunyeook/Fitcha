@@ -1,5 +1,8 @@
 package com.ssafy.fitcha.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="사용자 정보 DTO")
 public class User {
 	private int userBoardId; // DB user 테이블에서 user들을 식별하는 고유 id (auto_increment로 생김)
 	private String userId;

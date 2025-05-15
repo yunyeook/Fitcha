@@ -1,5 +1,8 @@
 package com.ssafy.fitcha.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="날씨 정보 DTO")
 public class Weather {
 	private String temperature; // 온도
 	private String humidity; // 습도

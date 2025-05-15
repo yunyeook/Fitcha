@@ -1,5 +1,8 @@
 package com.ssafy.fitcha.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="챌린지 게시글 파일 DTO")
 public class ChallengeFile {
 	private int challengeFileId;
 	private int challengeBoardId;

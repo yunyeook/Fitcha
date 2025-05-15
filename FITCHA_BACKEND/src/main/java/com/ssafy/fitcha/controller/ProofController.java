@@ -27,10 +27,13 @@ import com.ssafy.fitcha.model.service.CommentService;
 import com.ssafy.fitcha.model.service.LikeService;
 import com.ssafy.fitcha.model.service.ProofService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/proof")
+@Tag(name = "Proof RESTful API", description = "챌린지 게시글의 인증 게시판 CRUD")
 public class ProofController {
 
 	// 생성자 의존성 주입
@@ -44,7 +47,7 @@ public class ProofController {
 		this.likeService = likeService;
 	}
 
-	// 검색 목록 조회 ( 검색 Dto 없을시 전체 조회 )
+	@Operation(summary = "인증글 게시글 검색 및 전체 목록 조회")
 	@GetMapping
 	public ResponseEntity<List<Proof>> getSearchProofs(@ModelAttribute SearchProof search) {
 		List<Proof> proofList = null; // 인증글 전체 리스트
@@ -60,7 +63,7 @@ public class ProofController {
 
 	}
 
-	// 상세 조회
+	@Operation(summary = "인증글 게시글 상세 조회")
 	@GetMapping("/{proofBoardId}")
 	public ResponseEntity<Proof> getDetailProof(@PathVariable("proofBoardId") int proofBoardId) {
 		Proof proof = proofService.getProofDetails(proofBoardId);
@@ -70,7 +73,7 @@ public class ProofController {
 		return ResponseEntity.ok(proof);
 	}
 
-	// 등록
+	@Operation(summary = "인증글 게시글 등록")
 	@PostMapping
 	public ResponseEntity<Void> registProof(@RequestParam(value = "files", required = false) List<MultipartFile> files,
 			@RequestBody Proof proof) throws Exception {
@@ -80,7 +83,7 @@ public class ProofController {
 		return ResponseEntity.badRequest().build();
 	}
 
-	// 수정
+	@Operation(summary = "인증글 게시글 수정 ")
 	@PutMapping("/{proofBoardId}")
 	public ResponseEntity<Void> updateProof(@PathVariable("proofBoardId") int proofBoardId, @RequestBody Proof proof,
 			@RequestParam(value = "files", required = false) List<MultipartFile> files, // 추가된 파일
@@ -96,7 +99,7 @@ public class ProofController {
 		return ResponseEntity.badRequest().build();
 	}
 
-	// 삭제
+	@Operation(summary = "인증글 게시글 삭제")
 	@DeleteMapping("/{proofBoardId}")
 	public ResponseEntity<Void> deleteProof(@PathVariable("proofBoardId") int proofBoardId) {
 		if (proofService.deleteProofBoard(proofBoardId)) {
@@ -105,60 +108,56 @@ public class ProofController {
 		return ResponseEntity.badRequest().build();
 
 	}
-	
-	
+
 	// ---댓글-------------------------------------------------------------------------------
-		
-		// 인증글 댓글 등록
-		@PostMapping("/{proofBoardId}/comment")
-		public ResponseEntity<Void> registProofComment(@PathVariable("proofBoardId") int proofBoardId,
-				@RequestBody Comment comment) {
 
-			if (commentService.registProofComment(proofBoardId, comment)) {
-				URI redirectUri = URI.create("/proof/" + proofBoardId);
-				return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
-			}
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	@Operation(summary = "인증글 게시글의 댓글 등록")
+	@PostMapping("/{proofBoardId}/comment")
+	public ResponseEntity<Void> registProofComment(@PathVariable("proofBoardId") int proofBoardId,
+			@RequestBody Comment comment) {
 
+		if (commentService.registProofComment(proofBoardId, comment)) {
+			URI redirectUri = URI.create("/proof/" + proofBoardId);
+			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+		}
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+	}
+
+	@Operation(summary = "인증글 게시글의 댓글 삭제")
+	@DeleteMapping("/{proofBoardId}/comment/{proofCommentId}")
+	public ResponseEntity<Void> deleteProofComment(@PathVariable("proofBoardId") int proofBoardId,
+			@PathVariable("proofCommentId") int proofCommentId) {
+		if (commentService.deleteProofComment(proofBoardId, proofCommentId)) {
+			URI redirectUri = URI.create("/proof/" + proofBoardId);
+			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+		}
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	}
+
+	@Operation(summary="인증글 게시글의 댓글 수정")
+	@PutMapping("/{proofBoardId}/comment/{proofCommentId}")
+	public ResponseEntity<Void> updateProofComment(@PathVariable("proofBoardId") int proofBoardId,
+			@PathVariable("proofCommentId") int proofCommentId, @RequestBody Comment comment) {
+
+		if (commentService.updateProofComment(proofBoardId, proofCommentId, comment)) {
+			URI redirectUri = URI.create("/proof/" + proofBoardId);
+			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
 		}
 
-		// 인증글 댓글 삭제
-		@DeleteMapping("/{proofBoardId}/comment/{proofCommentId}")
-		public ResponseEntity<Void> deleteProofComment(@PathVariable("proofBoardId") int proofBoardId,
-				@PathVariable("proofCommentId") int proofCommentId) {
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-			if (commentService.deleteProofComment(proofBoardId, proofCommentId)) {
+	}
 
-				URI redirectUri = URI.create("/proof/" + proofBoardId);
-				return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
-			}
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
-		}
-
-		// 인증글 댓글 수정
-		@PutMapping("/{proofBoardId}/comment/{proofCommentId}")
-		public ResponseEntity<Void> updateProofComment(@PathVariable("proofBoardId") int proofBoardId,
-				@PathVariable("proofCommentId") int proofCommentId, @RequestBody Comment comment) {
-
-			if (commentService.updateProofComment(proofBoardId, proofCommentId, comment)) {
-				URI redirectUri = URI.create("/proof/" + proofBoardId);
-				return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
-			}
-
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
-		}
-
-		// ----- 좋아요-----
-		// 프론트에서 좋아요 버튼 누르면 파라미터로 like=true전달
-		@PostMapping("/{proofBoardId}/like")
-		public ResponseEntity<Void> updateProofLike(@PathVariable("proofBoardId") int proofBoardId,
-				@RequestParam("like") boolean isLiked, HttpSession session) {
-			User user = (User) session.getAttribute("loginUser");
-			if (likeService.updateProofLike(isLiked, proofBoardId, user.getNickName()))
-				return ResponseEntity.ok().build();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
+	// ----- 좋아요-----
+	@Operation(summary ="인증 게시글 좋아요 갱신")
+	@PostMapping("/{proofBoardId}/like")
+	public ResponseEntity<Void> updateProofLike(@PathVariable("proofBoardId") int proofBoardId,
+			@RequestParam("like") boolean isLiked, HttpSession session) {
+		User user = (User) session.getAttribute("loginUser");
+		if (likeService.updateProofLike(isLiked, proofBoardId, user.getNickName()))
+			return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	}
 
 }
