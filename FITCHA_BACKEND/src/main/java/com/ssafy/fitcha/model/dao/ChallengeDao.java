@@ -1,8 +1,10 @@
 package com.ssafy.fitcha.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ssafy.fitcha.model.dto.Challenge;
+import com.ssafy.fitcha.model.dto.Participate;
 import com.ssafy.fitcha.model.dto.SearchChallenge;
 
 public interface ChallengeDao {
@@ -26,5 +28,8 @@ public interface ChallengeDao {
 
 	//최근등록한| 참여자수 많은| 좋아요많은 | 조회수 많은 챌린지글 조회
 	public List<Challenge> selectTop10Challenges(String orderBy);
+
+	//현재 유저의 챌린지 참여 여부.
+	public int selectChallengeParticipated(Participate participate);
 
 }

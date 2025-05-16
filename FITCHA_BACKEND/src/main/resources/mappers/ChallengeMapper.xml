@@ -97,6 +97,14 @@
  	   LIMIT 10
 	</select>
 
+	<!-- 현재 유저의 참여 여부 -->
+	<select id="selectChallengeParticipated" parameterType="Participate" resultType="int">
+		SELECT COUNT(*)
+		  FROM participant_challenge
+		 WHERE challenge_board_id = #{challengeBoardId}
+   		   AND participant = #{participant}
+
+	</select>
 
 
 </mapper>

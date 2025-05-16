@@ -24,7 +24,9 @@ public class Challenge {
 	private List<ChallengeFile> challengeFiles;
 	private List<Comment> comments;
 	private boolean isLiked; // 로그인 유저의 좋아요여부.
+	private boolean isParticipated; //로그인 유저의 참여 여부.
 	
+
 	public int getChallengeBoardId() {
 		return challengeBoardId;
 	}
@@ -127,7 +129,12 @@ public class Challenge {
 	public void setLiked(boolean isLiked) {
 		this.isLiked = isLiked;
 	}
-
+	public boolean isParticipated() {
+		return isParticipated;
+	}
+	public void setParticipated(boolean isParticipated) {
+		this.isParticipated = isParticipated;
+	}
 
 
 }
