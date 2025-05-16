@@ -9,6 +9,7 @@ import com.ssafy.fitcha.model.dao.ChallengeDao;
 import com.ssafy.fitcha.model.dto.Challenge;
 import com.ssafy.fitcha.model.dto.ChallengeFile;
 import com.ssafy.fitcha.model.dto.Comment;
+import com.ssafy.fitcha.model.dto.Participate;
 import com.ssafy.fitcha.model.dto.Proof;
 import com.ssafy.fitcha.model.dto.SearchChallenge;
 
@@ -49,6 +50,11 @@ public class ChallengeServiceImpl implements ChallengeService {
 			challengeDao.updateChallengeViewCount(challengeBoardId);
 
 		Challenge challenge = challengeDao.selectChallengeBoard(challengeBoardId);
+		
+		//현재 유저가 참여중인 챌린지인지 
+		Participate participate = new Participate(challengeBoardId,nickName);
+		challenge.setParticipated(challengeDao.selectChallengeParticipated(participate)==1);
+		
 		// 파일 목록 조회
 		List<ChallengeFile> files = fileService.getChallengeFileList(challengeBoardId);
 		challenge.setChallengeFiles(files);

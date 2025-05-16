@@ -59,13 +59,24 @@ public class ChallengeController {
 		return ResponseEntity.ok(challenges);
 	}
 
+//	@Operation(summary ="챌린지 게시글 상세 조회")
+//	@GetMapping("/{challengeBoardId}")
+//	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
+//			@RequestParam("isViewCounted") boolean isViewCounted, HttpSession session) {
+//		User user = (User) session.getAttribute("loginUser");
+//		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId, user.getNickName(), isViewCounted);
+//
+//		if (challenge == null)
+//			return ResponseEntity.noContent().build();
+//		return ResponseEntity.ok(challenge);
+//	}
+	
+	// 로그인 기능 구현 전 vue test
 	@Operation(summary ="챌린지 게시글 상세 조회")
 	@GetMapping("/{challengeBoardId}")
 	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
-			@RequestParam("isViewCounted") boolean isViewCounted, HttpSession session) {
-		User user = (User) session.getAttribute("loginUser");
-		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId, user.getNickName(), isViewCounted);
-
+			@RequestParam("isViewCounted") boolean isViewCounted) {
+		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId,"길동이", isViewCounted);
 		if (challenge == null)
 			return ResponseEntity.noContent().build();
 		return ResponseEntity.ok(challenge);

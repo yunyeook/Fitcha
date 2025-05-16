@@ -154,6 +154,11 @@ who_delete VARCHAR(50) DEFAULT 'nobody',
 is_read BOOLEAN DEFAULT FALSE -- TRUE = 1, FALSE = 0 으로 저장된다함.. --
 );
 
+-- 유저들의 참여중인 챌린지 저장 --
+CREATE TABLE participant_challenge(
+challenge_board_id INT,
+participant VARCHAR(300) NOT NULL 
+);
 
 -- 더미 데이터----------------------------------------------------------------------
 
@@ -282,7 +287,18 @@ INSERT INTO message (sender, recipient, title, content, who_delete, is_read) VAL
 ('영희짱', '냥냥이', '회의 취소 안내', '내일 회의는 취소되었습니다.', '영희짱', FALSE),
 ('냥냥이', '영희짱', '확인 완료', '회의 취소 건 확인했습니다.', 'nobody', TRUE);
 
-
+-- participant_challenge 더미 데이터 
+INSERT INTO participant_challenge (challenge_board_id, participant) VALUES
+(1, '길동이'),
+(2, '영희짱'),
+(3, '길동이'),
+(4, '영희짱'),
+(5, '길동이'),
+(6, '영희짱'),
+(7, '길동이'),
+(8, '영희짱'),
+(9, '길동이'),
+(10, '영희짱');
  
 -- 좋아요 트리거 ---------------------------------------------------
  
@@ -357,3 +373,4 @@ BEGIN
     WHERE nick_name = OLD.following_nick_name;
 END $$
 DELIMITER ;
+select * from participant_challenge;
