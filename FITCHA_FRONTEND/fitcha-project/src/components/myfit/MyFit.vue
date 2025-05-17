@@ -3,7 +3,7 @@
     <!-- 프로필 헤더 -->
     <div class="profile-info-wrapper">
       <img
-        src="../assets/images/run.jpg"
+        src="../../assets/images/run.jpg"
         alt="프로필 사진"
         class="profile-img"
       />
@@ -31,227 +31,20 @@
 
     <!-- 콘텐츠 예시 -->
     <div class="tab-content">
-      <!-- 더미 데이터 -->
-      <div class="proof-card">
-        <a style="text-decoration: none" href="../views/fitLogDetail.html">
-          <!-- 헤더 작성자 정보 -->
-          <div class="header">
-            <img
-              class="user-profile-image"
-              src="../assets/images/user1.jpg"
-              alt="작성자 프로필"
-            />
-            <div class="user-info">
-              <span class="title">아침 5K 챌린지</span>
-              <span class="user-name">러너러너러너</span>
-            </div>
-          </div>
-
-          <!-- 운동 인증 이미지 -->
-          <div class="main-image">
-            <img src="../assets/images/run.jpg" alt="운동 인증 사진" />
-          </div>
-
-          <!-- 운동 정보 뱃지 -->
-          <div class="badges">
-            <span class="badge distance">러닝</span>
-            <span class="badge time">서울</span>
-            <span class="badge kcal">🔥 초보</span>
-          </div>
-
-          <!-- 내용 -->
-          <div class="content">
-            오늘도 미션 완료! 새벽 공기가 상쾌해서 오히려 좋았어요. 점점 몸이
-            가벼워지는 느낌 💪
-          </div>
-          <div class="hashtag">#5일차성공 #아침러닝</div>
-
-          <!-- 하단 푸터 -->
-          <div class="footer">
-            <div class="date">2025.05.13</div>
-            <div class="heart">
-              <i class="fas fa-heart"></i> <span>12</span>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="proof-card">
-        <a style="text-decoration: none" href="../views/fitLogDetail.html">
-          <!-- 헤더 작성자 정보 -->
-          <div class="header">
-            <img
-              class="user-profile-image"
-              src="../assets/images/user1.jpg"
-              alt="작성자 프로필"
-            />
-            <div class="user-info">
-              <span class="title">아침 5K 챌린지</span>
-              <span class="user-name">러너러너러너</span>
-            </div>
-          </div>
-
-          <!-- 운동 인증 이미지 -->
-          <div class="main-image">
-            <img src="../assets/images/run.jpg" alt="운동 인증 사진" />
-          </div>
-
-          <!-- 운동 정보 뱃지 -->
-          <div class="badges">
-            <span class="badge distance">러닝</span>
-            <span class="badge time">서울</span>
-            <span class="badge kcal">🔥 초보</span>
-          </div>
-
-          <!-- 내용 -->
-          <div class="content">
-            오늘도 미션 완료! 새벽 공기가 상쾌해서 오히려 좋았어요. 점점 몸이
-            가벼워지는 느낌 💪
-          </div>
-          <div class="hashtag">#5일차성공 #아침러닝</div>
-
-          <!-- 하단 푸터 -->
-          <div class="footer">
-            <div class="date">2025.05.13</div>
-            <div class="heart">
-              <i class="fas fa-heart"></i> <span>12</span>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="proof-card">
-        <a style="text-decoration: none" href="../views/fitLogDetail.html">
-          <!-- 헤더 작성자 정보 -->
-          <div class="header">
-            <img
-              class="user-profile-image"
-              src="../assets/images/user1.jpg"
-              alt="작성자 프로필"
-            />
-            <div class="user-info">
-              <span class="title">아침 5K 챌린지</span>
-              <span class="user-name">러너러너러너</span>
-            </div>
-          </div>
-
-          <!-- 운동 인증 이미지 -->
-          <div class="main-image">
-            <img src="../assets/images/run.jpg" alt="운동 인증 사진" />
-          </div>
-
-          <!-- 운동 정보 뱃지 -->
-          <div class="badges">
-            <span class="badge distance">러닝</span>
-            <span class="badge time">서울</span>
-            <span class="badge kcal">🔥 초보</span>
-          </div>
-
-          <!-- 내용 -->
-          <div class="content">
-            오늘도 미션 완료! 새벽 공기가 상쾌해서 오히려 좋았어요. 점점 몸이
-            가벼워지는 느낌 💪
-          </div>
-          <div class="hashtag">#5일차성공 #아침러닝</div>
-
-          <!-- 하단 푸터 -->
-          <div class="footer">
-            <div class="date">2025.05.13</div>
-            <div class="heart">
-              <i class="fas fa-heart"></i> <span>12</span>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="proof-card">
-        <a style="text-decoration: none" href="../views/fitLogDetail.html">
-          <!-- 헤더 작성자 정보 -->
-          <div class="header">
-            <img
-              class="user-profile-image"
-              src="../assets/images/user1.jpg"
-              alt="작성자 프로필"
-            />
-            <div class="user-info">
-              <span class="title">아침 5K 챌린지</span>
-              <span class="user-name">러너러너러너</span>
-            </div>
-          </div>
-
-          <!-- 운동 인증 이미지 -->
-          <div class="main-image">
-            <img src="../assets/images/run.jpg" alt="운동 인증 사진" />
-          </div>
-
-          <!-- 운동 정보 뱃지 -->
-          <div class="badges">
-            <span class="badge distance">러닝</span>
-            <span class="badge time">서울</span>
-            <span class="badge kcal">🔥 초보</span>
-          </div>
-
-          <!-- 내용 -->
-          <div class="content">
-            오늘도 미션 완료! 새벽 공기가 상쾌해서 오히려 좋았어요. 점점 몸이
-            가벼워지는 느낌 💪
-          </div>
-          <div class="hashtag">#5일차성공 #아침러닝</div>
-
-          <!-- 하단 푸터 -->
-          <div class="footer">
-            <div class="date">2025.05.13</div>
-            <div class="heart">
-              <i class="fas fa-heart"></i> <span>12</span>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="proof-card">
-        <a style="text-decoration: none" href="../views/fitLogDetail.html">
-          <!-- 헤더 작성자 정보 -->
-          <div class="header">
-            <img
-              class="user-profile-image"
-              src="../assets/images/user1.jpg"
-              alt="작성자 프로필"
-            />
-            <div class="user-info">
-              <span class="title">아침 5K 챌린지</span>
-              <span class="user-name">러너러너러너</span>
-            </div>
-          </div>
-
-          <!-- 운동 인증 이미지 -->
-          <div class="main-image">
-            <img src="../assets/images/run.jpg" alt="운동 인증 사진" />
-          </div>
-
-          <!-- 운동 정보 뱃지 -->
-          <div class="badges">
-            <span class="badge distance">러닝</span>
-            <span class="badge time">서울</span>
-            <span class="badge kcal">🔥 초보</span>
-          </div>
-
-          <!-- 내용 -->
-          <div class="content">
-            오늘도 미션 완료! 새벽 공기가 상쾌해서 오히려 좋았어요. 점점 몸이
-            가벼워지는 느낌 💪
-          </div>
-          <div class="hashtag">#5일차성공 #아침러닝</div>
-
-          <!-- 하단 푸터 -->
-          <div class="footer">
-            <div class="date">2025.05.13</div>
-            <div class="heart">
-              <i class="fas fa-heart"></i> <span>12</span>
-            </div>
-          </div>
-        </a>
-      </div>
+      <!-- 아래는 테스트 위한 복붙 -->
+      <ChallengeFitCard />
+      <ChallengeFitCard />
+      <ChallengeFitCard />
+      <ChallengeFitCard />
+      <ChallengeFitCard />
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import ChallengeFitCard from "../challengefit/ChallengeFitCard.vue";
+import FitLogCard from "../fitlog/FitLogCard.vue";
+</script>
 
 <style scoped>
 .profile-wrapper {
@@ -291,6 +84,7 @@
 }
 
 .profile-info-wrapper .user-nickname {
+  margin: 0px;
   text-align: center;
   font-size: 0.9rem;
   color: #666;
@@ -351,7 +145,6 @@
   padding: 10px 24px;
   font-size: 0.9rem;
   color: #444;
-  line-height: 1.6;
   display: flex;
   flex-direction: column;
   align-items: center;

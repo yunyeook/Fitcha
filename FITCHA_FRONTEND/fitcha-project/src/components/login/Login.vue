@@ -111,6 +111,7 @@
 }
 
 .login-component .login-card h2 {
+  margin: 0px;
   font-size: 22px;
   margin-bottom: 24px;
   font-weight: 800;

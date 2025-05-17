@@ -58,12 +58,12 @@
   border-radius: 15px;
   overflow: hidden;
   transition: all 0.3s ease;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
   cursor: pointer;
 }
 
 .challenge-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .challenge-card img {
