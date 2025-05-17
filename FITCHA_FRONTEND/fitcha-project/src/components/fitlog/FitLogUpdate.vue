@@ -1,7 +1,7 @@
 <template>
   <!-- 챌린지 인증글 작성 구조 -->
   <div class="challenge-form-wrapper">
-    <h2>챌린지 인증하기</h2>
+    <h2>챌린지 인증 수정</h2>
 
     <form class="challenge-form">
       <!-- 썸네일 미리보기 -->

@@ -1,13 +1,35 @@
 import { createRouter, createWebHistory } from "vue-router";
 import ChallengeFitView from "@/views/ChallengeFitView.vue";
 import ChallengeFitDetailView from "@/views/ChallengeFitDetailView.vue";
+import ChallengeFitRegistView from "@/views/ChallengeFitRegistView.vue";
+import ChallengeFitUpdateView from "@/views/ChallengeFitUpdateView.vue";
 import FitTubeView from "@/views/FitTubeView.vue";
+import FitLogView from "@/views/FitLogView.vue";
+import FitLogDetailView from "@/views/FitLogDetailView.vue";
+import FitLogRegistView from "@/views/FitLogRegistView.vue";
+import FitLogUpdateView from "@/views/FitLogUpdateView.vue";
+import HomeView from "@/views/HomeView.vue";
+import LoginView from "@/views/LoginView.vue";
+import SignupView from "@/views/SignupView.vue";
+import MyFitView from "@/views/MyFitView.vue";
+import MyFitUpdateView from "@/views/MyFitUpdateView.vue";
 
 const routes = [
   // 패스 경로는 테스트 위해서 임시로 해놓은거니 알아서 수정 필요
   { path: "/challenge", component: ChallengeFitView },
   { path: "/challenge/detail", component: ChallengeFitDetailView },
+  { path: "/challenge/regist", component: ChallengeFitRegistView },
+  { path: "/challenge/update", component: ChallengeFitUpdateView },
   { path: "/fittube", component: FitTubeView },
+  { path: "/fitlog", component: FitLogView },
+  { path: "/fitlog/detail", component: FitLogDetailView },
+  { path: "/fitlog/regist", component: FitLogRegistView },
+  { path: "/fitlog/update", component: FitLogUpdateView },
+  { path: "/home", component: HomeView },
+  { path: "/login", component: LoginView },
+  { path: "/signup", component: SignupView },
+  { path: "/myfit", component: MyFitView },
+  { path: "/myfit/update", component: MyFitUpdateView },
 ];
 
 const router = createRouter({

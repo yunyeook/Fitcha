@@ -1,7 +1,8 @@
+<!-- 챌린지 수정은 등록 폼이랑 동일해서 굳이 따로 컴포넌트 안 만들고 등록 컴포넌트로 할 수 있을 것 같은데  -->
+<!-- 일단 편의상 만들었음 -->
 <template>
-  <!-- 챌린지 인증글 작성 구조 -->
   <div class="challenge-form-wrapper">
-    <h2>챌린지 인증하기</h2>
+    <h2>챌린지 수정</h2>
 
     <form class="challenge-form">
       <!-- 썸네일 미리보기 -->
@@ -15,7 +16,7 @@
 
       <!-- 제목 -->
       <div class="form-group">
-        <label for="title">인증글 제목</label>
+        <label for="title">챌린지 제목</label>
         <input
           type="text"
           id="title"
@@ -67,6 +68,12 @@
           <option>중급</option>
           <option>고급</option>
         </select>
+      </div>
+
+      <!-- 모집 인원 -->
+      <div class="form-group">
+        <label for="limit">모집 인원</label>
+        <input type="number" id="limit" placeholder="예: 10" min="1" />
       </div>
 
       <!-- 제출 버튼 -->

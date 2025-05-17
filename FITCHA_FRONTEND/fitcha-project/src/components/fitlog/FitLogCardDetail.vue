@@ -16,7 +16,7 @@
 
       <!-- 인증 이미지 -->
       <div class="proof-image">
-        <img src="../assets/images/run.jpg" alt="운동 인증" />
+        <img src="../../assets/images/run.jpg" alt="운동 인증" />
       </div>
 
       <!-- 운동 정보 뱃지 -->
@@ -37,7 +37,7 @@
         <div class="content-bottom">
           <div class="hashtags">#5일차성공 #아침러닝 #챌린지인증</div>
           <a class="go-challenge" href="challengeFitDetail.html"
-            >챌린지 보기 &rarr;</a
+            >참여한 챌린지 보기 &rarr;</a
           >
         </div>
       </div>
@@ -194,9 +194,11 @@
 
 .badge {
   font-size: 0.75rem;
-  padding: 5px 10px;
+  padding: 2px 10px;
   border-radius: 12px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
 .badge.distance {

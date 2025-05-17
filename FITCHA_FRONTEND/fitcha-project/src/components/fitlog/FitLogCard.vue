@@ -17,7 +17,7 @@
 
       <!-- 운동 인증 이미지 -->
       <div class="main-image">
-        <img src="../assets/images/run.jpg" alt="운동 인증 사진" />
+        <img src="../../assets/images/run.jpg" alt="운동 인증 사진" />
       </div>
 
       <!-- 운동 정보 뱃지 -->
@@ -114,8 +114,10 @@
   font-size: 0.7rem;
   background-color: #f1f3f5;
   color: #333;
-  padding: 4px 8px;
+  padding: 2px 8px;
   border-radius: 12px;
+  display: flex;
+  align-items: center;
 }
 
 .proof-card .badge.kcal {

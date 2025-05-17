@@ -76,6 +76,7 @@
 }
 
 .signup-wrapper h2 {
+  margin-top: 0px;
   color: #333;
   margin-bottom: 30px;
   font-weight: 700;
