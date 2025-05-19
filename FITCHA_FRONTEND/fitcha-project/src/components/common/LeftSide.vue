@@ -9,28 +9,40 @@
     <!-- 다른 페이지로 이동하는 nav바 -->
     <ul>
       <li>
-        <a href="../views/home.html"><i class="fas fa-home"></i> Home</a>
+        <a href="../views/home.html">
+          <i class="fas fa-home"></i>
+          Home
+        </a>
       </li>
       <li>
-        <a href="../views/challengeFit.html"
-          ><i class="fas fa-fire"></i> ChallengeFit</a
-        >
+        <a @click="ChallengeFitView">
+          <i class="fas fa-fire"></i>
+          ChallengeFit
+        </a>
       </li>
       <li>
-        <a href="../views/fitTube.html"
-          ><i class="fab fa-youtube"></i> FitTube</a
-        >
+        <a @click="FitTubeView">
+          <i class="fab fa-youtube"></i>
+          FitTube
+        </a>
       </li>
       <li>
-        <a href="../views/fitLog.html"><i class="fas fa-users"></i> Fitlog</a>
+        <a href="../views/fitLog.html">
+          <i class="fas fa-users"></i>
+          Fitlog
+        </a>
       </li>
       <li>
-        <a href="../views/myFit.html"
-          ><i class="fas fa-user-circle"></i> MyFit</a
-        >
+        <a href="../views/myFit.html">
+          <i class="fas fa-user-circle"></i>
+          MyFit
+        </a>
       </li>
       <li>
-        <a href="#"><i class="fas fa-comments"></i> FitTalk</a>
+        <a href="#">
+          <i class="fas fa-comments"></i>
+          FitTalk
+        </a>
       </li>
     </ul>
 
@@ -44,7 +56,21 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import axios from "axios";
+import { useRoute, useRouter } from "vue-router";
+
+const route = useRoute();
+const router = useRouter();
+
+function ChallengeFitView() {
+  router.push({ name: "ChallengeFit" });
+}
+function FitTubeView() {
+  router.push({ name: "FitTube" });
+}
+</script>
 
 <style scoped>
 /* 전체 공통 레이아웃 중 왼쪽 사이드바 css */
