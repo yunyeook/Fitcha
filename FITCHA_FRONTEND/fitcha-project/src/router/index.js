@@ -26,7 +26,7 @@ const routes = [
   { path: "/challengefit/update", name: "ChallengeFitUpdate", component: ChallengeFitUpdateView },
   { path: "/fittube", component: FitTubeView },
   { path: "/fitlog", component: FitLogView },
-  { path: "/fitlog/detail", component: FitLogDetailView },
+  { path: "/fitlog/:id", name: FitLogDetailView, component: FitLogDetailView },
   { path: "/fitlog/regist", component: FitLogRegistView },
   { path: "/fitlog/update", component: FitLogUpdateView },
   { path: "/home", component: HomeView },

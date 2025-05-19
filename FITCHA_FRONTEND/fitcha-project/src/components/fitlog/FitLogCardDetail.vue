@@ -9,8 +9,8 @@
           alt="작성자 프로필"
         />
         <div class="user-info">
-          <span class="title">5일차 미션 성공! 새벽 5K 완주 💪</span>
-          <span class="user-name">러너러너러너</span>
+          <span class="title">{{ fitlog.title }}</span>
+          <span class="user-name">{{ fitlog.writer }}</span>
         </div>
       </div>
 
@@ -21,17 +21,15 @@
 
       <!-- 운동 정보 뱃지 -->
       <div class="badges">
-        <span class="badge distance">5km</span>
-        <span class="badge time">32분</span>
-        <span class="badge kcal">🔥 230kcal</span>
+        <span class="badge distance">{{ fitlog.exerciseType }}</span>
+        <span class="badge time">{{ fitlog.bodyPart }}</span>
+        <span class="badge kcal">🔥 {{ fitlog.level }}</span>
       </div>
 
       <!-- 인증글 내용 -->
       <div class="proof-content">
         <p>
-          오늘도 미션 완료! 새벽 공기가 상쾌해서 오히려 좋았어요.<br />
-          점점 몸이 가벼워지는 느낌 💪<br />
-          내일도 화이팅!
+          {{ fitlog.content }}
         </p>
 
         <div class="content-bottom">
@@ -44,8 +42,17 @@
 
       <!-- 하단 날짜 + 좋아요 -->
       <div class="footer">
-        <div class="write-date">2025.05.13</div>
-        <div class="like"><i class="fas fa-heart"></i> <span>12</span></div>
+        <div class="write-date">{{ fitlog.regDate }}</div>
+        <div class="stats">
+          <div class="views">
+            <i class="fas fa-eye"></i>
+            <span>{{ fitlog.viewCount }}</span>
+          </div>
+          <div class="like">
+            <i class="fas fa-heart"></i>
+            <span>{{ fitlog.likeCount }}</span>
+          </div>
+        </div>
       </div>
 
       <!-- 댓글 영역 -->
@@ -131,13 +138,19 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps({
+  fitlog: {
+    type: Object,
+  },
+});
+</script>
 
 <style scoped>
 .proof-detail {
   max-width: 600px;
-  margin: 40px auto;
-  padding: 24px 20px;
+  margin: 20px auto 30px;
+  padding: 12px 20px 24px;
   background-color: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -167,12 +180,12 @@
 
 .user-info .title {
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 1.3rem;
   color: #222;
 }
 
 .user-info .user-name {
-  font-size: 0.75rem;
+  font-size: 1rem;
   color: #777;
   margin-top: 7px;
 }
@@ -218,7 +231,7 @@
 
 /* 인증글 본문 */
 .proof-content p {
-  font-size: 0.9rem;
+  font-size: 1rem;
   line-height: 1.6;
   color: #444;
   margin-bottom: 8px;
@@ -265,17 +278,29 @@
   color: #888;
 }
 
-.like {
+.stats {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
 }
 
-.like i {
+.stats .like,
+.stats .views {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  gap: 7px;
+}
+
+.stats .like {
   color: #ff6b6b;
   cursor: pointer;
 }
 
+.stats .views {
+  color: #868e96;
+}
 /* 댓글 섹션 */
 .comments-section {
   margin-top: 32px;

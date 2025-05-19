@@ -33,6 +33,25 @@
         ></textarea>
       </div>
 
+      <!-- 해시태그 입력 영역 -->
+      <div class="hashtag-input-box">
+        <div class="tags">
+          <span class="tag" v-for="(tag, index) in hashtags" :key="index">
+            {{ tag }}
+            <button class="remove-tag" type="button" @click="removeTag(index)">
+              <span>x</span>
+            </button>
+          </span>
+          <input
+            v-model="newTag"
+            @keydown.enter.prevent="addTag"
+            @keydown.space.prevent="addTag"
+            type="text"
+            placeholder="해시태그 입력 후 엔터(예: #러닝)"
+          />
+        </div>
+      </div>
+
       <!-- 운동 타입 -->
       <div class="form-group">
         <label for="type">운동 타입</label>
@@ -77,7 +96,24 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+
+const hashtags = ref([]);
+const newTag = ref("");
+
+function addTag() {
+  const tag = newTag.value.trim().replace(/^#/, "");
+  if (tag && !hashtags.value.includes(`#${tag}`)) {
+    hashtags.value.push(`#${tag}`);
+  }
+  newTag.value = "";
+}
+
+function removeTag(index) {
+  hashtags.value.splice(index, 1);
+}
+</script>
 
 <style scoped>
 /* 챌린지 게시글 작성 폼 css */
@@ -172,5 +208,49 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+/* 해쉬태그 입력 */
+.hashtag-input-box {
+  margin: 12px 0;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  border-radius: 8px;
+  min-height: 42px;
+}
+
+.tags input {
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
+  flex: 1;
+  min-width: 100px;
+}
+
+.tag {
+  background-color: #e6f4ea;
+  color: #2b8a3e;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.remove-tag {
+  background: none;
+  border: none;
+  color: #2b8a3e;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
 }
 </style>
