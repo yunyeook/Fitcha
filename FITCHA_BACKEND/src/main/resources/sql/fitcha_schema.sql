@@ -240,6 +240,7 @@ VALUES
 INSERT INTO challenge_comment (challenge_board_id, user_id, content, writer)
 VALUES
 (1, 'fituser2', '아침 스트레칭 하고 나니까 몸이 가벼워요!', '영희짱'),
+(1, 'fituser1', '많이 참여해주세요~', '길동이'),
 (2, 'fituser1', '만보 걷기 생각보다 힘드네요ㅋㅋ', '길동이'),
 (3, 'fituser2', '홈트 루틴 너무 좋아요, 추천합니다!', '영희짱'),
 (4, 'fituser1', '플랭크 진짜 어렵네요ㅠㅠ 그래도 해냈어요!', '길동이'),

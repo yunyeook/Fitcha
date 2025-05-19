@@ -50,6 +50,7 @@ public class ChallengeController {
 		List<Challenge> challenges = null;
 		try {
 			challenges = challengeService.getSearchChallenges(search);
+		
 			if (challenges == null || challenges.isEmpty()) {
 				return ResponseEntity.noContent().build();
 			}
