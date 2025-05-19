@@ -18,6 +18,36 @@ public class Proof {
 	private String writer; // 작성자
 	private int viewCount; // 조회수
 	private int likeCount; // 좋아요수
+	private String regDate; // 작성일
+	private List<ProofFile> files; // 인증글 파일 리스트
+	// 챌린지 글에서 설정한 운동 타입, 부위, 레벨 
+	private String exerciseType;  
+	private String bodyPart;
+	private String level;
+	
+	public String getExerciseType() {
+		return exerciseType;
+	}
+
+	public void setExerciseType(String exerciseType) {
+		this.exerciseType = exerciseType;
+	}
+
+	public String getBodyPart() {
+		return bodyPart;
+	}
+
+	public void setBodyPart(String bodyPart) {
+		this.bodyPart = bodyPart;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
 
 	public int getViewCount() {
 		return viewCount;
@@ -35,8 +65,6 @@ public class Proof {
 		this.likeCount = likeCount;
 	}
 
-	private String regDate; // 작성일
-	private List<ProofFile> files; // 인증글 파일 리스트
 
 	// getter / setter
 	public int getChallengeBoardId() {

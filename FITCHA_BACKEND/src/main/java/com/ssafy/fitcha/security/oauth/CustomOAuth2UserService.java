@@ -28,89 +28,74 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2UserService
-    implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+	
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private HttpServletRequest request;
+	private final RestOperations rest = new RestTemplate();
 
-    private final UserService userService;
-    private final HttpServletRequest request;
-    private final RestOperations rest = new RestTemplate();
+	@Override
+	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
-    @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest)
-            throws OAuth2AuthenticationException {
+		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        String registrationId = userRequest.getClientRegistration()
-                                           .getRegistrationId();
-        
-        System.out.println(registrationId+"찍히니?");
+		System.out.println(registrationId + "찍히니?");
 
-        
-        
-        // 로그인 후 돌아올 때 쓸 이름 속성("id" or "sub")
-        String userNameAttr = userRequest.getClientRegistration()
-            .getProviderDetails()
-            .getUserInfoEndpoint()
-            .getUserNameAttributeName();
+		// 로그인 후 돌아올 때 쓸 이름 속성("id" or "sub")
+		String userNameAttr = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint()
+				.getUserNameAttributeName();
 
-        Map<String,Object> attributes=null;
-        OAuth2UserInfo userInfo;
+		Map<String, Object> attributes = null;
+		OAuth2UserInfo userInfo;
 
-       if ("naver".equals(registrationId)) {
-            // 1) 토큰으로 헤더 설정
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(userRequest.getAccessToken().getTokenValue());
-            HttpEntity<Void> entity = new HttpEntity<>(headers);
+		if ("naver".equals(registrationId)) {
+			// 1) 토큰으로 헤더 설정
+			HttpHeaders headers = new HttpHeaders();
+			headers.setBearerAuth(userRequest.getAccessToken().getTokenValue());
+			HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-            // 2) 전체 JSON(Map) 호출
-            @SuppressWarnings("unchecked")
-            Map<String,Object> result = rest.exchange(
-                userRequest.getClientRegistration()
-                    .getProviderDetails()
-                    .getUserInfoEndpoint()
-                    .getUri(),
-                HttpMethod.GET, entity, Map.class
-            ).getBody();
+			// 2) 전체 JSON(Map) 호출
+			@SuppressWarnings("unchecked")
+			Map<String, Object> result = rest
+					.exchange(userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri(),
+							HttpMethod.GET, entity, Map.class)
+					.getBody();
 
-            // 3) inner "response" 맵만 꺼내서 새로운 변수에 담기
-            @SuppressWarnings("unchecked")
-            Map<String,Object> responseMap = (Map<String,Object>) result.get("response");
+			// 3) inner "response" 맵만 꺼내서 새로운 변수에 담기
+			@SuppressWarnings("unchecked")
+			Map<String, Object> responseMap = (Map<String, Object>) result.get("response");
 
-            // 4) responseMap 으로 userInfo 객체 생성
-            userInfo = new NaverOAuth2UserInfoImpl(responseMap);
+			// 4) responseMap 으로 userInfo 객체 생성
+			userInfo = new NaverOAuth2UserInfoImpl(responseMap);
 
-            // 5) DefaultOAuth2User 에 넘길 attributes 도 덮어쓰기
-            attributes = responseMap;
-            }else {
-            // ── 카카오·구글은 기본 서비스 사용 ──
-            OAuth2User delegate = new DefaultOAuth2UserService()
-                                        .loadUser(userRequest);
-            attributes = delegate.getAttributes();
+			// 5) DefaultOAuth2User 에 넘길 attributes 도 덮어쓰기
+			attributes = responseMap;
+		} else {
+			// ── 카카오·구글은 기본 서비스 사용 ──
+			OAuth2User delegate = new DefaultOAuth2UserService().loadUser(userRequest);
+			attributes = delegate.getAttributes();
 
-            if ("kakao".equals(registrationId)) {
-                userInfo = new KakaoOAuth2UserInfoImpl(attributes);
-            } else if ("google".equals(registrationId)) {
-                userInfo = new GoogleOAuth2UserInfoImpl(attributes);
-                System.out.println(registrationId);
-            } else {
-                throw new OAuth2AuthenticationException(
-                  "지원하지 않는 소셜 로그인: " + registrationId);
-            }
-        }
+			if ("kakao".equals(registrationId)) {
+				userInfo = new KakaoOAuth2UserInfoImpl(attributes);
+			} else if ("google".equals(registrationId)) {
+				userInfo = new GoogleOAuth2UserInfoImpl(attributes);
+				System.out.println(registrationId);
+			} else {
+				throw new OAuth2AuthenticationException("지원하지 않는 소셜 로그인: " + registrationId);
+			}
+		}
 
-        // ── 기존 DB 로그인/가입 분기 ──
-        User dbUser = new User();
-        dbUser.setUserId(userInfo.getEmail());
-        dbUser = userService.login(dbUser);
-        System.out.println(userInfo.getEmail());
-        request.getSession().setAttribute(
-            "signupStatus", dbUser == null ? "true" : "false"
-        );
+		// ── 기존 DB 로그인/가입 분기 ──
+		User dbUser = new User();
+		dbUser.setUserId(userInfo.getEmail());
+		dbUser = userService.login(dbUser);
+		System.out.println(userInfo.getEmail());
+		request.getSession().setAttribute("signupStatus", dbUser == null ? "true" : "false");
 
-        // ── 최종 사용자 객체 생성 ──
-        return new DefaultOAuth2User(
-            Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-            attributes,
-            userNameAttr
-        );
-    }
+		// ── 최종 사용자 객체 생성 ──
+		return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")), attributes,
+				userNameAttr);
+	}
 }

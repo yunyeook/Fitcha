@@ -21,7 +21,8 @@
 				</when>
 				<!-- 제목 + 내용 검색 -->
 				<when test="key == 'both'">
-					title LIKE concat('%', #{word}, '%') OR content LIKE concat('%',
+					title LIKE concat('%', #{word}, '%') OR content LIKE
+					concat('%',
 					#{word}, '%')
 				</when>
 				<!-- 작성자 검색 -->
@@ -47,9 +48,13 @@
 	<!-- 인증글 등록 -->
 	<insert id="insertProofBoard" parameterType="Proof"
 		useGeneratedKeys="true" keyProperty="proofBoardId">
-		INSERT INTO proof_board (challenge_board_id, user_id, title, content,
-		writer)
-		VALUES (#{challengeBoardId}, #{userId}, #{title}, #{content}, #{writer})
+		INSERT INTO proof_board
+		(challenge_board_id, user_id, title, content,
+		writer,
+		exercise_type,body_part,level)
+		VALUES (#{challengeBoardId}, #{userId},
+		#{title}, #{content}, #{writer},#{exerciseType}, #{bodyPart},
+		#{level})
 	</insert>
 
 	<!-- 인증글 수정 -->
@@ -57,7 +62,8 @@
 		UPDATE proof_board
 		SET title = #{title},
 		content = #{content}
-		WHERE proof_board_id = #{proofBoardId}
+		WHERE proof_board_id =
+		#{proofBoardId}
 	</update>
 
 	<!-- 인증글 삭제 -->
@@ -72,6 +78,7 @@
 		DELETE FROM
 		proof_board
 		WHERE challenge_board_id = #{challengeBoardId}
-		AND writer = #{writer}
+		AND writer =
+		#{writer}
 	</delete>
 </mapper>
