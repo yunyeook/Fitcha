@@ -1,42 +1,38 @@
 <template>
   <div class="challenge-detail__container">
-    <img
-      src="../../assets/images/run.jpg"
-      alt="러닝 이미지"
-      class="challenge-detail__image"
-    />
+    <img src="../../assets/images/run.jpg" alt="러닝 이미지" class="challenge-detail__image" />
 
     <div class="challenge-detail__content">
       <div class="challenge-detail__header">
-        <h2>🏃‍♂️ 30일 아침 러닝 챌린지</h2>
+        <h2>{{ challenge.title }}</h2>
         <div class="challenge-detail__options">
           <i class="fas fa-ellipsis-v"></i>
         </div>
       </div>
 
       <div class="challenge-detail__badges">
-        <span class="challenge-detail__badge running"
-          ><i class="fas fa-person-running"></i> 러닝</span
-        >
-        <span class="challenge-detail__badge location"
-          ><i class="fas fa-map-marker-alt"></i> 서울</span
-        >
+        <span class="challenge-detail__badge running">
+          <i class="fas fa-person-running"></i>
+          {{ challenge.exerciseType }}
+        </span>
+        <span class="challenge-detail__badge location">
+          <i class="fas fa-map-marker-alt"></i>
+          {{ challenge.bodyPart }}
+        </span>
 
-        <span class="challenge-detail__badge hard"
-          ><i class="fas fa-star"></i> 초보자 가능</span
-        >
+        <span class="challenge-detail__badge hard">
+          <i class="fas fa-star"></i>
+          {{ challenge.level }}
+        </span>
       </div>
 
-      <p class="challenge-detail__desc">
-        매일 아침 6시에 함께 러닝할 사람을 모집합니다. 서로 응원하며 건강한
-        하루를 시작해요!
-      </p>
+      <p class="challenge-detail__desc">{{ challenge.content }}</p>
 
       <div class="challenge-detail__progress">
         <div class="challenge-detail__progress-bar">
           <div class="challenge-detail__progress-fill" style="width: 50%"></div>
         </div>
-        <p class="challenge-detail__participants">참여: 5 / 10명</p>
+        <p class="challenge-detail__participants">참여:{{ challenge.participantCount }} / {{ challenge.totalParticipantCount }}명</p>
       </div>
 
       <div class="challenge-detail__avatars-section">
@@ -54,33 +50,57 @@
         </div>
       </div>
 
-      <div class="challenge-detail__actions">
-        <button class="challenge-detail__join-btn">
-          <i class="fas fa-sign-in-alt"></i> 참여하기
-        </button>
-        <button class="challenge-detail__certify-btn">
-          <a href="../views/registFitLog.html" style="text-decoration: none">
-            <i class="fas fa-pen"></i> 인증글 쓰기
-          </a>
-        </button>
-      </div>
+      <!-- 현재 참여중인경우 -->
+      <template v-if="challenge.participated">
+        <div class="challenge-detail__actions">
+          <button class="challenge-detail__join-btn">
+            <i class="fas fa-sign-in-alt"></i>
+            참여중
+          </button>
+          <button class="challenge-detail__certify-btn">
+            <a href="../views/registFitLog.html" style="text-decoration: none">
+              <i class="fas fa-pen"></i>
+              인증글 쓰기
+            </a>
+          </button>
+        </div>
+      </template>
+
+      <!-- 현재 참여중이 아닌경우 -->
+      <template v-else>
+        <template v-if="challenge.participantCount < challenge.totalParticipantCount">
+          <div class="challenge-detail__actions">
+            <button class="challenge-detail__join-btn">
+              <i class="fas fa-sign-in-alt"></i>
+              참여하기
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <div class="challenge-detail__actions">
+            <button class="challenge-detail__join-btn">
+              <i class="fas fa-sign-in-alt"></i>
+              정원초과
+            </button>
+          </div>
+        </template>
+      </template>
 
       <div class="challenge-detail__meta">
-        <span>2025년 4월 29일</span>
+        <span>{{ challenge.regDate }}</span>
         <div class="challenge-detail__meta-right">
-          <span>댓글 2개</span>
-          <span class="challenge-detail__likes"
-            ><i class="fas fa-heart"></i> 151명</span
-          >
+          <span>댓글 {{ commentsCount }}개</span>
+          <span class="challenge-detail__likes">
+            <i class="fas fa-heart"></i>
+            {{ challenge.likeCount }}명
+          </span>
         </div>
       </div>
 
       <!-- 탭 섹션 시작 -->
       <div class="challenge-detail__tab-section">
         <div class="challenge-detail__tabs">
-          <div class="challenge-detail__tab active" data-tab="comments">
-            댓글 보기
-          </div>
+          <div class="challenge-detail__tab active" data-tab="comments">댓글 보기</div>
           <div class="challenge-detail__tab" data-tab="certs">인증글 보기</div>
         </div>
 
@@ -95,9 +115,7 @@
             <div class="challenge-detail__comment-body">
               <div>
                 <div class="challenge-detail__comment-author">사용자1</div>
-                <div class="challenge-detail__comment-text">
-                  저도 참가할게요! 매일 아침 달리기 기대돼요.
-                </div>
+                <div class="challenge-detail__comment-text">저도 참가할게요! 매일 아침 달리기 기대돼요.</div>
                 <div class="challenge-detail__comment-date">2025년 5월 5일</div>
               </div>
               <div class="challenge-detail__options">
@@ -118,21 +136,24 @@
               </div>
               <span class="date">5월 10일</span>
             </div>
-            <div class="challenge-detail__cert-body">
-              오늘도 5km 완주했어요! 상쾌한 하루 시작 💪
-            </div>
+            <div class="challenge-detail__cert-body">오늘도 5km 완주했어요! 상쾌한 하루 시작 💪</div>
           </div>
         </div>
       </div>
 
       <a href="#" class="challenge-detail__back">
-        <i class="fas fa-arrow-left"></i> 뒤로 가기
+        <i class="fas fa-arrow-left"></i>
+        뒤로 가기
       </a>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+const props = defineProps({ challenge: Object });
+const commentsCount = ref(props.challenge.comments.length);
+</script>
 
 <style scoped>
 /* 챌린지 카드 디테일 디자인 */

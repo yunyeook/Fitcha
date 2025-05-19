@@ -16,10 +16,14 @@ import MyFitUpdateView from "@/views/MyFitUpdateView.vue";
 
 const routes = [
   // 패스 경로는 테스트 위해서 임시로 해놓은거니 알아서 수정 필요
-  { path: "/challenge", component: ChallengeFitView },
-  { path: "/challenge/detail", component: ChallengeFitDetailView },
-  { path: "/challenge/regist", component: ChallengeFitRegistView },
-  { path: "/challenge/update", component: ChallengeFitUpdateView },
+  { path: "/challengefit", name: "ChallengeFit", component: ChallengeFitView },
+  {
+    path: "/challengefit/:id",
+    name: "ChallengeFitDetail",
+    component: ChallengeFitDetailView,
+  },
+  { path: "/challengefit/regist", name: "ChallengeFitRegist", component: ChallengeFitRegistView },
+  { path: "/challengefit/update", name: "ChallengeFitUpdate", component: ChallengeFitUpdateView },
   { path: "/fittube", component: FitTubeView },
   { path: "/fitlog", component: FitLogView },
   { path: "/fitlog/detail", component: FitLogDetailView },

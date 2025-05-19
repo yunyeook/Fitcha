@@ -6,19 +6,23 @@
       <img src="../../assets/images/run.jpg" alt="" />
       <!-- 챌린지 카드 내용 -->
       <div class="card-content">
-        <h3>30일 아침 러닝 챌린지!!</h3>
+        <h3>{{ challenge.title }}!</h3>
         <div class="card-badges">
-          <span class="badge activity"><i class="fas fa-running"></i>러닝</span>
-          <span class="badge location"
-            ><i class="fas fa-map-marker-alt"></i> 서울</span
-          >
-          <span class="badge level"><i class="fas fa-star"></i> 초보</span>
+          <span class="badge activity">
+            <i class="fas fa-running"></i>
+            {{ challenge.exerciseType }}
+          </span>
+          <span class="badge location">
+            <i class="fas fa-map-marker-alt"></i>
+            {{ challenge.bodyPart }}
+          </span>
+          <span class="badge level">
+            <i class="fas fa-star"></i>
+            {{ challenge.level }}
+          </span>
         </div>
         <!-- 챌린지 게시글 내용 -->
-        <p class="card-desc">
-          매일 아침 6시에 함께 러닝할 사람 모집합니다. 시작은 힘들지만 끝은
-          상쾌해요! 서울 근방 러너 환영! 혼자 달리기 어렵다면 함께 해봐요 💪
-        </p>
+        <p class="card-desc">{{ challenge.content }}</p>
         <!-- 참여 인원 프로그래스바 -->
         <div class="progress-container">
           <div class="progress-bar">
@@ -26,18 +30,20 @@
           </div>
         </div>
 
-        <p class="participants">참여: 5 / 10명</p>
+        <p class="participants">참여:{{ challenge.participantCount }} / {{ challenge.totalParticipantCount }}명</p>
         <p class="date">
-          2025년 4월 29일 · <span class="comment-count">2</span>개의 댓글
+          {{ challenge.regDate }}
+          <span class="comment-count">{{ challenge.comments.length }}</span>
+          개의 댓글
         </p>
         <div class="card-footer">
           <div class="writer-info">
             <img src="../../assets/images/run.jpg" alt="" />
-            <span>게시글 작성자</span>
+            <span>{{ challenge.writer }}</span>
           </div>
           <div class="like">
             <i class="fas fa-heart"></i>
-            <span>12</span>
+            <span>{{ challenge.likeCount }}</span>
           </div>
         </div>
       </div>
@@ -45,7 +51,9 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps({ challenge: { type: Object } });
+</script>
 
 <style scoped>
 /* 챌린지 카드 디자인 */
