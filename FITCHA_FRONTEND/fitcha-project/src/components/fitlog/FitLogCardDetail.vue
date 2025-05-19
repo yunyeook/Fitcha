@@ -3,14 +3,19 @@
     <div class="proof-detail">
       <!-- 상단 작성자 정보 -->
       <div class="header">
-        <img
-          class="user-profile-image"
-          src="../assets/images/user1.jpg"
-          alt="작성자 프로필"
-        />
-        <div class="user-info">
-          <span class="title">{{ fitlog.title }}</span>
-          <span class="user-name">{{ fitlog.writer }}</span>
+        <div class="userAndTitle">
+          <img
+            class="user-profile-image"
+            src="../assets/images/user1.jpg"
+            alt="작성자 프로필"
+          />
+          <div class="user-info">
+            <span class="title">{{ fitlog.title }}</span>
+            <span class="user-name">{{ fitlog.writer }}</span>
+          </div>
+        </div>
+        <div class="proof-menu" @click="openModal">
+          <i class="fas fa-ellipsis-v"></i>
         </div>
       </div>
 
@@ -66,7 +71,7 @@
           <div class="comment-body">
             <div class="comment-header">
               <span class="comment-author">사용자1</span>
-              <div class="comment-menu">
+              <div class="comment-menu" @click="openModal">
                 <i class="fas fa-ellipsis-v"></i>
               </div>
             </div>
@@ -76,62 +81,27 @@
             <div class="comment-date">2025년 5월 5일</div>
           </div>
         </div>
-        <div class="comment-card">
-          <img
-            class="comment-profile"
-            src="../assets/images/user1.jpg"
-            alt="프로필"
-          />
-          <div class="comment-body">
-            <div class="comment-header">
-              <span class="comment-author">사용자1</span>
-              <div class="comment-menu">
-                <i class="fas fa-ellipsis-v"></i>
-              </div>
-            </div>
-            <div class="comment-text">
-              저도 참가할게요! 매일 아침 달리기 기대돼요.
-            </div>
-            <div class="comment-date">2025년 5월 5일</div>
-          </div>
+      </div>
+      <!-- 댓글 수정/삭제 모달 -->
+      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+        <div class="modal-box">
+          <button class="modal-close-button" @click="closeModal">×</button>
+          <div class="modal-title">댓글 관리</div>
+          <button class="modal-button" @click="editComment">수정하기</button>
+          <button class="modal-button delete" @click="deleteComment">
+            삭제하기
+          </button>
         </div>
-        <div class="comment-card">
-          <img
-            class="comment-profile"
-            src="../assets/images/user1.jpg"
-            alt="프로필"
-          />
-          <div class="comment-body">
-            <div class="comment-header">
-              <span class="comment-author">사용자1</span>
-              <div class="comment-menu">
-                <i class="fas fa-ellipsis-v"></i>
-              </div>
-            </div>
-            <div class="comment-text">
-              저도 참가할게요! 매일 아침 달리기 기대돼요.
-            </div>
-            <div class="comment-date">2025년 5월 5일</div>
-          </div>
-        </div>
-        <div class="comment-card">
-          <img
-            class="comment-profile"
-            src="../assets/images/user1.jpg"
-            alt="프로필"
-          />
-          <div class="comment-body">
-            <div class="comment-header">
-              <span class="comment-author">사용자1</span>
-              <div class="comment-menu">
-                <i class="fas fa-ellipsis-v"></i>
-              </div>
-            </div>
-            <div class="comment-text">
-              저도 참가할게요! 매일 아침 달리기 기대돼요.
-            </div>
-            <div class="comment-date">2025년 5월 5일</div>
-          </div>
+      </div>
+      <!-- 인증글 수정/삭제 모달 -->
+      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+        <div class="modal-box">
+          <button class="modal-close-button" @click="closeModal">×</button>
+          <div class="modal-title">인증글 관리</div>
+          <button class="modal-button" @click="editProof">수정하기</button>
+          <button class="modal-button delete" @click="deleteProof">
+            삭제하기
+          </button>
         </div>
       </div>
     </div>
@@ -144,6 +114,38 @@ const props = defineProps({
     type: Object,
   },
 });
+
+// 댓글 수정 삭제 모달
+import { ref } from "vue";
+
+const showModal = ref(false);
+
+const openModal = () => {
+  showModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+};
+
+const editComment = () => {
+  alert("수정 기능은 여기에 구현하면 됨.");
+  closeModal();
+};
+
+const deleteComment = () => {
+  alert("삭제 기능은 여기에 구현.");
+  closeModal();
+};
+const editProof = () => {
+  alert("수정 기능은 여기에 구현하면 됨.");
+  closeModal();
+};
+
+const deleteProof = () => {
+  alert("삭제 기능은 여기에 구현.");
+  closeModal();
+};
 </script>
 
 <style scoped>
@@ -162,7 +164,14 @@ const props = defineProps({
 .header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 12px;
+  gap: 10px;
+}
+
+.userAndTitle {
+  display: flex;
+  align-items: center;
   gap: 10px;
 }
 
@@ -188,6 +197,16 @@ const props = defineProps({
   font-size: 1rem;
   color: #777;
   margin-top: 7px;
+}
+
+.proof-menu {
+  font-size: 1.3rem;
+  width: 20px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: start;
+  justify-content: end;
 }
 
 /* 인증 이미지 */
@@ -395,5 +414,93 @@ const props = defineProps({
 .comment-date {
   font-size: 0.75rem;
   color: #999;
+}
+
+/* 모달 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  position: relative;
+  background: #fff;
+  width: 280px;
+  padding: 24px 20px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  animation: fadeIn 0.25s ease;
+}
+
+.modal-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+  color: #333;
+}
+
+.modal-button {
+  font-size: 0.95rem;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: #f1f3f5;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.modal-button:hover {
+  background-color: #e9ecef;
+}
+
+.modal-button.delete {
+  background-color: #ffe3e3;
+  color: #e03131;
+}
+
+.modal-button.delete:hover {
+  background-color: #ffc9c9;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close-button:hover {
+  color: #222;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
