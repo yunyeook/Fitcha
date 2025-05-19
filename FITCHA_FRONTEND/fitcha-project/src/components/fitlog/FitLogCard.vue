@@ -1,51 +1,68 @@
 <template>
   <!-- 인증글 게시글 카드 구조 -->
-  <div class="proof-card">
-    <a style="text-decoration: none" href="../views/fitLogDetail.html">
-      <!-- 헤더 작성자 정보 -->
-      <div class="header">
-        <img
-          class="user-profile-image"
-          src="../assets/images/user1.jpg"
-          alt="작성자 프로필"
-        />
-        <div class="user-info">
-          <span class="title">아침 5K 챌린지</span>
-          <span class="user-name">러너러너러너</span>
+  <router-link class="link-detail" :to="`fitlog/${fitlog.proofBoardId}`">
+    <div class="proof-card">
+      <a style="text-decoration: none" href="../views/fitLogDetail.html">
+        <!-- 헤더 작성자 정보 -->
+        <div class="header">
+          <img
+            class="user-profile-image"
+            src="../assets/images/user1.jpg"
+            alt="작성자 프로필"
+          />
+          <div class="user-info">
+            <span class="title">{{ fitlog.title }}</span>
+            <span class="user-name">{{ fitlog.writer }}</span>
+          </div>
         </div>
-      </div>
 
-      <!-- 운동 인증 이미지 -->
-      <div class="main-image">
-        <img src="../../assets/images/run.jpg" alt="운동 인증 사진" />
-      </div>
+        <!-- 운동 인증 이미지 -->
+        <div class="main-image">
+          <img src="../../assets/images/run.jpg" alt="운동 인증 사진" />
+        </div>
 
-      <!-- 운동 정보 뱃지 -->
-      <div class="badges">
-        <span class="badge distance">러닝</span>
-        <span class="badge time">서울</span>
-        <span class="badge kcal">🔥 초보</span>
-      </div>
+        <!-- 운동 정보 뱃지 -->
+        <div class="badges">
+          <span class="badge distance">{{ fitlog.exerciseType }}</span>
+          <span class="badge time">{{ fitlog.bodyPart }}</span>
+          <span class="badge kcal">🔥 {{ fitlog.level }}</span>
+        </div>
 
-      <!-- 내용 -->
-      <div class="content">
-        오늘도 미션 완료! 새벽 공기가 상쾌해서 오히려 좋았어요. 점점 몸이
-        가벼워지는 느낌 💪
-      </div>
-      <div class="hashtag">#5일차성공 #아침러닝</div>
+        <!-- 내용 -->
+        <div class="content">
+          {{ fitlog.content }}
+        </div>
+        <div class="hashtag">#5일차성공 #아침러닝</div>
 
-      <!-- 하단 푸터 -->
-      <div class="footer">
-        <div class="date">2025.05.13</div>
-        <div class="heart"><i class="fas fa-heart"></i> <span>12</span></div>
-      </div>
-    </a>
-  </div>
+        <!-- 하단 푸터 -->
+        <div class="footer">
+          <div class="date">{{ fitlog.regDate }}</div>
+          <div class="stats">
+            <div class="views">
+              <i class="fas fa-eye"></i> <span>{{ fitlog.viewCount }}</span>
+            </div>
+            <div class="heart">
+              <i class="fas fa-heart"></i> <span>{{ fitlog.likeCount }}</span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </router-link>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps({
+  fitlog: {
+    type: Object,
+  },
+});
+</script>
 
 <style scoped>
+.link-detail {
+  text-decoration: none;
+}
 .proof-card {
   width: 280px;
   border-radius: 16px;
@@ -182,5 +199,39 @@
 .footer .date {
   font-size: 0.75rem;
   color: #999;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-top: 1px solid #eee;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.footer .stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer .heart,
+.footer .views {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.footer .heart i {
+  color: #ff6b6b;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.footer .views i {
+  color: #868e96;
+  font-size: 1rem;
 }
 </style>
