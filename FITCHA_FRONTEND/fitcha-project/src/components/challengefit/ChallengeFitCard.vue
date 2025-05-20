@@ -6,7 +6,7 @@
       <img src="../../assets/images/run.jpg" alt="" />
       <!-- 챌린지 카드 내용 -->
       <div class="card-content">
-        <h3>{{ challenge.title }}!</h3>
+        <h3>{{ challenge.title }}</h3>
         <div class="card-badges">
           <span class="badge activity">
             <i class="fas fa-running"></i>

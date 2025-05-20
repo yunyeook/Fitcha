@@ -9,34 +9,34 @@
     <!-- 다른 페이지로 이동하는 nav바 -->
     <ul>
       <li>
-        <a href="../views/home.html">
+        <router-link to="/home">
           <i class="fas fa-home"></i>
           Home
-        </a>
+        </router-link>
       </li>
       <li>
-        <a @click="ChallengeFitView">
+        <router-link to="/challengefit">
           <i class="fas fa-fire"></i>
           ChallengeFit
-        </a>
+        </router-link>
       </li>
       <li>
-        <a @click="FitTubeView">
+        <router-link to="/fittube">
           <i class="fab fa-youtube"></i>
           FitTube
-        </a>
+        </router-link>
       </li>
       <li>
-        <a href="../views/fitLog.html">
+        <router-link to="/fitlog">
           <i class="fas fa-users"></i>
           Fitlog
-        </a>
+        </router-link>
       </li>
       <li>
-        <a href="../views/myFit.html">
+        <router-link to="/myfit">
           <i class="fas fa-user-circle"></i>
           MyFit
-        </a>
+        </router-link>
       </li>
       <li>
         <a href="#">
@@ -56,21 +56,7 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from "vue";
-import axios from "axios";
-import { useRoute, useRouter } from "vue-router";
-
-const route = useRoute();
-const router = useRouter();
-
-function ChallengeFitView() {
-  router.push({ name: "ChallengeFit" });
-}
-function FitTubeView() {
-  router.push({ name: "FitTube" });
-}
-</script>
+<script setup></script>
 
 <style scoped>
 /* 전체 공통 레이아웃 중 왼쪽 사이드바 css */
