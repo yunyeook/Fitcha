@@ -91,4 +91,17 @@
 			(#{proofBoardId}, #{tag})
 		</foreach>
 	</insert>
+	<!-- 인증글의 해쉬태그 가져오 -->
+	<select id="selectHashTagsByProofBoardIds" resultType="map"
+		parameterType="list">
+		SELECT proof_board_id, hashtag
+		FROM proof_board_hashtag
+		WHERE proof_board_id IN
+		<foreach collection="list" item="id" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</select>
+
+
 </mapper>

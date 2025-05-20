@@ -81,7 +81,7 @@ public class ProofController {
 			throws Exception {
 
 		if (proofService.registProof(proof, files))
-			return ResponseEntity.ok(proof.getChallengeBoardId());
+			return ResponseEntity.ok(proof.getProofBoardId());
 
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
@@ -111,6 +111,10 @@ public class ProofController {
 		return ResponseEntity.badRequest().build();
 
 	}
+
+	
+	
+	
 
 	// ---댓글-------------------------------------------------------------------------------
 

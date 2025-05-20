@@ -28,4 +28,8 @@ public interface ProofDao {
 
 	// 인증글에 있는 해쉬 태그 별도 테이블에 저장
 	int insertProofBoardHashtags(Map<String, Object> map);
+	
+	// 인증글에 해당하는 해쉬태그 가져오
+	List<Map<String, Object>> selectHashTagsByProofBoardIds(List<Integer> proofBoardIds);
+
 }
