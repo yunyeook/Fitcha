@@ -182,7 +182,6 @@ function removeTag(index) {
 }
 
 onMounted(async () => {
-  console.log(challengeBoardId.value);
   const { data } = await axios.get(
     `${BASE_URL}/challenge/${challengeBoardId.value}`,
     {

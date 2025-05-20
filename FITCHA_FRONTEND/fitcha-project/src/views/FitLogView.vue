@@ -27,6 +27,7 @@ const fitlogs = ref([]);
 onMounted(async () => {
   const { data } = await axios.get(BASE_URL);
   fitlogs.value = data;
+  console.log(fitlogs.value);
 });
 </script>
 

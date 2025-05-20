@@ -111,7 +111,11 @@
           <button class="modal-close-button" @click="closeProofModal">×</button>
           <div class="modal-title">인증글 관리</div>
           <button class="modal-button" @click="editProof">수정하기</button>
-          <button class="modal-button delete" @click="deleteProof">
+          <button
+            class="modal-button delete"
+            type="button"
+            @click="deleteProof"
+          >
             삭제하기
           </button>
         </div>
@@ -127,12 +131,16 @@ const props = defineProps({
   },
 });
 
-// 댓글 수정 삭제 모달
+import axios from "axios";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const showCommentModal = ref(false);
 const showProofModal = ref(false);
+const BASE_URL = "http://localhost:8080/proof";
 
+// 댓글 수정 삭제 모달
 const openCommentModal = () => {
   showCommentModal.value = true;
 };
@@ -150,21 +158,25 @@ const closeProofModal = () => {
 
 const editComment = () => {
   alert("수정 기능은 여기에 구현하면 됨.");
-  closeModal();
+  closeCommentModal();
 };
 
-const deleteComment = () => {
-  alert("삭제 기능은 여기에 구현.");
-  closeModal();
+const deleteComment = async () => {
+  closeCommentModal();
 };
 const editProof = () => {
   alert("수정 기능은 여기에 구현하면 됨.");
-  closeModal();
+  closeProofModal();
 };
 
-const deleteProof = () => {
-  alert("삭제 기능은 여기에 구현.");
-  closeModal();
+const deleteProof = async () => {
+  try {
+    await axios.delete(`${BASE_URL}/${props.fitlog.proofBoardId}`);
+    closeProofModal();
+    router.push(`/fitlog`);
+  } catch (error) {
+    console.error("인증글 삭제 중 오류 발생:", error);
+  }
 };
 </script>
 
