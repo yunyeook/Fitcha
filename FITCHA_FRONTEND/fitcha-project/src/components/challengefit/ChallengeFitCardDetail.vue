@@ -1,11 +1,15 @@
 <template>
   <div class="challenge-detail__container">
-    <img src="../../assets/images/run.jpg" alt="러닝 이미지" class="challenge-detail__image" />
+    <img
+      src="../../assets/images/run.jpg"
+      alt="러닝 이미지"
+      class="challenge-detail__image"
+    />
 
     <div class="challenge-detail__content">
       <div class="challenge-detail__header">
         <h2>{{ challenge.title }}</h2>
-        <div class="challenge-detail__options">
+        <div class="challenge-detail__options" @click="openChallengeFitModal">
           <i class="fas fa-ellipsis-v"></i>
         </div>
       </div>
@@ -32,7 +36,10 @@
         <div class="challenge-detail__progress-bar">
           <div class="challenge-detail__progress-fill" style="width: 50%"></div>
         </div>
-        <p class="challenge-detail__participants">참여:{{ challenge.participantCount }} / {{ challenge.totalParticipantCount }}명</p>
+        <p class="challenge-detail__participants">
+          참여:{{ challenge.participantCount }} /
+          {{ challenge.totalParticipantCount }}명
+        </p>
       </div>
 
       <div class="challenge-detail__avatars-section">
@@ -68,7 +75,9 @@
 
       <!-- 현재 참여중이 아닌경우 -->
       <template v-else>
-        <template v-if="challenge.participantCount < challenge.totalParticipantCount">
+        <template
+          v-if="challenge.participantCount < challenge.totalParticipantCount"
+        >
           <div class="challenge-detail__actions">
             <button class="challenge-detail__join-btn">
               <i class="fas fa-sign-in-alt"></i>
@@ -89,7 +98,7 @@
       <div class="challenge-detail__meta">
         <span>{{ challenge.regDate }}</span>
         <div class="challenge-detail__meta-right">
-          <span>댓글 {{ commentsCount }}개</span>
+          <!-- <span>댓글 {{ commentsCount }}개</span> -->
           <span class="challenge-detail__likes">
             <i class="fas fa-heart"></i>
             {{ challenge.likeCount }}명
@@ -100,7 +109,9 @@
       <!-- 탭 섹션 시작 -->
       <div class="challenge-detail__tab-section">
         <div class="challenge-detail__tabs">
-          <div class="challenge-detail__tab active" data-tab="comments">댓글 보기</div>
+          <div class="challenge-detail__tab active" data-tab="comments">
+            댓글 보기
+          </div>
           <div class="challenge-detail__tab" data-tab="certs">인증글 보기</div>
         </div>
 
@@ -115,10 +126,12 @@
             <div class="challenge-detail__comment-body">
               <div>
                 <div class="challenge-detail__comment-author">사용자1</div>
-                <div class="challenge-detail__comment-text">저도 참가할게요! 매일 아침 달리기 기대돼요.</div>
+                <div class="challenge-detail__comment-text">
+                  저도 참가할게요! 매일 아침 달리기 기대돼요.
+                </div>
                 <div class="challenge-detail__comment-date">2025년 5월 5일</div>
               </div>
-              <div class="challenge-detail__options">
+              <div class="challenge-detail__options" @click="openCommentModal">
                 <i class="fas fa-ellipsis-v"></i>
               </div>
             </div>
@@ -136,7 +149,9 @@
               </div>
               <span class="date">5월 10일</span>
             </div>
-            <div class="challenge-detail__cert-body">오늘도 5km 완주했어요! 상쾌한 하루 시작 💪</div>
+            <div class="challenge-detail__cert-body">
+              오늘도 5km 완주했어요! 상쾌한 하루 시작 💪
+            </div>
           </div>
         </div>
       </div>
@@ -147,12 +162,83 @@
       </a>
     </div>
   </div>
+
+  <!-- 댓글 수정/삭제 모달 -->
+  <div
+    v-if="showCommentModal"
+    class="modal-overlay"
+    @click.self="closeCommentModal"
+  >
+    <div class="modal-box">
+      <button class="modal-close-button" @click="closeCommentModal">×</button>
+      <div class="modal-title">댓글 관리</div>
+      <button class="modal-button" @click="editComment">수정하기</button>
+      <button class="modal-button delete" @click="deleteComment">
+        삭제하기
+      </button>
+    </div>
+  </div>
+  <!--  수정/삭제 모달 -->
+  <div
+    v-if="showChallengeFitModal"
+    class="modal-overlay"
+    @click.self="closeChallengeFitModal"
+  >
+    <div class="modal-box">
+      <button class="modal-close-button" @click="closeChallengeFitModal">
+        ×
+      </button>
+      <div class="modal-title">첼린지 관리</div>
+      <button class="modal-button" @click="editChallengeFit">수정하기</button>
+      <button class="modal-button delete" @click="deleteChallengeFit">
+        삭제하기
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 const props = defineProps({ challenge: Object });
-const commentsCount = ref(props.challenge.comments.length);
+// const commentsCount = ref(props.challenge.comments.length);
+
+const showCommentModal = ref(false);
+const showChallengeFitModal = ref(false);
+
+const openChallengeFitModal = () => {
+  showChallengeFitModal.value = true;
+};
+
+const closeChallengeFitModal = () => {
+  showChallengeFitModal.value = false;
+};
+
+const openCommentModal = () => {
+  showCommentModal.value = true;
+};
+
+const closeCommentModal = () => {
+  showCommentModal.value = false;
+};
+
+const editComment = () => {
+  alert("수정 기능은 여기에 구현하면 됨.");
+  closeModal();
+};
+
+const deleteComment = () => {
+  alert("삭제 기능은 여기에 구현.");
+  closeModal();
+};
+const editChallengeFit = () => {
+  alert("수정 기능은 여기에 구현하면 됨.");
+  closeModal();
+};
+
+const deleteChallengeFit = () => {
+  alert("삭제 기능은 여기에 구현.");
+  closeModal();
+};
 </script>
 
 <style scoped>
@@ -187,6 +273,13 @@ const commentsCount = ref(props.challenge.comments.length);
 .challenge-detail__header h2 {
   margin: 0px;
   font-size: 1.3rem;
+}
+
+.challenge-detail__options {
+  cursor: pointer;
+  width: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .challenge-detail__badges {
@@ -500,5 +593,93 @@ const commentsCount = ref(props.challenge.comments.length);
   text-decoration: none;
   color: #444;
   gap: 6px;
+}
+
+/* 모달 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  position: relative;
+  background: #fff;
+  width: 280px;
+  padding: 24px 20px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  animation: fadeIn 0.25s ease;
+}
+
+.modal-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+  color: #333;
+}
+
+.modal-button {
+  font-size: 0.95rem;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: #f1f3f5;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.modal-button:hover {
+  background-color: #e9ecef;
+}
+
+.modal-button.delete {
+  background-color: #ffe3e3;
+  color: #e03131;
+}
+
+.modal-button.delete:hover {
+  background-color: #ffc9c9;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close-button:hover {
+  color: #222;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

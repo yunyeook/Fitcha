@@ -14,7 +14,7 @@
             <span class="user-name">{{ fitlog.writer }}</span>
           </div>
         </div>
-        <div class="proof-menu" @click="openModal">
+        <div class="proof-menu" @click="openProofModal">
           <i class="fas fa-ellipsis-v"></i>
         </div>
       </div>
@@ -71,7 +71,7 @@
           <div class="comment-body">
             <div class="comment-header">
               <span class="comment-author">사용자1</span>
-              <div class="comment-menu" @click="openModal">
+              <div class="comment-menu" @click="openCommentModal">
                 <i class="fas fa-ellipsis-v"></i>
               </div>
             </div>
@@ -83,9 +83,15 @@
         </div>
       </div>
       <!-- 댓글 수정/삭제 모달 -->
-      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+      <div
+        v-if="showCommentModal"
+        class="modal-overlay"
+        @click.self="openCommentModal"
+      >
         <div class="modal-box">
-          <button class="modal-close-button" @click="closeModal">×</button>
+          <button class="modal-close-button" @click="closeCommentModal">
+            ×
+          </button>
           <div class="modal-title">댓글 관리</div>
           <button class="modal-button" @click="editComment">수정하기</button>
           <button class="modal-button delete" @click="deleteComment">
@@ -94,9 +100,13 @@
         </div>
       </div>
       <!-- 인증글 수정/삭제 모달 -->
-      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+      <div
+        v-if="showProofModal"
+        class="modal-overlay"
+        @click.self="closeProofModal"
+      >
         <div class="modal-box">
-          <button class="modal-close-button" @click="closeModal">×</button>
+          <button class="modal-close-button" @click="closeProofModal">×</button>
           <div class="modal-title">인증글 관리</div>
           <button class="modal-button" @click="editProof">수정하기</button>
           <button class="modal-button delete" @click="deleteProof">
@@ -118,14 +128,22 @@ const props = defineProps({
 // 댓글 수정 삭제 모달
 import { ref } from "vue";
 
-const showModal = ref(false);
+const showCommentModal = ref(false);
+const showProofModal = ref(false);
 
-const openModal = () => {
-  showModal.value = true;
+const openCommentModal = () => {
+  showCommentModal.value = true;
 };
 
-const closeModal = () => {
-  showModal.value = false;
+const closeCommentModal = () => {
+  showCommentModal.value = false;
+};
+const openProofModal = () => {
+  showProofModal.value = true;
+};
+
+const closeProofModal = () => {
+  showProofModal.value = false;
 };
 
 const editComment = () => {
