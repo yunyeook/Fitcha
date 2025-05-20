@@ -68,6 +68,7 @@ public class UserController {
 	@Operation(summary="사용자 회원가입(등록)")
 	@PostMapping("/signup")
 	public ResponseEntity<Void> registUser(@RequestBody User user) {
+		System.out.println("프론트에서 요청된 : " +user);
 
 		if (userService.registUser(user)) {
 
