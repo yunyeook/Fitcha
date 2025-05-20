@@ -39,9 +39,11 @@
 
         <div class="content-bottom">
           <div class="hashtags">#5일차성공 #아침러닝 #챌린지인증</div>
-          <a class="go-challenge" href="challengeFitDetail.html"
-            >참여한 챌린지 보기 &rarr;</a
-          >
+          <router-link
+            class="go-challenge"
+            :to="`/challengefit/${fitlog.challengeBoardId}`"
+            >참여한 챌린지 보기 &rarr;
+          </router-link>
         </div>
       </div>
 
