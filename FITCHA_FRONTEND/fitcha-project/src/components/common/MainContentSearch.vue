@@ -93,7 +93,7 @@
 }
 
 .select-wrapper::after {
-  content: "▼";
+  content: '▼';
   position: absolute;
   top: 50%;
   right: 7px;

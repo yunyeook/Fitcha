@@ -20,7 +20,7 @@
 	</select>
 	
 	<!-- 챌린지 댓글 등록 -->
-	<insert id="insertChallengeComment" parameterType="comment">
+	<insert id="insertChallengeComment" parameterType="comment" >
 		INSERT INTO challenge_comment (challenge_board_id, user_id, content, writer)
              VALUES (#{boardId},#{userId},#{content},#{writer})
 	</insert>

@@ -57,18 +57,18 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import axios from "axios";
-import { useRoute, useRouter } from "vue-router";
+import { ref } from 'vue';
+import axios from 'axios';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
 
 function ChallengeFitView() {
-  router.push({ name: "ChallengeFit" });
+  router.push({ name: 'ChallengeFit' });
 }
 function FitTubeView() {
-  router.push({ name: "FitTube" });
+  router.push({ name: 'FitTube' });
 }
 </script>
 

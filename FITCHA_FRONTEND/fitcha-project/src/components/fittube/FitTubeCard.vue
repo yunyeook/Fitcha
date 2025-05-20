@@ -6,11 +6,7 @@
       <span class="ytc-duration">12:34</span>
     </div>
     <div class="ytc-info">
-      <img
-        src="../assets/images/profile.jpg"
-        alt="채널 프로필"
-        class="ytc-profile"
-      />
+      <img src="../assets/images/profile.jpg" alt="채널 프로필" class="ytc-profile" />
       <div class="ytc-text">
         <div class="ytc-title">이것은 유튜브 영상 제목입니다</div>
         <div class="ytc-channel">채널명</div>

@@ -11,7 +11,7 @@ public interface CommentService {
 	List<Comment> getChallengeCommentList(int challengeBoardId);
 
 	// 챌린지 댓글 등록
-	boolean registChallengeComment(int challengeBoardId, Comment comment);
+	boolean registChallengeComment( Comment comment);
 
 	// 챌린지 댓글 삭제
 	boolean deleteChallengeComment(int challengeBoardId, int challengeCommentId);
