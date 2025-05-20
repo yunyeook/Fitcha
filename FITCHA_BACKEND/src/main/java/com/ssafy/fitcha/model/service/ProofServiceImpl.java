@@ -1,6 +1,8 @@
 package com.ssafy.fitcha.model.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,13 +38,25 @@ public class ProofServiceImpl implements ProofService {
 	// 인증글 등록
 	@Override
 	public boolean registProof(Proof proof, List<MultipartFile> files) throws Exception {
+		// 인증글 저장
+		boolean isRegisted = (1 == proofDao.insertProofBoard(proof));
+		int proofBoardId = proof.getProofBoardId();
+
 		fileService.insertProofFile(files, proof.getProofBoardId(), proof.getWriter());
-		return 1 == proofDao.insertProofBoard(proof);
+
+		// 해쉬태그 저장
+		Map<String, Object> params = new HashMap<>();
+		params.put("proofBoardId", proofBoardId);
+		params.put("hashTags", proof.getHashTags());
+		proofDao.insertProofBoardHashtags(params);
+
+		return isRegisted;
 	}
 
 	// 인증글 수정
 	@Override
-	public boolean updateProof(Proof proof, List<MultipartFile> files, List<Integer> deleteProofFileIds) throws Exception {
+	public boolean updateProof(Proof proof, List<MultipartFile> files, List<Integer> deleteProofFileIds)
+			throws Exception {
 		boolean isUpdated = (1 == proofDao.updateProofBoard(proof));
 		// 인증글 파일 삭제
 		if (deleteProofFileIds != null && deleteProofFileIds.size() > 0) {
