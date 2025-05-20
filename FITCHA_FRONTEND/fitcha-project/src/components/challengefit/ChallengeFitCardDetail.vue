@@ -1,10 +1,6 @@
 <template>
   <div class="challenge-detail__container">
-    <img
-      src="../../assets/images/run.jpg"
-      alt="러닝 이미지"
-      class="challenge-detail__image"
-    />
+    <img :src="imgUrl" alt="러닝 이미지" class="challenge-detail__image" />
 
     <div class="challenge-detail__content">
       <div class="challenge-detail__header">
@@ -79,7 +75,10 @@
           v-if="challenge.participantCount < challenge.totalParticipantCount"
         >
           <div class="challenge-detail__actions">
-            <button class="challenge-detail__join-btn">
+            <button
+              class="challenge-detail__join-btn"
+              @click="requestChallengeParticipate"
+            >
               <i class="fas fa-sign-in-alt"></i>
               참여하기
             </button>
@@ -118,25 +117,40 @@
         <!-- 댓글 탭 -->
         <div class="challenge-detail__tab-content active" id="comments">
           <div class="challenge-detail__comment-form">
-            <input type="text" placeholder="댓글을 남기세요..." />
-            <button>작성</button>
+            <input
+              type="text"
+              placeholder="댓글을 남기세요..."
+              v-model="comment"
+            />
+            <button @click="requestChallengeCommentRegist">작성</button>
           </div>
-          <div class="challenge-detail__comment">
+          <div
+            class="challenge-detail__comment"
+            v-for="comment in challenge.comments"
+            :key="comment.commentId"
+          >
             <img src="https://via.placeholder.com/36/FF5733" />
             <div class="challenge-detail__comment-body">
               <div>
-                <div class="challenge-detail__comment-author">사용자1</div>
-                <div class="challenge-detail__comment-text">
-                  저도 참가할게요! 매일 아침 달리기 기대돼요.
+                <div class="challenge-detail__comment-author">
+                  {{ comment.writer }}
                 </div>
-                <div class="challenge-detail__comment-date">2025년 5월 5일</div>
+                <div class="challenge-detail__comment-text">
+                  {{ comment.content }}
+                </div>
+                <div class="challenge-detail__comment-date">
+                  {{ comment.regDate }}
+                </div>
               </div>
+
+              <!--'길동이' -> 세션에서 사용자 닉네임가져오기-->
+              <!-- <template v-if="comment.writer === '길동이'"> -->
               <div class="challenge-detail__options" @click="openCommentModal">
                 <i class="fas fa-ellipsis-v"></i>
               </div>
+              <!-- </template> -->
             </div>
           </div>
-          <!-- 추가 댓글... -->
         </div>
 
         <!-- 인증글 탭 -->
@@ -198,7 +212,78 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import axios from "axios";
+import { useRoute, useRouter } from "vue-router";
+const BASE_URL = "http://localhost:8080/challenge";
+const IMG_BASE_URL = "http://localhost:8080/";
+const imgUrl = ref("");
+const route = useRoute();
+const router = useRouter();
+const isViewCounted = ref(route.query.isViewCounted);
+const challengeBoardId = ref(route.params.id);
+const challenge = ref({});
+const updateCommwzentId = ref(-1);
+
+const commentsCount = computed(() => {
+  const comments = challenge.value.comments;
+  return Array.isArray(comments) ? comments.length : 0;
+});
+
+async function requestChallengeDetail() {
+  const { data } = await axios.get(`${BASE_URL}/${challengeBoardId.value}`, {
+    params: {
+      // user:
+      isViewCounted: isViewCounted.value,
+    },
+  });
+  challenge.value = data;
+  imgUrl.value = IMG_BASE_URL + data.challengeFiles[0].fileUploadName;
+  isViewCounted.value = !isViewCounted.value;
+}
+requestChallengeDetail();
+
+const comment = ref("");
+
+//댓글등록.
+async function requestChallengeCommentRegist() {
+  const { status } = await axios.post(
+    `${BASE_URL}/${challengeBoardId.value}/comment`,
+    {
+      boardId: challengeBoardId.value,
+      userId: "fituser1", // 세션에서 가져오기
+      content: comment.value,
+      writer: "길동이", //세션에서 가져오기
+    }
+  );
+  comment.value = "";
+  //성공시 다시 전체 댓글 목록 불러오기
+  if (status === axios.HttpStatusCode.Created) {
+    const { data } = await axios.get(
+      `${BASE_URL}/${challengeBoardId.value}/comment`
+    );
+    challenge.value.comments = data;
+    //실패시
+  } else {
+    //작성하기
+  }
+}
+
+async function requestChallengeParticipate() {
+  const { status } = await axios.post(
+    `${BASE_URL}/${challengeBoardId.value}/participate`,
+    {
+      boardId: challengeBoardId.value,
+      writer: "길동이", //세션에서 가져오기
+    }
+  );
+  if (status === axios.HttpStatusCode.Ok) {
+    challenge.value.participated = true;
+    //실패시
+  } else {
+    //
+  }
+}
 const props = defineProps({ challenge: Object });
 // const commentsCount = ref(props.challenge.comments.length);
 

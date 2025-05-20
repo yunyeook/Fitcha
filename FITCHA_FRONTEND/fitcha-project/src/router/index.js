@@ -21,7 +21,18 @@ const routes = [
     path: "/challengefit/:id",
     name: "ChallengeFitDetail",
     component: ChallengeFitDetailView,
+    beforeEnter: (to, from, next) => {
+      if (!to.query.isViewCounted) {
+        next({
+          path: to.path,
+          query: { ...to.query, isViewCounted: "false" },
+        });
+      } else {
+        next();
+      }
+    },
   },
+
   {
     path: "/challengefit/regist",
     name: "ChallengeFitRegist",
@@ -32,9 +43,9 @@ const routes = [
     name: "ChallengeFitUpdate",
     component: ChallengeFitUpdateView,
   },
-  { path: "/fittube", component: FitTubeView },
+  { path: "/fittube", name: "FitTube", component: FitTubeView },
   { path: "/fitlog", component: FitLogView },
-  { path: "/fitlog/:id", name: FitLogDetailView, component: FitLogDetailView },
+  { path: "/fitlog/detail", component: FitLogDetailView },
   { path: "/fitlog/regist", component: FitLogRegistView },
   { path: "/fitlog/update", component: FitLogUpdateView },
   { path: "/home", component: HomeView },

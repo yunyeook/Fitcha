@@ -35,7 +35,7 @@
 	<if test="totalParticipantCount != 0">
 	 AND total_participant_count = #{totalParticipantCount}
 	</if>
-	
+	ORDER BY reg_date DESC
 </select>
 	
 	<!-- 상세 조회 -->
@@ -65,7 +65,7 @@
 
 	<!-- 등록 -->
 	<insert id="insertChallengeBoard" parameterType="challenge" useGeneratedKeys="true" keyProperty="challengeBoardId">
-		INSERT INTO challenge_board (user_id, title, content, writer, exercise_type, body_part, level, duration,totalParticipantCount)
+		INSERT INTO challenge_board (user_id, title, content, writer, exercise_type, body_part, level, duration,total_participant_count)
 			 VALUES (#{userId},#{title},#{content},#{writer}, #{exerciseType},#{bodyPart},#{level},#{duration},#{totalParticipantCount})
 	</insert>
 	
@@ -97,7 +97,7 @@
  	   LIMIT 10
 	</select>
 
-	<!-- 현재 유저의 참여 여부 -->
+	<!-- 현재 유저의 참여 여부 조회 -->
 	<select id="selectChallengeParticipated" parameterType="Participate" resultType="int">
 		SELECT COUNT(*)
 		  FROM participant_challenge
@@ -105,6 +105,11 @@
    		   AND participant = #{participant}
 
 	</select>
+	<insert id="insertParticipantChallenge" parameterType="challenge">
+		INSERT INTO participant_challenge (challenge_board_id, participant)
+			 VALUES (#{challengeBoardId},#{writer})
+
+	</insert>
 
 
 </mapper>

@@ -24,8 +24,7 @@ public class CommentServiceImpl implements CommentService {
 
 	// 챌린지 댓글 등록
 	@Override
-	public boolean registChallengeComment(int challengeBoardId, Comment comment) {
-		comment.setBoardId(challengeBoardId);
+	public boolean registChallengeComment( Comment comment) {
 		return 1 == commentDao.insertChallengeComment(comment);
 
 	}
