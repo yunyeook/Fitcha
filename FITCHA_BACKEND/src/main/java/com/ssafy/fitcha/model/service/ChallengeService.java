@@ -23,9 +23,12 @@ public interface ChallengeService {
 	boolean deleteChallenge(int challengeBoardId, String writer);
 
 	// 등록
-	void registChallenge(Challenge challenge, List<MultipartFile> files) throws Exception;
+	boolean registChallenge(Challenge challenge, List<MultipartFile> files) throws Exception;
 
 	//top10 챌린지 목록
 	List<Challenge> getTop10Challenges(String orderBy);
+
+	//챌린지 참여 등록
+	boolean registChallengeParticipate(Challenge challenge);
 
 }

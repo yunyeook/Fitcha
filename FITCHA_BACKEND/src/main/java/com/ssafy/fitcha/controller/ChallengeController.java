@@ -114,36 +114,61 @@ public class ChallengeController {
 
 	@Operation(summary ="챌린지 게시글 등록")
 	@PostMapping
-	public ResponseEntity<Void> registChallenge(
+	public ResponseEntity<Integer> registChallenge(
 			@RequestParam(value = "files", required = false) List<MultipartFile> files,
 			@ModelAttribute Challenge challenge) throws Exception {
-		challengeService.registChallenge(challenge, files);
-		URI redirectUri = URI.create("/challenge/" + challenge.getChallengeBoardId());
-		return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+		if(challengeService.registChallenge(challenge, files)) 
+			return ResponseEntity.ok(challenge.getChallengeBoardId());
+		
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+	}
+	
+	@Operation(summary ="챌린지 참여 등록")
+	@PostMapping(("/{challengeBoardId}/participate"))
+	public ResponseEntity<Void> registChallengParticipate(
+			@RequestBody Challenge challenge) throws Exception {
+		if(challengeService.registChallengeParticipate(challenge)) 
+			return ResponseEntity.ok().build();
+		
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
 	}
 
 	// -------- 댓 글 ------------
 
+	@Operation(summary ="챌린지 게시글의 전체 댓글 조회 ")
+	@GetMapping("/{challengeBoardId}/comment")	
+	//프론트에서 comment에 보드번호 포함 필요한 정보 다보내니까 생략가능.
+	public ResponseEntity<List<Comment>> getChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId) {
+		List<Comment> comments = commentService.getChallengeCommentList(challengeBoardId);
+		if (comments==null||comments.size()==0) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(comments);
+
+	}
+	
 
 	@Operation(summary ="챌린지 게시글에 댓글 등록")
-	@PostMapping("/{challengeBoardId}/comment")
-	public ResponseEntity<Void> registChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId,
+	@PostMapping("/{challengeBoardId}/comment")	
+	//프론트에서 comment에 보드번호 포함 필요한 정보 다보내니까 생략가능.
+	public ResponseEntity<Void> registChallengeComment(
 			@RequestBody Comment comment) {
 
-		if (commentService.registChallengeComment(challengeBoardId, comment)) {
-			URI redirectUri = URI.create("/challenge/" + challengeBoardId);
-			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+		if (commentService.registChallengeComment(comment)) {
+			System.out.println("등록됨?");
+			return ResponseEntity.status(HttpStatus.CREATED).build();
 		}
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
 	}
+	
 
 	@Operation(summary ="챌린지 게시글의 댓글 삭제")
 	@DeleteMapping("{challengeBoardId}/comment/{challengeCommentId}")
 	public ResponseEntity<Void> deleteChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId,
 			@PathVariable("challengeCommentId") int challengeCommentId) {
-		System.out.println(challengeCommentId);
 
 		if (commentService.deleteChallengeComment(challengeBoardId, challengeCommentId)) {
 

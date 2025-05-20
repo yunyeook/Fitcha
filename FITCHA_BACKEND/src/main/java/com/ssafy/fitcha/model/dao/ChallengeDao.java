@@ -22,6 +22,9 @@ public interface ChallengeDao {
 
 	// 챌린지보드 등록
 	public int insertChallengeBoard(Challenge challenge);
+	//동시에 참여중 등록
+	public int insertParticipantChallenge(Challenge challenge);
+
 
 	// 챌린지보드 조회수 증가
 	public int updateChallengeViewCount(int challengeBoardId);
@@ -31,5 +34,6 @@ public interface ChallengeDao {
 
 	//현재 유저의 챌린지 참여 여부.
 	public int selectChallengeParticipated(Participate participate);
+
 
 }

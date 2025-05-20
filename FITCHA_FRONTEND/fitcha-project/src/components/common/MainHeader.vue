@@ -3,11 +3,11 @@
     <!-- 중간 메인 영역의 가장 위 헤더 -->
     <h2>Hello! <span class="userName">User</span></h2>
     <div class="challenge-create-wrapper">
-      <a href="../views/registChallenge.html">
-        <button class="header__challenge-create-btn">
-          <i class="fas fa-pen"></i> 챌린지 작성
-        </button>
-      </a>
+      <RouterLink :to="{ name: 'ChallengeFitRegist' }">
+        <a>
+          <button class="header__challenge-create-btn"><i class="fas fa-pen"></i> 챌린지 작성</button>
+        </a>
+      </RouterLink>
     </div>
   </div>
 </template>
@@ -38,11 +38,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(
-    135deg,
-    #3cb371,
-    #2e8b57
-  ); /* 민트~그린 그라디언트 */
+  background: linear-gradient(135deg, #3cb371, #2e8b57); /* 민트~그린 그라디언트 */
   color: white;
   border: none;
   padding: 10px 16px;

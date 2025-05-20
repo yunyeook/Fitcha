@@ -3,7 +3,7 @@
   <div class="challenge-card">
     <a style="text-decoration: none" href="../views/challengeFitDetail.html">
       <!-- 챌린지 카드 이미지 -->
-      <img src="../../assets/images/run.jpg" alt="" />
+      <img :src="imgUrl" alt="" />
       <!-- 챌린지 카드 내용 -->
       <div class="card-content">
         <h3>{{ challenge.title }}!</h3>
@@ -52,14 +52,21 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 const props = defineProps({ challenge: { type: Object } });
+const BASE_URL = 'http://localhost:8080/';
+const imgUrl = computed(() => {
+  return props.challenge?.challengeFiles?.[0]?.fileUploadName
+    ? BASE_URL + props.challenge.challengeFiles[0].fileUploadName
+    : '';
+});
 </script>
 
 <style scoped>
 /* 챌린지 카드 디자인 */
 
 .challenge-card {
-  font-family: "Arial", sans-serif;
+  font-family: 'Arial', sans-serif;
   background-color: #ffffff;
   width: 280px;
   height: 405px;

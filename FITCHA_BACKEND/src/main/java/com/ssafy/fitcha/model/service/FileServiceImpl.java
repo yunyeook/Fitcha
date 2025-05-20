@@ -60,9 +60,7 @@ public class FileServiceImpl implements FileService {
 				String originalFileName = file.getOriginalFilename();
 				String uploadFileName = generateUniqueName(originalFileName);
 				file.transferTo(new File(uploadDir, uploadFileName));
-
-				System.out.println(new File(uploadDir, uploadFileName));
-
+				
 				ChallengeFile challengeFile = new ChallengeFile();
 				challengeFile.setChallengeBoardId(challengeBoardId);
 				challengeFile.setFileOriginalName(originalFileName);

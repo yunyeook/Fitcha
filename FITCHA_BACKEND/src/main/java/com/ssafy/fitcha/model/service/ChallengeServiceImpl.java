@@ -105,9 +105,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 	// 등록
 	@Override
-	public void registChallenge(Challenge challenge, List<MultipartFile> files) throws Exception {
-		challengeDao.insertChallengeBoard(challenge);
+	public boolean registChallenge(Challenge challenge, List<MultipartFile> files) throws Exception {
+		boolean isOk=challengeDao.insertChallengeBoard(challenge)==1;
 		fileService.insertChallengeFile(files, challenge.getChallengeBoardId(), challenge.getWriter());
+		challengeDao.insertParticipantChallenge(challenge);
+		
+		return isOk;
 	}
 	
 	//최근등록한| 참여자수 많은| 좋아요많은 | 조회수 많은 챌린지글 조회
@@ -119,6 +122,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 			challenge.setChallengeFiles(fileService.getChallengeFileList(challengeBoardId));
 		}
 		return challengeBoardList;
+	}
+
+	//챌린지 참여 등록
+	@Override
+	public boolean registChallengeParticipate(Challenge challenge) {
+		return challengeDao.insertParticipantChallenge(challenge)==1;
 	}
 
 }
