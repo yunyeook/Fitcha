@@ -5,7 +5,7 @@
     <div class="challenge-detail__content">
       <div class="challenge-detail__header">
         <h2>{{ challenge.title }}</h2>
-        <div class="challenge-detail__options">
+        <div class="challenge-detail__options" @click="openChallengeFitModal">
           <i class="fas fa-ellipsis-v"></i>
         </div>
       </div>
@@ -33,7 +33,8 @@
           <div class="challenge-detail__progress-fill" style="width: 50%"></div>
         </div>
         <p class="challenge-detail__participants">
-          참여:{{ challenge.participantCount }} / {{ challenge.totalParticipantCount }}명
+          참여:{{ challenge.participantCount }} /
+          {{ challenge.totalParticipantCount }}명
         </p>
       </div>
 
@@ -70,9 +71,14 @@
 
       <!-- 현재 참여중이 아닌경우 -->
       <template v-else>
-        <template v-if="challenge.participantCount < challenge.totalParticipantCount">
+        <template
+          v-if="challenge.participantCount < challenge.totalParticipantCount"
+        >
           <div class="challenge-detail__actions">
-            <button class="challenge-detail__join-btn" @click="requestChallengeParticipate">
+            <button
+              class="challenge-detail__join-btn"
+              @click="requestChallengeParticipate"
+            >
               <i class="fas fa-sign-in-alt"></i>
               참여하기
             </button>
@@ -91,7 +97,7 @@
       <div class="challenge-detail__meta">
         <span>{{ challenge.regDate }}</span>
         <div class="challenge-detail__meta-right">
-          <span>댓글 {{ commentsCount }}개</span>
+          <!-- <span>댓글 {{ commentsCount }}개</span> -->
           <span class="challenge-detail__likes">
             <i class="fas fa-heart"></i>
             {{ challenge.likeCount }}명
@@ -102,35 +108,47 @@
       <!-- 탭 섹션 시작 -->
       <div class="challenge-detail__tab-section">
         <div class="challenge-detail__tabs">
-          <div class="challenge-detail__tab active" data-tab="comments">댓글 보기</div>
+          <div class="challenge-detail__tab active" data-tab="comments">
+            댓글 보기
+          </div>
           <div class="challenge-detail__tab" data-tab="certs">인증글 보기</div>
         </div>
 
         <!-- 댓글 탭 -->
         <div class="challenge-detail__tab-content active" id="comments">
           <div class="challenge-detail__comment-form">
-            <input type="text" placeholder="댓글을 남기세요..." v-model="comment" />
+            <input
+              type="text"
+              placeholder="댓글을 남기세요..."
+              v-model="comment"
+            />
             <button @click="requestChallengeCommentRegist">작성</button>
           </div>
-          <div class="challenge-detail__comment" v-for="comment in challenge.comments" :key="comment.commentId">
+          <div
+            class="challenge-detail__comment"
+            v-for="comment in challenge.comments"
+            :key="comment.commentId"
+          >
             <img src="https://via.placeholder.com/36/FF5733" />
             <div class="challenge-detail__comment-body">
               <div>
-                <div class="challenge-detail__comment-author">{{ comment.writer }}</div>
-                <div class="challenge-detail__comment-text">{{ comment.content }}</div>
-                <div class="challenge-detail__comment-date">{{ comment.regDate }}</div>
+                <div class="challenge-detail__comment-author">
+                  {{ comment.writer }}
+                </div>
+                <div class="challenge-detail__comment-text">
+                  {{ comment.content }}
+                </div>
+                <div class="challenge-detail__comment-date">
+                  {{ comment.regDate }}
+                </div>
               </div>
 
               <!--'길동이' -> 세션에서 사용자 닉네임가져오기-->
-              <template v-if="comment.writer === '길동이'">
-                <div class="challenge-detail__options" v-if="updateCommentId !== comment.commentId">
-                  <button @click="updateCommentId = comment.commentId">수정</button>
-                  <button>삭제</button>
-                </div>
-                <div class="challenge-detail__options" v-else>
-                  <button @click="updateCommentId = -1">저장</button>
-                </div>
-              </template>
+              <!-- <template v-if="comment.writer === '길동이'"> -->
+              <div class="challenge-detail__options" @click="openCommentModal">
+                <i class="fas fa-ellipsis-v"></i>
+              </div>
+              <!-- </template> -->
             </div>
           </div>
         </div>
@@ -145,7 +163,9 @@
               </div>
               <span class="date">5월 10일</span>
             </div>
-            <div class="challenge-detail__cert-body">오늘도 5km 완주했어요! 상쾌한 하루 시작 💪</div>
+            <div class="challenge-detail__cert-body">
+              오늘도 5km 완주했어요! 상쾌한 하루 시작 💪
+            </div>
           </div>
         </div>
       </div>
@@ -156,15 +176,48 @@
       </a>
     </div>
   </div>
+
+  <!-- 댓글 수정/삭제 모달 -->
+  <div
+    v-if="showCommentModal"
+    class="modal-overlay"
+    @click.self="closeCommentModal"
+  >
+    <div class="modal-box">
+      <button class="modal-close-button" @click="closeCommentModal">×</button>
+      <div class="modal-title">댓글 관리</div>
+      <button class="modal-button" @click="editComment">수정하기</button>
+      <button class="modal-button delete" @click="deleteComment">
+        삭제하기
+      </button>
+    </div>
+  </div>
+  <!--  수정/삭제 모달 -->
+  <div
+    v-if="showChallengeFitModal"
+    class="modal-overlay"
+    @click.self="closeChallengeFitModal"
+  >
+    <div class="modal-box">
+      <button class="modal-close-button" @click="closeChallengeFitModal">
+        ×
+      </button>
+      <div class="modal-title">첼린지 관리</div>
+      <button class="modal-button" @click="editChallengeFit">수정하기</button>
+      <button class="modal-button delete" @click="deleteChallengeFit">
+        삭제하기
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import axios from 'axios';
-import { useRoute, useRouter } from 'vue-router';
-const BASE_URL = 'http://localhost:8080/challenge';
-const IMG_BASE_URL = 'http://localhost:8080/';
-const imgUrl = ref('');
+import { ref, computed } from "vue";
+import axios from "axios";
+import { useRoute, useRouter } from "vue-router";
+const BASE_URL = "http://localhost:8080/challenge";
+const IMG_BASE_URL = "http://localhost:8080/";
+const imgUrl = ref("");
 const route = useRoute();
 const router = useRouter();
 const isViewCounted = ref(route.query.isViewCounted);
@@ -190,20 +243,25 @@ async function requestChallengeDetail() {
 }
 requestChallengeDetail();
 
-const comment = ref('');
+const comment = ref("");
 
 //댓글등록.
 async function requestChallengeCommentRegist() {
-  const { status } = await axios.post(`${BASE_URL}/${challengeBoardId.value}/comment`, {
-    boardId: challengeBoardId.value,
-    userId: 'fituser1', // 세션에서 가져오기
-    content: comment.value,
-    writer: '길동이', //세션에서 가져오기
-  });
-  comment.value = '';
+  const { status } = await axios.post(
+    `${BASE_URL}/${challengeBoardId.value}/comment`,
+    {
+      boardId: challengeBoardId.value,
+      userId: "fituser1", // 세션에서 가져오기
+      content: comment.value,
+      writer: "길동이", //세션에서 가져오기
+    }
+  );
+  comment.value = "";
   //성공시 다시 전체 댓글 목록 불러오기
   if (status === axios.HttpStatusCode.Created) {
-    const { data } = await axios.get(`${BASE_URL}/${challengeBoardId.value}/comment`);
+    const { data } = await axios.get(
+      `${BASE_URL}/${challengeBoardId.value}/comment`
+    );
     challenge.value.comments = data;
     //실패시
   } else {
@@ -212,10 +270,13 @@ async function requestChallengeCommentRegist() {
 }
 
 async function requestChallengeParticipate() {
-  const { status } = await axios.post(`${BASE_URL}/${challengeBoardId.value}/participate`, {
-    boardId: challengeBoardId.value,
-    writer: '길동이', //세션에서 가져오기
-  });
+  const { status } = await axios.post(
+    `${BASE_URL}/${challengeBoardId.value}/participate`,
+    {
+      boardId: challengeBoardId.value,
+      writer: "길동이", //세션에서 가져오기
+    }
+  );
   if (status === axios.HttpStatusCode.Ok) {
     challenge.value.participated = true;
     //실패시
@@ -223,6 +284,46 @@ async function requestChallengeParticipate() {
     //
   }
 }
+const props = defineProps({ challenge: Object });
+// const commentsCount = ref(props.challenge.comments.length);
+
+const showCommentModal = ref(false);
+const showChallengeFitModal = ref(false);
+
+const openChallengeFitModal = () => {
+  showChallengeFitModal.value = true;
+};
+
+const closeChallengeFitModal = () => {
+  showChallengeFitModal.value = false;
+};
+
+const openCommentModal = () => {
+  showCommentModal.value = true;
+};
+
+const closeCommentModal = () => {
+  showCommentModal.value = false;
+};
+
+const editComment = () => {
+  alert("수정 기능은 여기에 구현하면 됨.");
+  closeModal();
+};
+
+const deleteComment = () => {
+  alert("삭제 기능은 여기에 구현.");
+  closeModal();
+};
+const editChallengeFit = () => {
+  alert("수정 기능은 여기에 구현하면 됨.");
+  closeModal();
+};
+
+const deleteChallengeFit = () => {
+  alert("삭제 기능은 여기에 구현.");
+  closeModal();
+};
 </script>
 
 <style scoped>
@@ -257,6 +358,13 @@ async function requestChallengeParticipate() {
 .challenge-detail__header h2 {
   margin: 0px;
   font-size: 1.3rem;
+}
+
+.challenge-detail__options {
+  cursor: pointer;
+  width: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .challenge-detail__badges {
@@ -570,5 +678,93 @@ async function requestChallengeParticipate() {
   text-decoration: none;
   color: #444;
   gap: 6px;
+}
+
+/* 모달 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  position: relative;
+  background: #fff;
+  width: 280px;
+  padding: 24px 20px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  animation: fadeIn 0.25s ease;
+}
+
+.modal-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+  color: #333;
+}
+
+.modal-button {
+  font-size: 0.95rem;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: #f1f3f5;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.modal-button:hover {
+  background-color: #e9ecef;
+}
+
+.modal-button.delete {
+  background-color: #ffe3e3;
+  color: #e03131;
+}
+
+.modal-button.delete:hover {
+  background-color: #ffc9c9;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close-button:hover {
+  color: #222;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

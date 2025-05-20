@@ -6,7 +6,7 @@
       <img :src="imgUrl" alt="" />
       <!-- 챌린지 카드 내용 -->
       <div class="card-content">
-        <h3>{{ challenge.title }}!</h3>
+        <h3>{{ challenge.title }}</h3>
         <div class="card-badges">
           <span class="badge activity">
             <i class="fas fa-running"></i>
@@ -30,21 +30,34 @@
           </div>
         </div>
 
-        <p class="participants">참여:{{ challenge.participantCount }} / {{ challenge.totalParticipantCount }}명</p>
+        <p class="participants">
+          참여:{{ challenge.participantCount }} /
+          {{ challenge.totalParticipantCount }}명
+        </p>
         <p class="date">
-          {{ challenge.regDate }}
-          <span class="comment-count">{{ challenge.comments.length }}</span>
-          개의 댓글
+          <div>
+            {{ challenge.regDate }}
+          </div>
+          <div>
+            <span class="comment-count">{{ challenge.comments.length }}</span>
+            개의 댓글
+          </div>
         </p>
         <div class="card-footer">
           <div class="writer-info">
             <img src="../../assets/images/run.jpg" alt="" />
             <span>{{ challenge.writer }}</span>
           </div>
+          <div class="stats">
+          <div class="views">
+            <i class="fas fa-eye"></i>
+            <span>{{ challenge.viewCount }}</span>
+          </div>
           <div class="like">
             <i class="fas fa-heart"></i>
             <span>{{ challenge.likeCount }}</span>
           </div>
+        </div>
         </div>
       </div>
     </a>
@@ -69,7 +82,7 @@ const imgUrl = computed(() => {
   font-family: 'Arial', sans-serif;
   background-color: #ffffff;
   width: 280px;
-  height: 405px;
+  height: 380px;
   border-radius: 15px;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -171,16 +184,20 @@ const imgUrl = computed(() => {
   font-size: 0.7rem;
   color: #888;
   margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 14px;
+  padding: 8px;
   border-top: 1px solid #eee;
   font-size: 0.7rem;
   color: #666;
+
 }
 
 .card-footer .writer-info {
@@ -195,7 +212,31 @@ const imgUrl = computed(() => {
   border-radius: 50%;
 }
 
-.card-footer .like {
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stats .like,
+.stats .views {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  gap: 5px;
+}
+
+.stats .like {
+  color: #ff6b6b;
+  cursor: pointer;
+}
+
+.stats .views {
+  color: #868e96;
+}
+
+/* .card-footer .like {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -203,5 +244,5 @@ const imgUrl = computed(() => {
 
 .like i {
   color: #ff6b6b;
-}
+} */
 </style>

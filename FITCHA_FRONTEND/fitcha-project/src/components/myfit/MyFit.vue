@@ -32,11 +32,6 @@
     <!-- 콘텐츠 예시 -->
     <div class="tab-content">
       <!-- 아래는 테스트 위한 복붙 -->
-      <ChallengeFitCard />
-      <ChallengeFitCard />
-      <ChallengeFitCard />
-      <ChallengeFitCard />
-      <ChallengeFitCard />
     </div>
   </div>
 </template>
