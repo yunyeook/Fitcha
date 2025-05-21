@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
+
 @Component
 public class JwtUtil {
 	private String key = "SSAFY_fitcha_project_token_SecretKey_!@#$%!@$";
@@ -43,3 +44,4 @@ public class JwtUtil {
 	}
 
 }
+

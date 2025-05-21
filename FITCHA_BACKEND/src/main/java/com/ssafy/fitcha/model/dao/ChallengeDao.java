@@ -15,7 +15,7 @@ public interface ChallengeDao {
 	public Challenge selectChallengeBoard(int challengeBoardId);
 
 	// 챌린지보드 수정
-	public void updateChallengeBoard(Challenge challenge);
+	public int updateChallengeBoard(Challenge challenge);
 
 	// 챌린지보드 삭제
 	public int deleteChallengeBoard(int challengeBoardId);

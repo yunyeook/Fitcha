@@ -76,7 +76,7 @@ public class ChallengeController {
 	@Operation(summary ="챌린지 게시글 상세 조회")
 	@GetMapping("/{challengeBoardId}")
 	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
-			@RequestParam("isViewCounted") boolean isViewCounted) {
+			@RequestParam(value="isViewCounted",required=false) boolean isViewCounted) {
 		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId,"길동이", isViewCounted);
 		if (challenge == null)
 			return ResponseEntity.noContent().build();
@@ -86,18 +86,16 @@ public class ChallengeController {
 
 	@Operation(summary ="챌린지 게시글 수정 " , description="게시글 수정 후 상세화면으로 이동")
 	@PutMapping("/{challengeBoardId}")
-	public ResponseEntity<Void> updateChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
+	public ResponseEntity<Integer> updateChallenge(
 			@ModelAttribute Challenge challenge,
 			@RequestParam(value = "files", required = false) List<MultipartFile> files, // 추가된 파일
 			@RequestParam(value = "deleteChallengeFileIds", required = false) List<Integer> deleteChallengeFileIds // 삭제할
 																													// 파일
 	) throws Exception {
 
-		challenge.setChallengeBoardId(challengeBoardId);
-		challengeService.updateChallenge(challenge, files, deleteChallengeFileIds);
-
-		URI redirectUri = URI.create("/challenge/" + challengeBoardId);
-		return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+		if(challengeService.updateChallenge(challenge, files, deleteChallengeFileIds))
+			return ResponseEntity.ok(challenge.getChallengeBoardId());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
 
 
@@ -128,6 +126,7 @@ public class ChallengeController {
 	@PostMapping(("/{challengeBoardId}/participate"))
 	public ResponseEntity<Void> registChallengParticipate(
 			@RequestBody Challenge challenge) throws Exception {
+
 		if(challengeService.registChallengeParticipate(challenge)) 
 			return ResponseEntity.ok().build();
 		
@@ -157,7 +156,6 @@ public class ChallengeController {
 			@RequestBody Comment comment) {
 
 		if (commentService.registChallengeComment(comment)) {
-			System.out.println("등록됨?");
 			return ResponseEntity.status(HttpStatus.CREATED).build();
 		}
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -186,8 +184,7 @@ public class ChallengeController {
 			@PathVariable("challengeCommentId") int challengeCommentId, @RequestBody Comment comment) {
 
 		if (commentService.updateChallengeComment(challengeBoardId, challengeCommentId, comment)) {
-			URI redirectUri = URI.create("/challenge/" + challengeBoardId);
-			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+			return ResponseEntity.ok(null);
 		}
 
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

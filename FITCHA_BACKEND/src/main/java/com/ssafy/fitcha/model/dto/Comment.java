@@ -10,6 +10,22 @@ public class Comment {
 	private String 	content;
 	private String writer ;
 	private String regDate;
+	
+	private int challengeCommentId;
+	private int challengeBoardId;
+	
+	public int getChallengeCommentId() {
+		return challengeCommentId;
+	}
+	public void setChallengeCommentId(int challengeCommentId) {
+		this.challengeCommentId = challengeCommentId;
+	}
+	public int getChallengeBoardId() {
+		return challengeBoardId;
+	}
+	public void setChallengeBoardId(int challengeBoardId) {
+		this.challengeBoardId = challengeBoardId;
+	}
 	public int getCommentId() {
 		return commentId;
 	}

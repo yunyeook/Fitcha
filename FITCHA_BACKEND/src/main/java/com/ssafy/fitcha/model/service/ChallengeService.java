@@ -16,7 +16,7 @@ public interface ChallengeService {
 	Challenge getChallengeDetail(int challengeBoardId, String nickName, boolean isViewCounted);
 
 	// 수정
-	void updateChallenge(Challenge challenge, List<MultipartFile> files, List<Integer> deleteChallengeFileIds)
+	boolean updateChallenge(Challenge challenge, List<MultipartFile> files, List<Integer> deleteChallengeFileIds)
 			throws Exception;
 
 	// 삭제
