@@ -1,6 +1,7 @@
 package com.ssafy.fitcha.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ssafy.fitcha.model.dto.Proof;
 import com.ssafy.fitcha.model.dto.SearchProof;
@@ -22,7 +23,13 @@ public interface ProofDao {
 	// 인증글 삭제
 	int deleteProofBoard(int challengeFileId);
 
-	//챌린지글 삭제시 내 인증글 삭제
+	// 챌린지글 삭제시 내 인증글 삭제
 	int deleteMyProofBoard(Proof proof);
+
+	// 인증글에 있는 해쉬 태그 별도 테이블에 저장
+	int insertProofBoardHashtags(Map<String, Object> map);
+	
+	// 인증글에 해당하는 해쉬태그 가져오
+	List<Map<String, Object>> selectHashTagsByProofBoardIds(List<Integer> proofBoardIds);
 
 }

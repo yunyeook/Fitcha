@@ -61,10 +61,16 @@
             참여중
           </button>
           <button class="challenge-detail__certify-btn">
-            <a href="../views/registFitLog.html" style="text-decoration: none">
+            <router-link
+              :to="{
+                name: 'FitLogRegistView',
+                params: { challengeBoardId: challenge.challengeBoardId },
+              }"
+              style="text-decoration: none"
+            >
               <i class="fas fa-pen"></i>
               인증글 쓰기
-            </a>
+            </router-link>
           </button>
         </div>
       </template>
@@ -519,6 +525,10 @@ const deleteChallengeFit = () => {
 
 .challenge-detail__certify-btn:hover {
   background: #228be6;
+}
+
+.challenge-detail__certify-btn a {
+  color: #ffffff;
 }
 
 /* 메타 정보 */

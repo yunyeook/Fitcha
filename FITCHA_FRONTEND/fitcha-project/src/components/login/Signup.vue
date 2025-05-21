@@ -2,13 +2,14 @@
   <!-- 회원가입 폼 -->
   <div class="signup-wrapper">
     <h2>🏃‍♀️ 회원가입하고 챌린지 시작하기!</h2>
-    <form class="signup-form">
+    <form class="signup-form" @submit="signup">
       <div class="form-group">
         <label for="userid">아이디</label>
         <input
           type="text"
           id="userid"
           placeholder="아이디를 입력하세요"
+          v-model="form.userId"
           required
         />
       </div>
@@ -18,12 +19,19 @@
           type="password"
           id="password"
           placeholder="비밀번호를 입력하세요"
+          v-model="form.password"
           required
         />
       </div>
       <div class="form-group">
         <label for="name">이름</label>
-        <input type="text" id="name" placeholder="이름을 입력하세요" required />
+        <input
+          type="text"
+          id="name"
+          placeholder="이름을 입력하세요"
+          required
+          v-model="form.name"
+        />
       </div>
       <div class="form-group">
         <label for="nickname">닉네임</label>
@@ -31,6 +39,7 @@
           type="text"
           id="nickname"
           placeholder="닉네임을 입력하세요"
+          v-model="form.nickName"
           required
         />
       </div>
@@ -41,12 +50,13 @@
           id="age"
           placeholder="나이를 입력하세요"
           required
+          v-model="form.age"
           min="0"
         />
       </div>
       <div class="form-group">
         <label for="gender">성별</label>
-        <select id="gender" required>
+        <select id="gender" required v-model="form.gender">
           <option value="">선택</option>
           <option>남성</option>
           <option>여성</option>
@@ -60,7 +70,35 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import axios from "axios";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const BASE_URL = "http://localhost:8080";
+
+const form = ref({
+  userId: "",
+  password: "",
+  email: "",
+  name: "",
+  nickName: "",
+  age: "",
+  gender: "",
+});
+
+const signup = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axios.post(`${BASE_URL}/user/signup`, form.value);
+    alert("회원가입에 성공했습니다. 로그인해주세요");
+    router.push(`/login`);
+  } catch (err) {
+    console.log("회원가입 실패: ", err);
+  }
+};
+</script>
 
 <style scoped>
 /* 회원가입 폼 스타일 */

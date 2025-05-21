@@ -3,14 +3,29 @@
   <div class="challenge-form-wrapper">
     <h2>챌린지 인증하기</h2>
 
-    <form class="challenge-form">
+    <form class="challenge-form" @submit.prevent="submitProof">
       <!-- 썸네일 미리보기 -->
       <div class="form-group">
         <label for="thumbnail">썸네일 이미지</label>
-        <div class="image-preview" id="imagePreview">
-          <span>이미지를 선택하면 미리보기가 표시됩니다</span>
+        <div
+          class="image-preview"
+          id="imagePreview"
+          :style="
+            thumbnailPreview
+              ? { backgroundImage: `url(${thumbnailPreview})` }
+              : {}
+          "
+        >
+          <span v-if="!thumbnailPreview"
+            >이미지를 선택하면 미리보기가 표시됩니다</span
+          >
         </div>
-        <input type="file" id="thumbnail" accept="image/*" />
+        <input
+          type="file"
+          id="thumbnail"
+          accept="image/*"
+          @change="onImageChange"
+        />
       </div>
 
       <!-- 제목 -->
@@ -20,6 +35,7 @@
           type="text"
           id="title"
           placeholder="예: 30일 아침 러닝 챌린지!!"
+          v-model="title"
         />
       </div>
 
@@ -30,6 +46,7 @@
           id="description"
           rows="4"
           placeholder="챌린지 내용을 입력하세요."
+          v-model="content"
         ></textarea>
       </div>
 
@@ -55,36 +72,24 @@
       <!-- 운동 타입 -->
       <div class="form-group">
         <label for="type">운동 타입</label>
-        <select id="type">
-          <option value="">선택</option>
-          <option>러닝</option>
-          <option>헬스</option>
-          <option>요가</option>
-          <option>필라테스</option>
-          <option>홈트</option>
+        <select id="type" disabled>
+          <option>{{ exerciseType }}</option>
         </select>
       </div>
 
       <!-- 지역 -->
       <div class="form-group">
         <label for="location">지역</label>
-        <select id="location">
-          <option value="">선택</option>
-          <option>서울</option>
-          <option>부산</option>
-          <option>대구</option>
-          <option>기타</option>
+        <select id="location" disabled>
+          <option>{{ bodyPart }}</option>
         </select>
       </div>
 
       <!-- 난이도 -->
       <div class="form-group">
         <label for="level">난이도</label>
-        <select id="level">
-          <option value="">선택</option>
-          <option>초보</option>
-          <option>중급</option>
-          <option>고급</option>
+        <select id="level" disabled>
+          <option>{{ level }}</option>
         </select>
       </div>
 
@@ -97,10 +102,72 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:8080";
+
+const route = useRoute();
+const router = useRouter();
+const challengeBoardId = ref(route.params.challengeBoardId);
+
+const exerciseType = ref("");
+const bodyPart = ref("");
+const level = ref("");
 
 const hashtags = ref([]);
 const newTag = ref("");
+
+// 이미지 미리보기
+const thumbnailPreview = ref("");
+const thumbnailFile = ref(null);
+
+function onImageChange(event) {
+  const file = event.target.files[0];
+  if (file) {
+    thumbnailFile.value = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      thumbnailPreview.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    thumbnailPreview.value = "";
+    thumbnailFile.value = null;
+  }
+}
+
+// 이미지 + 게시글 내용 전송
+const title = ref("");
+const userId = ref("fituser1");
+const content = ref("");
+const writer = ref("작성자");
+
+const submitProof = async () => {
+  const formData = new FormData();
+  formData.append("files", thumbnailFile.value);
+  formData.append("title", title.value);
+  formData.append("userId", userId.value);
+  formData.append("challengeBoardId", String(challengeBoardId.value));
+  formData.append("content", content.value);
+  formData.append("writer", writer.value);
+  formData.append("exerciseType", exerciseType.value);
+  formData.append("bodyPart", bodyPart.value);
+  formData.append("level", level.value);
+  hashtags.value.forEach((tag) => {
+    formData.append("hashTags", tag);
+  });
+
+  const response = await axios.post(`${BASE_URL}/proof`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  const proofBoardId = response.data;
+  router.replace(`/fitlog/${proofBoardId}`);
+};
 
 function addTag() {
   const tag = newTag.value.trim().replace(/^#/, "");
@@ -113,6 +180,20 @@ function addTag() {
 function removeTag(index) {
   hashtags.value.splice(index, 1);
 }
+
+onMounted(async () => {
+  const { data } = await axios.get(
+    `${BASE_URL}/challenge/${challengeBoardId.value}`,
+    {
+      params: {
+        isViewCounted: false,
+      },
+    }
+  );
+  exerciseType.value = data.exerciseType;
+  bodyPart.value = data.bodyPart;
+  level.value = data.level;
+});
 </script>
 
 <style scoped>
@@ -196,7 +277,13 @@ function removeTag(index) {
 
 .challenge-form .image-preview {
   width: 100%;
-  height: 160px;
+  height: 280px;
+
+  background-size: cover;
+  background-position: center, center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+
   border: 1px dashed #ccc;
   border-radius: 8px;
   margin-bottom: 10px;

@@ -11,11 +11,11 @@
         <button type="submit">로그인</button>
       </form>
 
-      <a href="../views/signup.html">
+      <router-link to="/signup">
         <div class="signup-btn">
           <button>회원가입</button>
         </div>
-      </a>
+      </router-link>
 
       <div class="social-login">
         <div class="divider"><span>또는</span></div>

@@ -17,7 +17,7 @@ public interface ProofService {
 	Proof getProofDetails(int proofBoardId);
 
 	// 인증글 등록
-	boolean registProof(Proof proof,List<MultipartFile> files) throws Exception;
+	boolean registProof(Proof proof, List<MultipartFile> file) throws Exception;
 	
 	// 인증글 수정
 	boolean updateProof(Proof proof, List<MultipartFile> files, List<Integer> deleteProofFileIds) throws Exception;

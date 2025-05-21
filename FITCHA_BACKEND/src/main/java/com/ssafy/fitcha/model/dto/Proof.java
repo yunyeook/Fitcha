@@ -2,6 +2,8 @@ package com.ssafy.fitcha.model.dto;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description="인증 게시글 DTO")
 public class Proof {
@@ -19,12 +21,22 @@ public class Proof {
 	private int viewCount; // 조회수
 	private int likeCount; // 좋아요수
 	private String regDate; // 작성일
-	private List<ProofFile> files; // 인증글 파일 리스트
+	private List<MultipartFile> files; // 인증글 파일 리스트
 	// 챌린지 글에서 설정한 운동 타입, 부위, 레벨 
 	private String exerciseType;  
 	private String bodyPart;
 	private String level;
+	private List<String> hashTags; // 해쉬태그 
+
 	
+	public List<String> getHashTags() {
+		return hashTags;
+	}
+
+	public void setHashTags(List<String> hashTags) {
+		this.hashTags = hashTags;
+	}
+
 	public String getExerciseType() {
 		return exerciseType;
 	}
@@ -123,11 +135,12 @@ public class Proof {
 		this.regDate = regDate;
 	}
 
-	public List<ProofFile> getFiles() {
+	
+	public List<MultipartFile> getFiles() {
 		return files;
 	}
 
-	public void setFiles(List<ProofFile> files) {
+	public void setFiles(List<MultipartFile> files) {
 		this.files = files;
 	}
 
