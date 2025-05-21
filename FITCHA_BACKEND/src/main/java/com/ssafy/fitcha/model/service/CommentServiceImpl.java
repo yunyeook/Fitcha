@@ -33,8 +33,8 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public boolean deleteChallengeComment(int challengeBoardId, int challengeCommentId) {
 		Comment comment = new Comment();
-		comment.setBoardId(challengeBoardId);
-		comment.setCommentId(challengeCommentId);
+		comment.setChallengeBoardId(challengeBoardId);
+		comment.setChallengeCommentId(challengeCommentId);
 		return 1 == commentDao.deleteChallengeComment(comment);
 
 	}
@@ -42,8 +42,8 @@ public class CommentServiceImpl implements CommentService {
 	// 챌린지 글의 댓글 수정
 	@Override
 	public boolean updateChallengeComment(int challengeBoardId, int challengeCommentId, Comment comment) {
-		comment.setBoardId(challengeBoardId);
-		comment.setCommentId(challengeCommentId);
+		comment.setChallengeBoardId(challengeBoardId);
+		comment.setChallengeCommentId(challengeCommentId);
 		return 1 == commentDao.updateChallengeComment(comment);
 	}
 	

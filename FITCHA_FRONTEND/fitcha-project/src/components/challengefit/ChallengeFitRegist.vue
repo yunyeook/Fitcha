@@ -36,7 +36,7 @@
         </select>
       </div>
 
-      <!-- 지역 -->
+      <!-- 운동부위 -->
       <div class="form-group">
         <label for="bodyPart">운동 부위</label>
         <select id="bodyPart" v-model="bodyPart">
@@ -51,7 +51,7 @@
       <!-- 난이도 -->
       <div class="form-group">
         <label for="level">난이도</label>
-        <select id="level">
+        <select id="level" v-model="level">
           <option disabled hidden>선택</option>
           <option>초보</option>
           <option>중급</option>
@@ -71,11 +71,12 @@
           v-model="totalParticipantCount"
         />
       </div>
-
+      <!-- 챌린지 기간 -->
       <div class="form-group">
         <label for="duration">챌린지 기간</label>
-        <input type="duration" id="duration" placeholder="예: 10" min="1" max="100" v-model="duration" />
+        <input type="number" id="duration" placeholder="예: 10" min="1" max="100" v-model="duration" />
       </div>
+
       <!-- 제출 버튼 -->
       <div class="challenge-regist">
         <button type="submit" class="submit-btn">등록하기</button>

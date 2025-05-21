@@ -72,9 +72,9 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 	// 수정 (챌린지 보드 : 수정, 챌린지 파일 : 등록 및 삭제)
 	@Override
-	public void updateChallenge(Challenge challenge, List<MultipartFile> files, List<Integer> deleteChallengeFileIds)
+	public boolean updateChallenge(Challenge challenge, List<MultipartFile> files, List<Integer> deleteChallengeFileIds)
 			throws Exception {
-		challengeDao.updateChallengeBoard(challenge);
+		boolean isOk =challengeDao.updateChallengeBoard(challenge)==1;
 		// 챌린지 파일 삭제
 		if (deleteChallengeFileIds != null && deleteChallengeFileIds.size() > 0) {
 			fileService.deleteChallengeFile(deleteChallengeFileIds);
@@ -85,6 +85,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 			fileService.insertChallengeFile(files, challenge.getChallengeBoardId(), challenge.getWriter());
 
 		}
+		return isOk;
 
 	}
 

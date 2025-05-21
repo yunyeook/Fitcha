@@ -26,7 +26,7 @@
 	 AND body_part = #{bodyPart}
 	</if>
 	<if test="level != null and level != ''">
-	 AND level = #{level}
+	 AND `level` = #{level}
 	</if>
 	<if test="duration != null and duration != ''">
 	 AND duration = #{duration}
@@ -52,7 +52,7 @@
 		    	content = #{content}, 
 		    	exercise_type = #{exerciseType},
 		    	body_part = #{bodyPart},
-		   		level = #{level},
+		   		`level` = #{level},
 			    total_participant_count = #{totalParticipantCount}
 		  WHERE challenge_board_id = #{challengeBoardId} 
 	</update>
