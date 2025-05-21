@@ -105,7 +105,7 @@ const props = defineProps({
 
 .proof-card .user-info .title {
   font-weight: bold;
-  font-size: 1.22rem;
+  font-size: 1rem;
   color: #222;
 }
 
@@ -156,7 +156,7 @@ const props = defineProps({
 
 /* 인증 메시지 */
 .content {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #444;
   padding: 12px 16px 0px;
   margin-bottom: 8px;

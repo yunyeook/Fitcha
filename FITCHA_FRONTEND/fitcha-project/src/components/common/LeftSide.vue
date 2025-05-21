@@ -48,7 +48,7 @@
 
     <!-- 로그아웃 버튼 -->
     <div class="logout-btn">
-      <button>
+      <button type="button" @click="logout">
         <i class="fas fa-sign-out-alt"></i>
         logout
       </button>
@@ -56,7 +56,24 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
+const userStore = useUserStore();
+const router = useRouter();
+const logout = () => {
+  // 1) 로컬스토리지 토큰 삭제
+  localStorage.removeItem("access-token");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("nickname");
+
+  // 2) Pinia 상태 초기화
+  userStore.clearUser();
+
+  // 3) 로그인 페이지 또는 메인 페이지로 이동
+  router.push("/login");
+};
+</script>
 
 <style scoped>
 /* 전체 공통 레이아웃 중 왼쪽 사이드바 css */

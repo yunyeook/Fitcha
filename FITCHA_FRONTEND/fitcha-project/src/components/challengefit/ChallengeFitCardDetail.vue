@@ -221,6 +221,8 @@
 import { ref, computed } from "vue";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
+import api from "@/api/api";
+
 const BASE_URL = "http://localhost:8080/challenge";
 const IMG_BASE_URL = "http://localhost:8080/";
 const imgUrl = ref("");
@@ -230,6 +232,7 @@ const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
 const updateCommwzentId = ref(-1);
+const token = localStorage.getItem("access-token");
 
 const commentsCount = computed(() => {
   const comments = challenge.value.comments;
@@ -237,7 +240,7 @@ const commentsCount = computed(() => {
 });
 
 async function requestChallengeDetail() {
-  const { data } = await axios.get(`${BASE_URL}/${challengeBoardId.value}`, {
+  const { data } = await api.get(`/challenge/${challengeBoardId.value}`, {
     params: {
       // user:
       isViewCounted: isViewCounted.value,
@@ -253,8 +256,8 @@ const comment = ref("");
 
 //댓글등록.
 async function requestChallengeCommentRegist() {
-  const { status } = await axios.post(
-    `${BASE_URL}/${challengeBoardId.value}/comment`,
+  const { status } = await api.post(
+    `/challenge/${challengeBoardId.value}/comment`,
     {
       boardId: challengeBoardId.value,
       userId: "fituser1", // 세션에서 가져오기
@@ -265,8 +268,8 @@ async function requestChallengeCommentRegist() {
   comment.value = "";
   //성공시 다시 전체 댓글 목록 불러오기
   if (status === axios.HttpStatusCode.Created) {
-    const { data } = await axios.get(
-      `${BASE_URL}/${challengeBoardId.value}/comment`
+    const { data } = await api.get(
+      `/challenge/${challengeBoardId.value}/comment`
     );
     challenge.value.comments = data;
     //실패시
@@ -276,8 +279,8 @@ async function requestChallengeCommentRegist() {
 }
 
 async function requestChallengeParticipate() {
-  const { status } = await axios.post(
-    `${BASE_URL}/${challengeBoardId.value}/participate`,
+  const { status } = await api.post(
+    `/challenge/${challengeBoardId.value}/participate`,
     {
       boardId: challengeBoardId.value,
       writer: "길동이", //세션에서 가져오기

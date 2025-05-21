@@ -26,9 +26,14 @@ const search = ref({});
 const route = useRoute();
 const router = useRouter();
 const videos = ref([]);
+const token = localStorage.getItem("access-token");
 
 async function requestFitTubeVideos() {
-  const { data } = await axios.get(BASE_URL);
+  const { data } = await axios.get(BASE_URL, {
+    headers: {
+      Authorization: `Bearer ${token}`, // 서버가 발급한 JWT 토큰
+    },
+  });
 
   videos.value = data;
 }

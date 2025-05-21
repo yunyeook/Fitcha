@@ -4,7 +4,14 @@
     <MainContentSearch />
     <MainGridLayout>
       <template v-for="challenge in challenges" :key="challenge">
-        <router-link class="detailLink" :to="{ name: 'ChallengeFitDetail', params: { id: challenge.challengeBoardId }, query: { isViewCounted: true } }">
+        <router-link
+          class="detailLink"
+          :to="{
+            name: 'ChallengeFitDetail',
+            params: { id: challenge.challengeBoardId },
+            query: { isViewCounted: true },
+          }"
+        >
           <ChallengeFitCard :challenge="challenge" />
         </router-link>
       </template>
@@ -20,14 +27,17 @@ import MainContentSearch from "@/components/common/MainContentSearch.vue";
 import { ref } from "vue";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
+import api from "@/api/api";
+
 const BASE_URL = "http://localhost:8080/challenge";
 const search = ref({});
 const route = useRoute();
 const router = useRouter();
 let challenges = ref({});
+const token = localStorage.getItem("access-token");
 
 async function requestChallengeSearch() {
-  const { data } = await axios.get(BASE_URL);
+  const { data } = await api.get("/challenge");
   challenges.value = data;
 }
 requestChallengeSearch();
