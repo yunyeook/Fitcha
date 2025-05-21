@@ -77,18 +77,19 @@ const login = async (e) => {
   e.preventDefault(); // 폼 기본 기능 막기(새로고침)
   try {
     const response = await axios.post(`${BASE_URL}/user/login`, form.value);
-    const { token, userId, nickName } = response.data; // 백엔드가 보내는 데이터 구조에 맞게 구조분해
-    localStorage.setItem("access-token", token); // 로컬 스토리지에 저장
-    localStorage.setItem("userId", userId);
-    localStorage.setItem("nickName", nickName);
-    // Pinia store에 유저 정보 저장
-    const userStore = useUserStore();
+    const { token, userId, nickName } = response.data;
+
+    // 토큰 저장
+    localStorage.setItem("access-token", token);
+
+    // Pinia 상태 저장
     userStore.setUser({ userId, nickName });
 
     alert("로그인 성공! 메인페이지로 이동");
     router.push(`/home`);
   } catch (err) {
-    console.log("로그인 실패: ", err);
+    console.error("로그인 실패: ", err);
+    alert("로그인에 실패했습니다.");
   }
 };
 </script>

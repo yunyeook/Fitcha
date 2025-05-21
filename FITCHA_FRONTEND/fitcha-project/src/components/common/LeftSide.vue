@@ -59,19 +59,12 @@
 <script setup>
 import { useUserStore } from "@/stores/user";
 import { useRouter } from "vue-router";
+import { logout } from "@/stores/logout";
+
 const userStore = useUserStore();
 const router = useRouter();
-const logout = () => {
-  // 1) 로컬스토리지 토큰 삭제
-  localStorage.removeItem("access-token");
-  localStorage.removeItem("userId");
-  localStorage.removeItem("nickname");
-
-  // 2) Pinia 상태 초기화
-  userStore.clearUser();
-
-  // 3) 로그인 페이지 또는 메인 페이지로 이동
-  router.push("/login");
+const handleLogout = () => {
+  logout();
 };
 </script>
 
