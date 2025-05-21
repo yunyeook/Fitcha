@@ -3,10 +3,20 @@
     <!-- 오른쪽 사이드바   -->
 
     <!-- 로그인 유저 정보 -->
-    <!-- 로그인 안했을시에는 로그인 버튼 떠야함 -->
-    <div class="user-info">
-      <img src="" alt="" />
-      <span>{{ nickName }}</span>
+    <div class="user-info-wrapper">
+      <!-- 로그인 유저가 있으면 -->
+      <div class="user-info" v-if="nickName">
+        <img src="" alt="" />
+        <span>{{ nickName }}</span>
+      </div>
+      <!-- 로그인 안했을시에는 로그인 버튼 -->
+      <router-link style="text-decoration: none" to="/login">
+        <div v-if="!nickName" class="loginBtn">
+          <button type="button">
+            <i class="fas fa-user-circle"></i> Login
+          </button>
+        </div>
+      </router-link>
     </div>
 
     <!-- 달력 -->
@@ -36,7 +46,7 @@ import { storeToRefs } from "pinia";
 const userStore = useUserStore();
 
 // state 값은 storeToRefs()를 사용해서 반응형으로 꺼내기
-const { userId, nickName } = storeToRefs(userStore);
+const { nickName } = storeToRefs(userStore);
 </script>
 
 <style scoped>
@@ -45,7 +55,7 @@ const { userId, nickName } = storeToRefs(userStore);
 /* Right Sidebar */
 .right-sidebar {
   width: 200px;
-  padding: 60px 20px 30px;
+  padding: 40px 20px 30px;
 }
 
 .right-sidebar .user-info {
@@ -62,6 +72,33 @@ const { userId, nickName } = storeToRefs(userStore);
   height: 40px;
   border-radius: 50%;
   background-color: #90e4c8;
+}
+/* 로그인 버튼 */
+.loginBtn {
+  display: flex;
+  justify-content: center;
+}
+.loginBtn button {
+  padding: 12px 30px;
+  border-radius: 9999px;
+  background-color: white;
+  border: 2px solid #a7f3d0; /* 연한 그린 */
+  color: #065f46; /* 진한 그린 */
+  font-size: 18px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.loginBtn button:hover {
+  background-color: #d1fae5;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.loginBtn i {
+  font-size: 18px;
 }
 
 /* 달력 */

@@ -12,14 +12,6 @@
             query: { isViewCounted: true },
           }"
         >
-        <router-link
-          class="detailLink"
-          :to="{
-            name: 'ChallengeFitDetail',
-            params: { id: challenge.challengeBoardId },
-            query: { isViewCounted: true },
-          }"
-        >
           <ChallengeFitCard :challenge="challenge" />
         </router-link>
       </template>

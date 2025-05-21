@@ -31,6 +31,9 @@ public interface UserService {
 	
 	// 유저 팔로잉 전체 조회 
 	List<String> getFollowingAllList(String userNickName);
+	
+	// 유저 정보 조회 
+	User getUserInfo(String userNickName);
 
 
 }

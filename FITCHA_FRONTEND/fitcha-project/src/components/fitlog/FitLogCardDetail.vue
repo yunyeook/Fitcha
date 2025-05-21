@@ -14,7 +14,7 @@
             <span class="user-name">{{ fitlog.writer }}</span>
           </div>
         </div>
-        <div class="proof-menu" @click="openProofModal">
+        <div v-if="isMyFitLog" class="proof-menu" @click="openProofModal">
           <i class="fas fa-ellipsis-v"></i>
         </div>
       </div>
@@ -132,9 +132,17 @@ const props = defineProps({
 });
 
 import api from "@/api/api";
-import axios from "axios";
-import { ref } from "vue";
+import { useUserStore } from "@/stores/user";
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+
+const userStore = useUserStore();
+const { nickName } = storeToRefs(userStore);
+
+const isMyFitLog = computed(() => {
+  return props.fitlog?.writer === nickName.value;
+});
 
 const router = useRouter();
 const showCommentModal = ref(false);

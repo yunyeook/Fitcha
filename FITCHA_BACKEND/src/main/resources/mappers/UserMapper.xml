@@ -65,11 +65,18 @@
 		WHERE follower_nick_name = #{userNickName}
 	</select>
 	
+	<!-- 닉네임 존재 -->
 	<select id="existsByNickname" parameterType="string">
 		SELECT EXISTS (
  			 SELECT 1 FROM user_board WHERE nick_name = #{nickName}
 					) AS is_exists;
-		
+	</select>
+	
+	<!-- 유저 정보 조회  -->
+	<select id="selectUser" parameterType="string">
+		SELECT * 
+		FROM user_board
+		WHERE nick_name = #{userNickName}
 	</select>
 	
 </mapper>

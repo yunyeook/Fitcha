@@ -8,19 +8,19 @@
         class="profile-img"
       />
       <div class="user-info">
-        <h2 class="user-name">김싸피</h2>
-        <p class="user-nickname">@러너러너러너</p>
+        <h2 class="user-name">{{ userInfo.name }}</h2>
+        <p class="user-nickname">@{{ userInfo.nickName }}</p>
       </div>
       <a href="../views/myFitUpdate.html">
         <button class="edit-btn">프로필 수정</button>
       </a>
 
       <!-- 관심 분야 태그 -->
-      <div class="tags">
+      <!-- <div class="tags">
         <span class="tag">헬스</span>
         <span class="tag">요가</span>
         <span class="tag">홈트레이닝</span>
-      </div>
+      </div> -->
     </div>
 
     <!-- 탭 메뉴 -->
@@ -37,8 +37,23 @@
 </template>
 
 <script setup>
-import ChallengeFitCard from "../challengefit/ChallengeFitCard.vue";
-import FitLogCard from "../fitlog/FitLogCard.vue";
+import api from "@/api/api";
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { onMounted, ref } from "vue";
+const userStore = useUserStore();
+const { nickName } = storeToRefs(userStore);
+const userInfo = ref({});
+onMounted(async () => {
+  if (!nickName.value) return; // 값이 없으면 요청 안 보냄
+
+  try {
+    const response = await api.get(`/user/${nickName.value}`);
+    userInfo.value = response.data;
+  } catch (error) {
+    console.error("유저 정보 불러오기 실패:", error);
+  }
+});
 </script>
 
 <style scoped>

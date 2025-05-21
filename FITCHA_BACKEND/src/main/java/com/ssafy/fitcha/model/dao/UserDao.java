@@ -35,5 +35,8 @@ public interface UserDao {
 
 	//닉네임 존재여부 
 	int existsByNickname(String nickname);
+	
+	// 유저 정보 조회 
+	User selectUser(String userNickName);
 
 }

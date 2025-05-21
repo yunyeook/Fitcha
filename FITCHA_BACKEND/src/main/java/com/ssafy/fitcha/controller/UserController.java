@@ -166,5 +166,16 @@ public class UserController {
 		return ResponseEntity.badRequest().build();
 
 	}
+	
+	@GetMapping("/{userNickName}")
+	public ResponseEntity<User> getUserInfo(@PathVariable("userNickName") String userNickName){
+		User selectedUser = userService.getUserInfo(userNickName);
+		
+		if(selectedUser != null) {
+			return ResponseEntity.ok(selectedUser);
+		}
+		return ResponseEntity.badRequest().build();
+	}
+	
 
 }

@@ -104,9 +104,9 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import api from "@/api/api";
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 
 const route = useRoute();
 const router = useRouter();
@@ -138,11 +138,12 @@ function onImageChange(event) {
   }
 }
 
+const userStore = useUserStore();
+const { userId, nickName } = storeToRefs(userStore);
+
 // 이미지 + 게시글 내용 전송
 const title = ref("");
-const userId = ref("fituser1");
 const content = ref("");
-const writer = ref("작성자");
 
 const submitProof = async () => {
   const formData = new FormData();
@@ -151,7 +152,7 @@ const submitProof = async () => {
   formData.append("userId", userId.value);
   formData.append("challengeBoardId", String(challengeBoardId.value));
   formData.append("content", content.value);
-  formData.append("writer", writer.value);
+  formData.append("writer", nickName.value);
   formData.append("exerciseType", exerciseType.value);
   formData.append("bodyPart", bodyPart.value);
   formData.append("level", level.value);
@@ -159,7 +160,7 @@ const submitProof = async () => {
     formData.append("hashTags", tag);
   });
 
-  const response = await axios.post(`${BASE_URL}/proof`, formData, {
+  const response = await api.post(`/proof`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -182,14 +183,11 @@ function removeTag(index) {
 }
 
 onMounted(async () => {
-  const { data } = await axios.get(
-    `${BASE_URL}/challenge/${challengeBoardId.value}`,
-    {
-      params: {
-        isViewCounted: false,
-      },
-    }
-  );
+  const { data } = await api.get(`/challenge/${challengeBoardId.value}`, {
+    params: {
+      isViewCounted: false,
+    },
+  });
   exerciseType.value = data.exerciseType;
   bodyPart.value = data.bodyPart;
   level.value = data.level;

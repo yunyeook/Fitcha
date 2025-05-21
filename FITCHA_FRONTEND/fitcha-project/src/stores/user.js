@@ -20,4 +20,7 @@ export const useUserStore = defineStore("user", {
       this.nickName = null;
     },
   },
+  persist: {
+    storage: localStorage, // 또는 sessionStorage로 바꿀 수도 있음
+  },
 });

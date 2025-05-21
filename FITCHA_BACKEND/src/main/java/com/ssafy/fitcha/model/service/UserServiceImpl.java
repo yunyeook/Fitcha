@@ -75,6 +75,12 @@ public class UserServiceImpl implements UserService {
 		return userDao.selectFollowingAll(userNickName);
 	}
 	
+	// 유저 정보 조회 
+	@Override
+	public User getUserInfo(String userNickName) {
+		return userDao.selectUser(userNickName);
+	}
+	
 	
 	
 	
