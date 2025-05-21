@@ -1,18 +1,30 @@
 <template>
   <div class="main-header">
     <!-- 중간 메인 영역의 가장 위 헤더 -->
-    <h2>Hello! <span class="userName">User</span></h2>
+    <h2 v-if="nickName">
+      Hello! <span class="userName">{{ nickName }}</span>
+    </h2>
+    <h2 v-if="!nickName">
+      Welcome! <span class="userName"></span>
+    </h2>
     <div class="challenge-create-wrapper">
       <RouterLink :to="{ name: 'ChallengeFitRegist' }">
         <a>
-          <button class="header__challenge-create-btn"><i class="fas fa-pen"></i> 챌린지 작성</button>
+          <button class="header__challenge-create-btn">
+            <i class="fas fa-pen"></i> 챌린지 작성
+          </button>
         </a>
       </RouterLink>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+const userStore = useUserStore();
+const { nickName } = storeToRefs(userStore);
+</script>
 
 <style scoped>
 .main-header {
@@ -38,7 +50,11 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, #3cb371, #2e8b57); /* 민트~그린 그라디언트 */
+  background: linear-gradient(
+    135deg,
+    #3cb371,
+    #2e8b57
+  ); /* 민트~그린 그라디언트 */
   color: white;
   border: none;
   padding: 10px 16px;

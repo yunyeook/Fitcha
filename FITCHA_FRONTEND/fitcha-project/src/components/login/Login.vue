@@ -109,7 +109,7 @@ const login = async (e) => {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(135deg, #b2f1e6, #e2fcf5, #c2f6e6);
+  /* background: linear-gradient(135deg, #b2f1e6, #e2fcf5, #c2f6e6); */
   background-size: 400% 400%;
   animation: login-moveGradient 12s ease infinite;
   z-index: 1;
