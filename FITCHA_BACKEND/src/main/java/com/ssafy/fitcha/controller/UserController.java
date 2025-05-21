@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.fitcha.model.dto.User;
 import com.ssafy.fitcha.model.service.UserService;
+import com.ssafy.fitcha.util.JwtUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,8 +26,11 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/user")
-@Tag(name="User RESTful API" ,description="사용자의 회원가입, 로그인, 로그아웃, 팔로우 기능")
+@Tag(name = "User RESTful API", description = "사용자의 회원가입, 로그인, 로그아웃, 팔로우 기능")
 public class UserController {
+
+	@Autowired
+	private JwtUtil jwtUtil;
 
 	// 생성자 의존성 주입
 	private final UserService userService;
@@ -34,10 +39,9 @@ public class UserController {
 		this.userService = userService;
 	}
 
-
-	@Operation(summary="로그인/로그아웃 상태 변경", description="서버의 세션 상태를 바꿈. 이런 상태 변화가 있는 작업은 POST 또는 DELETE로 처리하는 것이 REST 관점")
+	@Operation(summary = "로그인/로그아웃 상태 변경", description = "서버의 세션 상태를 바꿈. 이런 상태 변화가 있는 작업은 POST 또는 DELETE로 처리하는 것이 REST 관점")
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestBody User user, HttpSession session) {
+	public ResponseEntity<?> login(@RequestBody User user) {
 
 		// 로그인 요청 받은 id와 DB에 등록된 동일한 id를 가진 유저를 반환
 		User registedUser = userService.login(user);
@@ -53,22 +57,28 @@ public class UserController {
 		}
 
 		// 아이디와 패스워드 일치 -> 로그인 성공
-		session.setAttribute("loginUser", registedUser);
-		return ResponseEntity.ok("로그인 성공");
+		// JWT 발급
+		String token = jwtUtil.createToken(String.valueOf(registedUser.getUserBoardId()));
+		// 응답에 토큰, 유저 아이디, 닉네임 같이 넣기
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("token", token);
+		responseBody.put("userId", registedUser.getUserId());
+		responseBody.put("nickName", registedUser.getNickName());
 
+		return ResponseEntity.ok().header("Authorization", "Bearer " + token).body(responseBody);
 	}
 
-	@Operation(summary="로그아웃")
+	@Operation(summary = "로그아웃")
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(HttpSession session) {
 		session.invalidate(); // 세션 무효화 -> 로그아웃
 		return ResponseEntity.ok("로그아웃 되었습니다.");
 	}
 
-	@Operation(summary="사용자 회원가입(등록)")
+	@Operation(summary = "사용자 회원가입(등록)")
 	@PostMapping("/signup")
 	public ResponseEntity<Void> registUser(@RequestBody User user) {
-		System.out.println("프론트에서 요청된 : " +user);
+		System.out.println("프론트에서 요청된 : " + user);
 
 		if (userService.registUser(user)) {
 
@@ -77,7 +87,7 @@ public class UserController {
 		return ResponseEntity.badRequest().build();
 	}
 
-	@Operation(summary="사용자 탈퇴(삭제)")
+	@Operation(summary = "사용자 탈퇴(삭제)")
 	@DeleteMapping("/{userBoardId}")
 	public ResponseEntity<Void> deleteUser(@PathVariable("userBoardId") int userBoardId) {
 
@@ -88,8 +98,7 @@ public class UserController {
 		return ResponseEntity.badRequest().build();
 	}
 
-
-	@Operation(summary="다른 사용자 팔로우 등록")
+	@Operation(summary = "다른 사용자 팔로우 등록")
 	@PostMapping("/follow/{followingNickName}")
 	public ResponseEntity<Void> followUser(@PathVariable("followingNickName") String followingNickName,
 			HttpSession session) {
@@ -103,7 +112,7 @@ public class UserController {
 		return ResponseEntity.badRequest().build();
 	}
 
-	@Operation(summary="다른 사용자 팔로잉 취소")
+	@Operation(summary = "다른 사용자 팔로잉 취소")
 	@DeleteMapping("/follow/{followingNickName}")
 	public ResponseEntity<Void> unfollowUser(@PathVariable("followingNickName") String followingNickName,
 			HttpSession session) {
@@ -117,7 +126,7 @@ public class UserController {
 		return ResponseEntity.badRequest().build();
 	}
 
-	@Operation(summary="사용자의 팔로워 및 팔로잉 수 조회")
+	@Operation(summary = "사용자의 팔로워 및 팔로잉 수 조회")
 	@GetMapping("/follow/{userBoardId}")
 	public ResponseEntity<Map<String, Integer>> getFollowCount(@PathVariable("userBoardId") int userBoardId) {
 
@@ -132,7 +141,7 @@ public class UserController {
 
 	}
 
-	@Operation(summary="사용자의 팔로워 전체 목록 조회")
+	@Operation(summary = "사용자의 팔로워 전체 목록 조회")
 	@GetMapping("/follow/{userNickName}/follower")
 	public ResponseEntity<List<String>> getFollowerAll(@PathVariable("userNickName") String userNickName) {
 		List<String> followerAllList = new ArrayList<>();
@@ -145,7 +154,7 @@ public class UserController {
 
 	}
 
-	@Operation(summary="사용자의 팔로잉 전체 목록 조회")
+	@Operation(summary = "사용자의 팔로잉 전체 목록 조회")
 	@GetMapping("/follow/{userNickName}/following")
 	public ResponseEntity<List<String>> getFollowingAll(@PathVariable("userNickName") String userNickName) {
 		List<String> followingAllList = new ArrayList<>();
