@@ -1,25 +1,43 @@
 <template>
-  <!-- 유튜브 영상 카드 구조 -->
   <div class="ytc-card">
     <div class="ytc-thumbnail">
-      <img src="../../assets/images/run.jpg" alt="썸네일 이미지" />
-      <span class="ytc-duration">12:34</span>
+      <!-- 유튜브 썸네일 -->
+      <img :src="video.snippet.thumbnails.high.url" :alt="video.snippet.title" />
+      <span class="ytc-duration">LIVE</span>
+      <!-- duration은 Search API에 없음 -->
     </div>
     <div class="ytc-info">
-      <img src="../assets/images/profile.jpg" alt="채널 프로필" class="ytc-profile" />
+      <!-- 채널 프로필 대체 아이콘 -->
+      <div class="ytc-profile-placeholder">👤</div>
       <div class="ytc-text">
-        <div class="ytc-title">이것은 유튜브 영상 제목입니다</div>
-        <div class="ytc-channel">채널명</div>
+        <div class="ytc-title">{{ video.snippet.title }}</div>
+        <div class="ytc-channel">{{ video.snippet.channelTitle }}</div>
         <div class="ytc-meta">
-          <span class="ytc-views">조회수 102만회</span> ·
-          <span class="ytc-date">2주 전</span>
+          <span class="ytc-views">유튜브 영상</span> ·
+          <span class="ytc-date">{{ formattedDate }}</span>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { computed } from 'vue';
+
+const props = defineProps({
+  video: Object,
+});
+
+const formattedDate = computed(() => {
+  const raw = props.video?.snippet?.publishedAt;
+  if (!raw) return '';
+  return new Date(raw).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+});
+</script>
 
 <style scoped>
 .ytc-card {

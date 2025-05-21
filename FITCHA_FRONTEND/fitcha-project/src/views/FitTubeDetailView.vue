@@ -2,7 +2,7 @@
   <div>
     <MainHeader />
     <MainDetailLayout>
-      <FitTubeCardDetail :fitlog="fitlog" />
+      <FitLogCardDetail :fitlog="fitlog" />
     </MainDetailLayout>
   </div>
 </template>
@@ -11,17 +11,18 @@
 import MainHeader from '@/components/common/MainHeader.vue';
 import MainDetailLayout from '@/components/common/MainDetailLayout.vue';
 import FitLogCardDetail from '@/components/fitlog/FitLogCardDetail.vue';
+import axios from 'axios';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import api from '@/api/api';
 
 const route = useRoute();
 const proofBoardId = route.params.id;
 
 const fitlog = ref({});
+const BASE_URL = 'http://localhost:8080/proof';
 
 const requestFitLogDetail = async () => {
-  const { data } = await api.get(`/proof/${proofBoardId}`);
+  const { data } = await axios.get(`${BASE_URL}/${proofBoardId}`);
   fitlog.value = data;
 };
 

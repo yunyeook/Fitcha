@@ -14,14 +14,19 @@
 .main-content-wrapper {
   height: 650px;
   overflow-y: auto;
-  padding-right: 14px;
-  padding-top: 20px;
+  margin: 0px;
+  padding: 20px 14px 50px;
 }
 
 .main-content {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  /* ✨ 높이 제한 제거 */
+  max-height: unset;
+  overflow: visible;
 }
 
 /* 스크롤바 디자인 */

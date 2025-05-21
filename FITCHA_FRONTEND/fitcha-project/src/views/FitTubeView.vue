@@ -1,47 +1,119 @@
 <template>
-  <div>
+  <div class="page-wrapper">
     <MainHeader />
     <MainContentSearch />
-    <MainGridLayout>
-      <template v-for="video in videos" :key="video.id">
-        <router-link class="detailLink">
-          <FitTubeCard />
-        </router-link>
-      </template>
-    </MainGridLayout>
+
+    <!-- ✨ scroll 담당, 스타일 간섭 X -->
+    <div class="main">
+      <MainGridLayout>
+        <template v-for="video in videos" :key="video.id.videoId">
+          <router-link
+            class="router-link"
+            :to="{
+              name: 'FitTubeDetail',
+              params: { id: video.id.videoId },
+            }"
+          >
+            <FitTubeCard :video="video" />
+          </router-link>
+        </template>
+        <!-- 이 요소가 화면에 보이면 → 다음 영상 요청 -->
+        <div ref="observerTarget" class="observer-sentinel"></div>
+      </MainGridLayout>
+    </div>
   </div>
 </template>
 
 <script setup>
-import MainHeader from "@/components/common/MainHeader.vue";
-import MainContentSearch from "@/components/common/MainContentSearch.vue";
-import FitTubeCard from "@/components/fittube/FitTubeCard.vue";
-import MainGridLayout from "@/components/common/MainGridLayout.vue";
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import axios from 'axios';
 
-import { ref } from "vue";
-import axios from "axios";
-import { useRoute, useRouter } from "vue-router";
-const BASE_URL = "http://localhost:8080/youtube/search";
-const search = ref({});
-const route = useRoute();
-const router = useRouter();
+import MainHeader from '@/components/common/MainHeader.vue';
+import MainContentSearch from '@/components/common/MainContentSearch.vue';
+import MainGridLayout from '@/components/common/MainGridLayout.vue';
+import FitTubeCard from '@/components/fittube/FitTubeCard.vue';
+
+const BASE_URL = 'http://localhost:8080/youtube/search';
+
 const videos = ref([]);
-const token = localStorage.getItem("access-token");
 
-async function requestFitTubeVideos() {
-  const { data } = await axios.get(BASE_URL, {
-    headers: {
-      Authorization: `Bearer ${token}`, // 서버가 발급한 JWT 토큰
-    },
-  });
+const token = localStorage.getItem('access-token');
 
-  videos.value = data;
+const nextPageToken = ref('');
+const isLoading = ref(false);
+const observerTarget = ref(null);
+let observer;
+
+async function requestYoutubeVideos() {
+  if (isLoading.value) return;
+  isLoading.value = true;
+
+  try {
+    const { data } = await axios.get(BASE_URL, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 서버가 발급한 JWT 토큰
+      },
+      params: { pageToken: nextPageToken.value },
+    });
+    videos.value.push(...data.items);
+    nextPageToken.value = data.nextPageToken || '';
+  } catch (error) {
+    console.error('영상 요청 실패:', error);
+  } finally {
+    isLoading.value = false;
+  }
 }
-requestFitTubeVideos();
+
+onMounted(() => {
+  requestYoutubeVideos();
+
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting && nextPageToken.value) {
+        requestYoutubeVideos();
+      }
+    },
+    {
+      threshold: 1.0,
+    }
+  );
+
+  if (observerTarget.value) {
+    observer.observe(observerTarget.value);
+  }
+});
+
+onBeforeUnmount(() => {
+  if (observer && observerTarget.value) {
+    observer.unobserve(observerTarget.value);
+  }
+});
 </script>
 
 <style scoped>
-.detailLink {
+/* 전체 페이지 기준 */
+.page-wrapper {
+  height: 780px;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.main {
+  flex: 1;
+  overflow: visible;
+  background: inherit; /* 상위와 동일하게 */
+  padding: 0; /* 여백 없음 */
+  margin: 0;
+  box-sizing: border-box;
+  display: block;
+}
+
+.observer-sentinel {
+  width: 100%;
+  height: 1px;
+}
+
+.router-link {
   text-decoration: none;
 }
 </style>
