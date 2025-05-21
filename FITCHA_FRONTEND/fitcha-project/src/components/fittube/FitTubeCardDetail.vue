@@ -10,7 +10,7 @@
             <span class="user-name">{{ fitlog.writer }}</span>
           </div>
         </div>
-        <div v-if="isMyFitLog" class="proof-menu" @click="openProofModal">
+        <div class="proof-menu" @click="openProofModal">
           <i class="fas fa-ellipsis-v"></i>
         </div>
       </div>
@@ -101,23 +101,13 @@ const props = defineProps({
   },
 });
 
-import api from '@/api/api';
-import { useUserStore } from '@/stores/user';
-import { ref, onMounted, computed } from 'vue';
+import axios from 'axios';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia';
-
-const userStore = useUserStore();
-const { nickName } = storeToRefs(userStore);
-
-const isMyFitLog = computed(() => {
-  return props.fitlog?.writer === nickName.value;
-});
 
 const router = useRouter();
 const showCommentModal = ref(false);
 const showProofModal = ref(false);
-
 const BASE_URL = 'http://localhost:8080/proof';
 
 // 댓글 수정 삭제 모달
@@ -151,7 +141,7 @@ const editProof = () => {
 
 const deleteProof = async () => {
   try {
-    await api.delete(`proof/${props.fitlog.proofBoardId}`);
+    await axios.delete(`${BASE_URL}/${props.fitlog.proofBoardId}`);
     closeProofModal();
     router.push(`/fitlog`);
   } catch (error) {

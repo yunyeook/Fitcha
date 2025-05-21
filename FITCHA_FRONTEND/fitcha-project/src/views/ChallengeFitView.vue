@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="page-wrapper">
     <MainHeader />
     <MainContentSearch />
     <MainGridLayout>
       <template v-for="challenge in challenges" :key="challenge">
         <router-link
-          class="detailLink"
+          class="router-link"
           :to="{
             name: 'ChallengeFitDetail',
             params: { id: challenge.challengeBoardId },
@@ -44,7 +44,11 @@ requestChallengeSearch();
 </script>
 
 <style scoped>
-.detailLink {
+.router-link {
   text-decoration: none;
+}
+.page-wrapper {
+  height: 780px;
+  overflow-y: hidden;
 }
 </style>
