@@ -35,6 +35,7 @@
 		<if test="orderBy != null">
 			ORDER BY ${orderBy} ${orderByDir}
 		</if>
+		ORDER BY reg_date DESC
 	</select>
 
 	<!-- 인증글 상세 조회 -->
@@ -81,4 +82,26 @@
 		AND writer =
 		#{writer}
 	</delete>
+
+	<!-- 인증글 등록시 해쉬태그 별도 테이블에 저장 -->
+	<insert id="insertProofBoardHashtags" parameterType="map">
+		INSERT INTO proof_board_hashtag (proof_board_id, hashtag)
+		VALUES
+		<foreach collection="hashTags" item="tag" separator=",">
+			(#{proofBoardId}, #{tag})
+		</foreach>
+	</insert>
+	<!-- 인증글의 해쉬태그 가져오 -->
+	<select id="selectHashTagsByProofBoardIds" resultType="map"
+		parameterType="list">
+		SELECT proof_board_id, hashtag
+		FROM proof_board_hashtag
+		WHERE proof_board_id IN
+		<foreach collection="list" item="id" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</select>
+
+
 </mapper>

@@ -15,6 +15,8 @@ follower_count INT DEFAULT 0 CHECK (follower_count >= 0), -- 팔로우 하는 �
 following_count INT DEFAULT 0 CHECK (following_count >= 0) -- 팔로우 당하는 사람 (상대방)
 );
 
+select * from user_board;
+
 CREATE TABLE user_file(
 user_file_id INT PRIMARY KEY AUTO_INCREMENT,
 user_board_id INT,
@@ -35,7 +37,7 @@ content TEXT NOT NULL,
 writer VARCHAR(300) NOT NULL,
 exercise_type VARCHAR(300) NOT NULL DEFAULT '전체',
 body_part VARCHAR(300) NOT NULL DEFAULT '전체',
-level VARCHAR(300) NOT NULL DEFAULT '초급',
+`level` VARCHAR(300) NOT NULL DEFAULT '초급',
 duration INT NOT NULL,
 participant_count INT DEFAULT 1 CHECK (participant_count >= 1 AND participant_count <= 100),
 total_participant_count INT DEFAULT 1 CHECK (total_participant_count >= 1 AND total_participant_count <= 100),
@@ -67,12 +69,28 @@ content TEXT NOT NULL,
 writer VARCHAR(300) NOT NULL,
 view_count INT DEFAULT 0 CHECK (view_count >= 0),
 like_count INT DEFAULT 0 CHECK (like_count >= 0),
-reg_date TIMESTAMP DEFAULT NOW(),
+reg_date TIMESTAMP DEFAULT NOW(), 
+exercise_type VARCHAR(300) NOT NULL DEFAULT '전체',
+body_part VARCHAR(300) NOT NULL DEFAULT '전체',
+`level` VARCHAR(300) NOT NULL DEFAULT '초급',
 CONSTRAINT proof_board_pk FOREIGN KEY (challenge_board_id) REFERENCES challenge_board (challenge_board_id) 
 ON DELETE SET NULL,
 CONSTRAINT proof_board_user_pk FOREIGN KEY (user_id) REFERENCES user_board(user_id)
 ON DELETE SET NULL
 );
+
+select * from proof_board;
+
+
+CREATE TABLE proof_board_hashtag (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    proof_board_id INT,
+    hashtag VARCHAR(1000),
+    CONSTRAINT fk_proof_board FOREIGN KEY (proof_board_id)
+        REFERENCES proof_board(proof_board_id)
+        ON DELETE CASCADE
+);
+select * from proof_board_hashtag;
 
 CREATE TABLE proof_file(
 proof_file_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -240,7 +258,6 @@ VALUES
 INSERT INTO challenge_comment (challenge_board_id, user_id, content, writer)
 VALUES
 (1, 'fituser2', '아침 스트레칭 하고 나니까 몸이 가벼워요!', '영희짱'),
-(1, 'fituser1', '많이 참여해주세요~', '길동이'),
 (2, 'fituser1', '만보 걷기 생각보다 힘드네요ㅋㅋ', '길동이'),
 (3, 'fituser2', '홈트 루틴 너무 좋아요, 추천합니다!', '영희짱'),
 (4, 'fituser1', '플랭크 진짜 어렵네요ㅠㅠ 그래도 해냈어요!', '길동이'),
@@ -375,3 +392,7 @@ BEGIN
 END $$
 DELIMITER ;
 select * from participant_challenge;
+
+
+select * from challenge_board;
+

@@ -32,7 +32,9 @@
         <div class="content">
           {{ fitlog.content }}
         </div>
-        <div class="hashtag">#5일차성공 #아침러닝</div>
+        <div class="hashtag">
+          <span v-for="tag in fitlog.hashTags" :key="tag">{{ tag }}</span>
+        </div>
 
         <!-- 하단 푸터 -->
         <div class="footer">
@@ -103,12 +105,12 @@ const props = defineProps({
 
 .proof-card .user-info .title {
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 1.22rem;
   color: #222;
 }
 
 .proof-card .user-info .user-name {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: #777;
   margin-top: 7px;
 }
@@ -154,7 +156,7 @@ const props = defineProps({
 
 /* 인증 메시지 */
 .content {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: #444;
   padding: 12px 16px 0px;
   margin-bottom: 8px;
@@ -168,8 +170,10 @@ const props = defineProps({
 
 .hashtag {
   color: #3cb371;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   margin: 0px 0px 12px 16px;
+  display: flex;
+  gap: 5px;
 }
 
 /* 하단 푸터 */
@@ -197,7 +201,7 @@ const props = defineProps({
 }
 
 .footer .date {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #999;
 }
 .footer {

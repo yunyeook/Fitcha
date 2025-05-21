@@ -13,15 +13,15 @@
 </template>
 
 <script setup>
-import MainHeader from '@/components/common/MainHeader.vue';
-import MainContentSearch from '@/components/common/MainContentSearch.vue';
-import FitTubeCard from '@/components/fittube/FitTubeCard.vue';
-import MainGridLayout from '@/components/common/MainGridLayout.vue';
+import MainHeader from "@/components/common/MainHeader.vue";
+import MainContentSearch from "@/components/common/MainContentSearch.vue";
+import FitTubeCard from "@/components/fittube/FitTubeCard.vue";
+import MainGridLayout from "@/components/common/MainGridLayout.vue";
 
-import { ref } from 'vue';
-import axios from 'axios';
-import { useRoute, useRouter } from 'vue-router';
-const BASE_URL = 'http://localhost:8080/youtube/search';
+import { ref } from "vue";
+import axios from "axios";
+import { useRoute, useRouter } from "vue-router";
+const BASE_URL = "http://localhost:8080/youtube/search";
 const search = ref({});
 const route = useRoute();
 const router = useRouter();
@@ -35,4 +35,8 @@ async function requestFitTubeVideos() {
 requestFitTubeVideos();
 </script>
 
-<style scoped></style>
+<style scoped>
+.detailLink {
+  text-decoration: none;
+}
+</style>

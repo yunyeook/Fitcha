@@ -126,7 +126,7 @@ public class ChallengeController {
 	@PostMapping(("/{challengeBoardId}/participate"))
 	public ResponseEntity<Void> registChallengParticipate(
 			@RequestBody Challenge challenge) throws Exception {
-		
+
 		if(challengeService.registChallengeParticipate(challenge)) 
 			return ResponseEntity.ok().build();
 		
@@ -184,7 +184,7 @@ public class ChallengeController {
 			@PathVariable("challengeCommentId") int challengeCommentId, @RequestBody Comment comment) {
 
 		if (commentService.updateChallengeComment(challengeBoardId, challengeCommentId, comment)) {
-			
+			return ResponseEntity.ok(null);
 		}
 
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

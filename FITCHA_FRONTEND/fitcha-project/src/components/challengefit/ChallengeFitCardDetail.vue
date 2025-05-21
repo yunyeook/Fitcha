@@ -64,10 +64,16 @@
             참여중
           </button>
           <button class="challenge-detail__certify-btn">
-            <a href="../views/registFitLog.html" style="text-decoration: none">
+            <router-link
+              :to="{
+                name: 'FitLogRegistView',
+                params: { challengeBoardId: challenge.challengeBoardId },
+              }"
+              style="text-decoration: none"
+            >
               <i class="fas fa-pen"></i>
               인증글 쓰기
-            </a>
+            </router-link>
           </button>
         </div>
       </template>
@@ -113,14 +119,16 @@
             <input type="text" placeholder="댓글을 남기세요..." v-model="comment" />
             <button @click="requestChallengeCommentRegist">작성</button>
           </div>
-          <div class="challenge-detail__comment" v-for="comment in challenge.comments" :key="comment.commentId">
+          <div class="challenge-detail__comment" v-for="comment in comments" :key="comment.challengeCommentId">
+            <!-- <p>{{ challenge.comments }}</p> -->
             <img src="https://via.placeholder.com/36/FF5733" />
             <div class="challenge-detail__comment-body">
               <div>
                 <div class="challenge-detail__comment-author">
                   {{ comment.writer }}
                 </div>
-                <template v-if="editCommentId !== comment.commentId">
+
+                <template v-if="editChallengeCommentId !== comment.challengeCommentId">
                   <div class="challenge-detail__comment-text">
                     {{ comment.content }}
                   </div>
@@ -128,7 +136,7 @@
                 <template v-else>
                   <div class="challenge-detail__comment-form">
                     <input type="text" v-model="editCommentContent" />
-                    <button @click="requestChallengeCommentUpdate(editCommentId)">수정완료</button>
+                    <button @click="requestChallengeCommentUpdate(editChallengeCommentId)">수정완료</button>
                   </div>
                 </template>
 
@@ -139,7 +147,10 @@
 
               <!--'길동이' -> 세션에서 사용자 닉네임가져오기-->
               <template v-if="comment.writer === '길동이'">
-                <div class="challenge-detail__options" @click="openCommentModal(comment.commentId)">
+                <div
+                  class="challenge-detail__options"
+                  @click="openCommentModal(comment.challengeCommentId, comment.content)"
+                >
                   <i class="fas fa-ellipsis-v"></i>
                 </div>
               </template>
@@ -170,11 +181,11 @@
   </div>
 
   <!-- 댓글 수정/삭제 모달 -->
-  <div v-if="showCommentModal" class="modal-overlay" @click.self="closeCommentModal">
+  <div v-if="showCommentModal" class="modal-overlay" @click.self="closeCommentModal(false)">
     <div class="modal-box">
-      <button class="modal-close-button" @click="closeCommentModal">×</button>
+      <button class="modal-close-button" @click="closeCommentModal(false)">×</button>
       <div class="modal-title">댓글 관리</div>
-      <button class="modal-button" @click="editComment">수정하기</button>
+      <button class="modal-button" @click="closeCommentModal(true)">수정하기</button>
       <button class="modal-button delete" @click="deleteComment">삭제하기</button>
     </div>
   </div>
@@ -191,7 +202,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 const BASE_URL = 'http://localhost:8080/challenge';
@@ -202,8 +214,17 @@ const router = useRouter();
 const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
-const editCommentId = ref(-1);
+const editChallengeCommentId = ref(-1);
 const editCommentContent = ref('');
+const comments = ref([]);
+async function requestChallengeComment() {
+  const { data } = await axios.get(`${BASE_URL}/${challengeBoardId.value}/comment`);
+  comments.value = data;
+}
+requestChallengeComment();
+watch(comments, (newValue, oldValue) => {
+  comments.value = newValue;
+});
 
 const commentsCount = computed(() => {
   const comments = challenge.value.comments;
@@ -212,11 +233,14 @@ const commentsCount = computed(() => {
 
 async function requestChallengeCommentUpdate(id) {
   await axios.put(`${BASE_URL}/${challengeBoardId.value}/comment/${id}`, {
-    commentId: id,
-    boardId: challengeBoardId.value,
+    challengeCommentId: id,
+    challengeBoardId: challengeBoardId.value,
     content: editCommentContent.value,
   });
-  editCommentContent.value = -1;
+
+  requestChallengeComment();
+
+  editChallengeCommentId.value = -1;
   editCommentContent.value = '';
 }
 
@@ -238,16 +262,19 @@ const comment = ref('');
 //댓글등록.
 async function requestChallengeCommentRegist() {
   const { status } = await axios.post(`${BASE_URL}/${challengeBoardId.value}/comment`, {
-    boardId: challengeBoardId.value,
+    challengeBoardId: challengeBoardId.value,
+
     userId: 'fituser1', // 세션에서 가져오기
     content: comment.value,
     writer: '길동이', //세션에서 가져오기
   });
   comment.value = '';
+
   //성공시 다시 전체 댓글 목록 불러오기
   if (status === axios.HttpStatusCode.Created) {
     const { data } = await axios.get(`${BASE_URL}/${challengeBoardId.value}/comment`);
-    challenge.value.comments = data;
+    comments.value = data;
+
     //실패시
   } else {
     //작성하기
@@ -257,6 +284,7 @@ async function requestChallengeCommentRegist() {
 async function requestChallengeParticipate() {
   const { status } = await axios.post(`${BASE_URL}/${challengeBoardId.value}/participate`, {
     challengeBoardId: challengeBoardId.value,
+
     writer: '길동이', //세션에서 가져오기
   });
   if (status === axios.HttpStatusCode.Ok) {
@@ -280,23 +308,27 @@ const closeChallengeFitModal = () => {
   showChallengeFitModal.value = false;
 };
 
-const openCommentModal = commentId => {
+const openCommentModal = (challengeCommentId, content) => {
   showCommentModal.value = true;
-  editCommentId.value = commentId;
+  editChallengeCommentId.value = challengeCommentId;
+  editCommentContent.value = content;
 };
 
-const closeCommentModal = () => {
+const closeCommentModal = isContinue => {
   showCommentModal.value = false;
-  editCommentId.value = -1;
+  if (!isContinue) {
+    editChallengeCommentId.value = -1;
+  }
 };
 
-const editComment = commentId => {
-  editCommentId.value = commentId;
-};
+// const editComment = () => {
+//   closeCommentModal();
+// };
 
-const deleteComment = () => {
-  alert('삭제 기능은 여기에 구현.');
-  closeModal();
+const deleteComment = async () => {
+  await axios.delete(`${BASE_URL}/${challengeBoardId.value}/comment/${editChallengeCommentId.value}`);
+  requestChallengeComment();
+  closeCommentModal(false);
 };
 
 const editChallengeFit = () => {
@@ -308,7 +340,7 @@ const deleteChallengeFit = async () => {
   closeChallengeFitModal();
 
   //토큰으로 하면 길동이를 굳이 안보내도 되니 이건 프론트랑 백이랑 후에 모두 수정하기
-  await axios.delete(`${BASE_URL}/${challengeBoardId.value}/"길동이"`);
+  await axios.delete(`${BASE_URL}/${challengeBoardId.value}/길동이`);
   router.push({ name: 'ChallengeFit' });
 };
 </script>
@@ -511,6 +543,10 @@ const deleteChallengeFit = async () => {
 
 .challenge-detail__certify-btn:hover {
   background: #228be6;
+}
+
+.challenge-detail__certify-btn a {
+  color: #ffffff;
 }
 
 /* 메타 정보 */

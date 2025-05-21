@@ -78,11 +78,11 @@
 
       <div class="form-group">
         <label for="duration">챌린지 기간</label>
-        <input type="duration" id="duration" placeholder="예: 10" min="1" max="100" v-model="duration" />
+        <input type="number" id="duration" placeholder="예: 10" min="1" max="100" v-model="duration" />
       </div>
       <!-- 제출 버튼 -->
       <div class="challenge-regist">
-        <button type="submit" class="submit-btn">등록하기</button>
+        <button type="submit" class="submit-btn">수정완료</button>
       </div>
     </form>
   </div>
@@ -118,7 +118,9 @@ async function requestChallengeDetail() {
     },
   });
   challenge.value = data;
-  imgUrl.value = IMG_BASE_URL + data.challengeFiles[0].fileUploadName;
+  if (data.challengeFiles.length > 0) {
+    imgUrl.value = IMG_BASE_URL + data.challengeFiles[0].fileUploadName;
+  }
 }
 requestChallengeDetail();
 
@@ -143,7 +145,7 @@ const thumbnailPreviewChange = e => {
       const preview = document.getElementById('imagePreview');
       preview.style.backgroundImage = `url(${reader.result})`;
       thumbnailPreview.value = reader.result;
-      console.log(thumbnailPreview.value);
+      imgUrl.value = reader.result;
     };
     reader.readAsDataURL(file);
   }
@@ -166,7 +168,9 @@ const requestChallengeRegist = async () => {
 
     if (thumbnailFile.value) {
       formData.append('files', thumbnailFile.value);
-      formData.append('deleteChallengeFileIds', challenge.value.challengeFiles[0].challengeFileId);
+      if (challenge.value.challengeFiles.length > 0) {
+        formData.append('deleteChallengeFileIds', challenge.value.challengeFiles[0].challengeFileId);
+      }
     }
 
     const response = await axios.put(`${BASE_URL}/${challengeBoardId.value}`, formData, {

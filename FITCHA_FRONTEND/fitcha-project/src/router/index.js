@@ -43,10 +43,15 @@ const routes = [
     name: 'ChallengeFitUpdate',
     component: ChallengeFitUpdateView,
   },
+
   { path: '/fittube', name: 'FitTube', component: FitTubeView },
   { path: '/fitlog', component: FitLogView },
-  { path: '/fitlog/detail', component: FitLogDetailView },
-  { path: '/fitlog/regist', component: FitLogRegistView },
+  { path: '/fitlog/:id', component: FitLogDetailView },
+  {
+    path: '/fitlog/regist/:challengeBoardId',
+    name: 'FitLogRegistView',
+    component: FitLogRegistView,
+  },
   { path: '/fitlog/update', component: FitLogUpdateView },
   { path: '/home', component: HomeView },
   { path: '/login', component: LoginView },

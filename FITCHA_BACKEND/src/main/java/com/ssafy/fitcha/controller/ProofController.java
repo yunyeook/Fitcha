@@ -4,8 +4,8 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -75,12 +76,14 @@ public class ProofController {
 
 	@Operation(summary = "인증글 게시글 등록")
 	@PostMapping
-	public ResponseEntity<Void> registProof(@RequestParam(value = "files", required = false) List<MultipartFile> files,
-			@RequestBody Proof proof) throws Exception {
-		if (proofService.registProof(proof, files)) {
-			return ResponseEntity.ok().build();
-		}
-		return ResponseEntity.badRequest().build();
+	public ResponseEntity<Integer> registProof(
+			@RequestParam(value = "files", required = false) List<MultipartFile> files, @ModelAttribute Proof proof)
+			throws Exception {
+
+		if (proofService.registProof(proof, files))
+			return ResponseEntity.ok(proof.getProofBoardId());
+
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
 
 	@Operation(summary = "인증글 게시글 수정 ")
@@ -109,6 +112,10 @@ public class ProofController {
 
 	}
 
+	
+	
+	
+
 	// ---댓글-------------------------------------------------------------------------------
 
 	@Operation(summary = "인증글 게시글의 댓글 등록")
@@ -135,7 +142,7 @@ public class ProofController {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
 
-	@Operation(summary="인증글 게시글의 댓글 수정")
+	@Operation(summary = "인증글 게시글의 댓글 수정")
 	@PutMapping("/{proofBoardId}/comment/{proofCommentId}")
 	public ResponseEntity<Void> updateProofComment(@PathVariable("proofBoardId") int proofBoardId,
 			@PathVariable("proofCommentId") int proofCommentId, @RequestBody Comment comment) {
@@ -150,7 +157,7 @@ public class ProofController {
 	}
 
 	// ----- 좋아요-----
-	@Operation(summary ="인증 게시글 좋아요 갱신")
+	@Operation(summary = "인증 게시글 좋아요 갱신")
 	@PostMapping("/{proofBoardId}/like")
 	public ResponseEntity<Void> updateProofLike(@PathVariable("proofBoardId") int proofBoardId,
 			@RequestParam("like") boolean isLiked, HttpSession session) {

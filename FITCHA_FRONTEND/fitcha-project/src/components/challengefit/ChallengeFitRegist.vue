@@ -74,8 +74,9 @@
       <!-- 챌린지 기간 -->
       <div class="form-group">
         <label for="duration">챌린지 기간</label>
-        <input type="duration" id="duration" placeholder="예: 10" min="1" max="100" v-model="duration" />
+        <input type="number" id="duration" placeholder="예: 10" min="1" max="100" v-model="duration" />
       </div>
+
       <!-- 제출 버튼 -->
       <div class="challenge-regist">
         <button type="submit" class="submit-btn">등록하기</button>

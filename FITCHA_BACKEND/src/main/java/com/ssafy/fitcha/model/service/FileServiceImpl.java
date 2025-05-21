@@ -20,6 +20,8 @@ import com.ssafy.fitcha.model.dto.ProofFile;
 public class FileServiceImpl implements FileService {
 	@Value("${challenge.file.upload-dir}")
 	private String uploadDirPath;
+	@Value("${proof.file.upload-dir}")
+	private String uploadDirPathProof;
 	private FileDao fileDao;
 	private ResourceLoader resourceLoader;
 
@@ -93,11 +95,14 @@ public class FileServiceImpl implements FileService {
 	// 인증글 파일 등록
 	@Override
 	public void insertProofFile(List<MultipartFile> files, int proofBoardId, String writer) throws Exception {
+		System.out.println(files);
+		System.out.println(proofBoardId);
+		System.out.println(writer);
 		if (files == null || files.isEmpty()) {
 			return;
 		}
 
-		File uploadDir = new File(uploadDirPath);
+		File uploadDir = new File(uploadDirPathProof);
 		if (!uploadDir.exists()) {
 			uploadDir.mkdirs();
 		}
