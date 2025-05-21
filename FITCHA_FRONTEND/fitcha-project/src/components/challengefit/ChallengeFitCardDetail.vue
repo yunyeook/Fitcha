@@ -202,29 +202,21 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from "vue";
+import axios from "axios";
+import { useRoute, useRouter } from "vue-router";
+import api from "@/api/api";
 
-import axios from 'axios';
-import { useRoute, useRouter } from 'vue-router';
-const BASE_URL = 'http://localhost:8080/challenge';
-const IMG_BASE_URL = 'http://localhost:8080/';
-const imgUrl = ref('');
+const BASE_URL = "http://localhost:8080/challenge";
+const IMG_BASE_URL = "http://localhost:8080/";
+const imgUrl = ref("");
 const route = useRoute();
 const router = useRouter();
 const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
-const editChallengeCommentId = ref(-1);
-const editCommentContent = ref('');
-const comments = ref([]);
-async function requestChallengeComment() {
-  const { data } = await axios.get(`${BASE_URL}/${challengeBoardId.value}/comment`);
-  comments.value = data;
-}
-requestChallengeComment();
-watch(comments, (newValue, oldValue) => {
-  comments.value = newValue;
-});
+const updateCommwzentId = ref(-1);
+const token = localStorage.getItem("access-token");
 
 const commentsCount = computed(() => {
   const comments = challenge.value.comments;
@@ -232,7 +224,7 @@ const commentsCount = computed(() => {
 });
 
 async function requestChallengeCommentUpdate(id) {
-  await axios.put(`${BASE_URL}/${challengeBoardId.value}/comment/${id}`, {
+  await api.put(`challenge/${challengeBoardId.value}/comment/${id}`, {
     challengeCommentId: id,
     challengeBoardId: challengeBoardId.value,
     content: editCommentContent.value,
@@ -245,7 +237,7 @@ async function requestChallengeCommentUpdate(id) {
 }
 
 async function requestChallengeDetail() {
-  const { data } = await axios.get(`${BASE_URL}/${challengeBoardId.value}`, {
+  const { data } = await api.get(`/challenge/${challengeBoardId.value}`, {
     params: {
       // user:
       isViewCounted: isViewCounted.value,
@@ -261,20 +253,22 @@ const comment = ref('');
 
 //댓글등록.
 async function requestChallengeCommentRegist() {
-  const { status } = await axios.post(`${BASE_URL}/${challengeBoardId.value}/comment`, {
-    challengeBoardId: challengeBoardId.value,
-
-    userId: 'fituser1', // 세션에서 가져오기
-    content: comment.value,
-    writer: '길동이', //세션에서 가져오기
-  });
-  comment.value = '';
-
+  const { status } = await api.post(
+    `/challenge/${challengeBoardId.value}/comment`,
+    {
+      boardId: challengeBoardId.value,
+      userId: "fituser1", // 세션에서 가져오기
+      content: comment.value,
+      writer: "길동이", //세션에서 가져오기
+    }
+  );
+  comment.value = "";
   //성공시 다시 전체 댓글 목록 불러오기
   if (status === axios.HttpStatusCode.Created) {
-    const { data } = await axios.get(`${BASE_URL}/${challengeBoardId.value}/comment`);
-    comments.value = data;
-
+    const { data } = await api.get(
+      `/challenge/${challengeBoardId.value}/comment`
+    );
+    challenge.value.comments = data;
     //실패시
   } else {
     //작성하기
@@ -282,11 +276,13 @@ async function requestChallengeCommentRegist() {
 }
 
 async function requestChallengeParticipate() {
-  const { status } = await axios.post(`${BASE_URL}/${challengeBoardId.value}/participate`, {
-    challengeBoardId: challengeBoardId.value,
-
-    writer: '길동이', //세션에서 가져오기
-  });
+  const { status } = await api.post(
+    `/challenge/${challengeBoardId.value}/participate`,
+    {
+      boardId: challengeBoardId.value,
+      writer: "길동이", //세션에서 가져오기
+    }
+  );
   if (status === axios.HttpStatusCode.Ok) {
     challenge.value.participated = true;
     //실패시

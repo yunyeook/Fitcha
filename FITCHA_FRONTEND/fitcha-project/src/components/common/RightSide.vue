@@ -6,7 +6,7 @@
     <!-- 로그인 안했을시에는 로그인 버튼 떠야함 -->
     <div class="user-info">
       <img src="" alt="" />
-      <span>USER</span>
+      <span>{{ nickName }}</span>
     </div>
 
     <!-- 달력 -->
@@ -28,7 +28,16 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+
+// Pinia store 인스턴스 가져오기
+const userStore = useUserStore();
+
+// state 값은 storeToRefs()를 사용해서 반응형으로 꺼내기
+const { userId, nickName } = storeToRefs(userStore);
+</script>
 
 <style scoped>
 /* 전체 공통 레이아웃 중 오른쪽 사이드바 css */

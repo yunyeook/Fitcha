@@ -15,8 +15,9 @@ import MyFitView from '@/views/MyFitView.vue';
 import MyFitUpdateView from '@/views/MyFitUpdateView.vue';
 
 const routes = [
-  // 패스 경로는 테스트 위해서 임시로 해놓은거니 알아서 수정 필요
-  { path: '/challengefit', name: 'ChallengeFit', component: ChallengeFitView },
+  { path: "/home", name: "HomeView", component: HomeView },
+  { path: "/", redirect: "/home" }, // 처음 진입시 항상 홈 뷰가 보이도록 설정
+  { path: "/challengefit", name: "ChallengeFit", component: ChallengeFitView },
   {
     path: '/challengefit/:id',
     name: 'ChallengeFitDetail',
@@ -52,17 +53,32 @@ const routes = [
     name: 'FitLogRegistView',
     component: FitLogRegistView,
   },
-  { path: '/fitlog/update', component: FitLogUpdateView },
-  { path: '/home', component: HomeView },
-  { path: '/login', component: LoginView },
-  { path: '/signup', component: SignupView },
-  { path: '/myfit', component: MyFitView },
-  { path: '/myfit/update', component: MyFitUpdateView },
+  { path: "/fitlog/update", component: FitLogUpdateView },
+
+  { path: "/login", component: LoginView },
+  { path: "/signup", component: SignupView },
+  { path: "/myfit", component: MyFitView },
+  { path: "/myfit/update", component: MyFitUpdateView },
 ];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+});
+
+const publicPages = ["/login", "/signup", "/home"];
+
+// 로그인 여부에 따른 라우트 접근 제한
+router.beforeEach((to, from, next) => {
+  const isPublicPage = publicPages.some((path) => to.path.startsWith(path));
+  const authRequired = !isPublicPage;
+  const token = localStorage.getItem("access-token");
+
+  if (authRequired && !token) {
+    next("/login"); // 로그인 페이지로 이동
+  } else {
+    next();
+  }
 });
 
 export default router;

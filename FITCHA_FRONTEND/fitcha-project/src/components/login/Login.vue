@@ -5,9 +5,19 @@
     <div class="login-card">
       <h2><span>🏃‍♀️</span> 운동하러 왔나요?</h2>
 
-      <form class="login-form">
-        <input type="text" placeholder="아이디" required />
-        <input type="password" placeholder="비밀번호" required />
+      <form class="login-form" @submit="login">
+        <input
+          type="text"
+          placeholder="아이디"
+          required
+          v-model="form.userId"
+        />
+        <input
+          type="password"
+          placeholder="비밀번호"
+          required
+          v-model="form.password"
+        />
         <button type="submit">로그인</button>
       </form>
 
@@ -48,7 +58,40 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useUserStore } from "@/stores/user";
+import axios from "axios";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const userStore = useUserStore();
+const router = useRouter();
+const BASE_URL = "http://localhost:8080";
+
+const form = ref({
+  userId: "",
+  password: "",
+});
+
+const login = async (e) => {
+  e.preventDefault(); // 폼 기본 기능 막기(새로고침)
+  try {
+    const response = await axios.post(`${BASE_URL}/user/login`, form.value);
+    const { token, userId, nickName } = response.data; // 백엔드가 보내는 데이터 구조에 맞게 구조분해
+    localStorage.setItem("access-token", token); // 로컬 스토리지에 저장
+    localStorage.setItem("userId", userId);
+    localStorage.setItem("nickName", nickName);
+    // Pinia store에 유저 정보 저장
+    const userStore = useUserStore();
+    userStore.setUser({ userId, nickName });
+
+    alert("로그인 성공! 메인페이지로 이동");
+    router.push(`/home`);
+  } catch (err) {
+    console.log("로그인 실패: ", err);
+  }
+};
+</script>
 
 <style scoped>
 .login-component {

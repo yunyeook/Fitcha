@@ -5,7 +5,7 @@
 <mapper namespace="com.ssafy.fitcha.model.dao.UserDao">
 
 	<!-- 유저 회원가입 (등록) -->
-	<insert id="insertUser" parameterType="User">
+	<insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userBoardId">
 		INSERT INTO user_board (user_id, password, email, name, nick_name, age, gender)
 		VALUES
 		(#{userId}, #{password}, #{email}, #{name}, #{nickName}, age, gender)

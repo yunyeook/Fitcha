@@ -131,6 +131,7 @@ const props = defineProps({
   },
 });
 
+import api from "@/api/api";
 import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -138,7 +139,6 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const showCommentModal = ref(false);
 const showProofModal = ref(false);
-const BASE_URL = "http://localhost:8080/proof";
 
 // 댓글 수정 삭제 모달
 const openCommentModal = () => {
@@ -171,7 +171,7 @@ const editProof = () => {
 
 const deleteProof = async () => {
   try {
-    await axios.delete(`${BASE_URL}/${props.fitlog.proofBoardId}`);
+    await api.delete(`proof/${props.fitlog.proofBoardId}`);
     closeProofModal();
     router.push(`/fitlog`);
   } catch (error) {
