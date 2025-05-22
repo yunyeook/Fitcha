@@ -11,48 +11,25 @@
           placeholder="아이디를 입력하세요"
           v-model="form.userId"
           required
+          :readonly="!isPossible"
+          :style="{ backgroundColor: isPossible ? '' : '#e0e0e0' }"
         />
       </div>
       <div class="form-group">
         <label for="password">패스워드</label>
-        <input
-          type="password"
-          id="password"
-          placeholder="비밀번호를 입력하세요"
-          v-model="form.password"
-          required
-        />
+        <input type="password" id="password" placeholder="비밀번호를 입력하세요" v-model="form.password" required />
       </div>
       <div class="form-group">
         <label for="name">이름</label>
-        <input
-          type="text"
-          id="name"
-          placeholder="이름을 입력하세요"
-          required
-          v-model="form.name"
-        />
+        <input type="text" id="name" placeholder="이름을 입력하세요" required v-model="form.name" />
       </div>
       <div class="form-group">
         <label for="nickname">닉네임</label>
-        <input
-          type="text"
-          id="nickname"
-          placeholder="닉네임을 입력하세요"
-          v-model="form.nickName"
-          required
-        />
+        <input type="text" id="nickname" placeholder="닉네임을 입력하세요" v-model="form.nickName" required />
       </div>
       <div class="form-group">
         <label for="age">나이</label>
-        <input
-          type="number"
-          id="age"
-          placeholder="나이를 입력하세요"
-          required
-          v-model="form.age"
-          min="0"
-        />
+        <input type="number" id="age" placeholder="나이를 입력하세요" required v-model="form.age" min="0" />
       </div>
       <div class="form-group">
         <label for="gender">성별</label>
@@ -63,39 +40,45 @@
           <option>기타</option>
         </select>
       </div>
-      <button type="submit" class="signup-btn">
-        <i class="fas fa-dumbbell"></i> 회원가입 완료
-      </button>
+      <button type="submit" class="signup-btn"><i class="fas fa-dumbbell"></i> 회원가입 완료</button>
     </form>
   </div>
 </template>
 
 <script setup>
-import axios from "axios";
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
+const route = useRoute();
 const router = useRouter();
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = 'http://localhost:8080';
 
 const form = ref({
-  userId: "",
-  password: "",
-  email: "",
-  name: "",
-  nickName: "",
-  age: "",
-  gender: "",
+  userId: '',
+  password: '',
+  email: '',
+  name: '',
+  nickName: '',
+  age: '',
+  gender: '',
+});
+const isPossible = ref(true);
+onMounted(() => {
+  if (route.query.userId != null) {
+    form.value.userId = route.query.userId;
+    isPossible.value = false;
+  }
 });
 
-const signup = async (e) => {
+const signup = async e => {
   e.preventDefault();
   try {
     const response = await axios.post(`${BASE_URL}/user/signup`, form.value);
-    alert("회원가입에 성공했습니다. 로그인해주세요");
+    alert('회원가입에 성공했습니다. 로그인해주세요');
     router.push(`/login`);
   } catch (err) {
-    console.log("회원가입 실패: ", err);
+    console.log('회원가입 실패: ', err);
   }
 };
 </script>
@@ -110,7 +93,7 @@ const signup = async (e) => {
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(144, 228, 200, 0.5);
   text-align: center;
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 
 .signup-wrapper h2 {

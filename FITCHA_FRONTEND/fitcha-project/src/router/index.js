@@ -11,6 +11,7 @@ import FitLogRegistView from '@/views/FitLogRegistView.vue';
 import FitLogUpdateView from '@/views/FitLogUpdateView.vue';
 import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
+import OAuthSuccessView from '@/views/OAuthSuccessView.vue';
 import SignupView from '@/views/SignupView.vue';
 import MyFitView from '@/views/MyFitView.vue';
 import MyFitUpdateView from '@/views/MyFitUpdateView.vue';
@@ -60,7 +61,9 @@ const routes = [
   { path: '/fitlog/update', component: FitLogUpdateView },
 
   { path: '/login', component: LoginView },
-  { path: '/signup', component: SignupView },
+  { path: '/oauth-success', name: 'OAuthSuccess', component: OAuthSuccessView },
+
+  { path: '/signup', name: 'Signup', component: SignupView },
   { path: '/myfit', component: MyFitView },
   { path: '/myfit/update', component: MyFitUpdateView },
 ];
@@ -76,7 +79,7 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('access-token');
   const userStore = useUserStore();
 
-  const isPublicPage = ['/login', '/signup', '/home'].includes(to.path);
+  const isPublicPage = ['/login', '/signup', '/home', '/oauth-success'].includes(to.path);
   const authRequired = !isPublicPage;
 
   // 1. 토큰 없으면 Pinia도 초기화
