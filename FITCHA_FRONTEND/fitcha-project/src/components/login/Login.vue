@@ -6,18 +6,8 @@
       <h2><span>🏃‍♀️</span> 운동하러 왔나요?</h2>
 
       <form class="login-form" @submit="login">
-        <input
-          type="text"
-          placeholder="아이디"
-          required
-          v-model="form.userId"
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          required
-          v-model="form.password"
-        />
+        <input type="text" placeholder="아이디" required v-model="form.userId" />
+        <input type="password" placeholder="비밀번호" required v-model="form.password" />
         <button type="submit">로그인</button>
       </form>
 
@@ -30,7 +20,7 @@
       <div class="social-login">
         <div class="divider"><span>또는</span></div>
 
-        <button class="social-btn kakao">
+        <button class="social-btn kakao" @click="oauthLogin('kakao')">
           <img
             src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png"
             alt="Kakao"
@@ -38,19 +28,13 @@
           카카오로 시작하기
         </button>
 
-        <button class="social-btn naver">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Naver_Logotype.svg"
-            alt="Naver"
-          />
+        <button class="social-btn naver" @click="oauthLogin('naver')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Naver_Logotype.svg" alt="Naver" />
           네이버로 시작하기
         </button>
 
-        <button class="social-btn google">
-          <img
-            src="https://developers.google.com/identity/images/g-logo.png"
-            alt="Google"
-          />
+        <button class="social-btn google" @click="oauthLogin('google')">
+          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
           구글로 시작하기
         </button>
       </div>
@@ -59,38 +43,42 @@
 </template>
 
 <script setup>
-import { useUserStore } from "@/stores/user";
-import axios from "axios";
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useUserStore } from '@/stores/user';
+import axios from 'axios';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
 const router = useRouter();
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = 'http://localhost:8080';
 
 const form = ref({
-  userId: "",
-  password: "",
+  userId: '',
+  password: '',
 });
 
-const login = async (e) => {
+const login = async e => {
   e.preventDefault(); // 폼 기본 기능 막기(새로고침)
   try {
     const response = await axios.post(`${BASE_URL}/user/login`, form.value);
     const { token, userId, nickName } = response.data;
 
     // 토큰 저장
-    localStorage.setItem("access-token", token);
+    localStorage.setItem('access-token', token);
 
     // Pinia 상태 저장
     userStore.setUser({ userId, nickName });
 
-    alert("로그인 성공! 메인페이지로 이동");
+    alert('로그인 성공! 메인페이지로 이동');
     router.push(`/home`);
   } catch (err) {
-    console.error("로그인 실패: ", err);
-    alert("로그인에 실패했습니다.");
+    console.error('로그인 실패: ', err);
+    alert('로그인에 실패했습니다.');
   }
+};
+
+const oauthLogin = provider => {
+  window.location.href = `${BASE_URL}/oauth2/authorization/${provider}`;
 };
 </script>
 
@@ -244,7 +232,7 @@ const login = async (e) => {
 }
 .login-component .divider::before,
 .login-component .divider::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 50%;
   width: 40%;

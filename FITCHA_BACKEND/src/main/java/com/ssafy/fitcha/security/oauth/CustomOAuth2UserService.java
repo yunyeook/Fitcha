@@ -41,8 +41,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-		System.out.println(registrationId + "찍히니?");
-
 		// 로그인 후 돌아올 때 쓸 이름 속성("id" or "sub")
 		String userNameAttr = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint()
 				.getUserNameAttributeName();
@@ -88,11 +86,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		}
 
 		// ── 기존 DB 로그인/가입 분기 ──
-		User dbUser = new User();
-		dbUser.setUserId(userInfo.getEmail());
-		dbUser = userService.login(dbUser);
-		System.out.println(userInfo.getEmail());
-		request.getSession().setAttribute("signupStatus", dbUser == null ? "true" : "false");
+		User user = new User();
+		user.setUserId(userInfo.getEmail());
+		user.setNickName(userInfo.getNickname());
+		User DBuser = userService.login(user);
+		request.getSession().setAttribute("signupStatus", DBuser == null ? "true" : "false");
+		request.getSession().setAttribute("user", user);
 
 		// ── 최종 사용자 객체 생성 ──
 		return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")), attributes,
