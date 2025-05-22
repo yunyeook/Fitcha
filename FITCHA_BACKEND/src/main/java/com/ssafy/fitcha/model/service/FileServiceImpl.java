@@ -119,7 +119,7 @@ public class FileServiceImpl implements FileService {
 				proofFile.setProofBoardId(proofBoardId);
 				proofFile.setFileOriginalName(originalFileName);
 				proofFile.setFileUploadName(uploadFileName);
-				proofFile.setFileUrl(uploadDirPath + uploadFileName); // 경로 저장
+				proofFile.setFileUrl(uploadDirPathProof + uploadFileName); // 경로 저장
 				proofFile.setWriter(writer);
 
 				fileDao.insertProofFile(proofFile);

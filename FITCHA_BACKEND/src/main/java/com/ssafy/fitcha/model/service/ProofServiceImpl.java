@@ -24,7 +24,7 @@ public class ProofServiceImpl implements ProofService {
 		this.proofDao = proofDao;
 		this.fileService = fileService;
 	}
-
+	
 	// 인증글 검색 조회 ( 검색 없으실 전체 조회 )
 	@Override
 	public List<Proof> getSearchProofs(SearchProof search) {
@@ -50,10 +50,11 @@ public class ProofServiceImpl implements ProofService {
 	        hashtagMap.computeIfAbsent(boardId, k -> new ArrayList<>()).add(tag);
 	    }
 
-	    // 4. 인증글에 해시태그 세팅
+	    // 4. 인증글에 해시태그 세팅 + 파일 설정
 	    for (Proof proof : proofList) {
 	        List<String> tags = hashtagMap.getOrDefault(proof.getProofBoardId(), new ArrayList<>());
 	        proof.setHashTags(tags);
+	        proof.setFiles(fileService.getProofFileList(proof.getProofBoardId()));
 	    }
 
 	    return proofList;
