@@ -64,6 +64,7 @@ const props = defineProps({
 <style scoped>
 .link-detail {
   text-decoration: none;
+  margin: 0 auto;
 }
 .proof-card {
   width: 280px;

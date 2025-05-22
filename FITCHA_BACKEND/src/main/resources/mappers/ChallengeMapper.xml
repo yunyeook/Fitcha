@@ -105,11 +105,19 @@
    		   AND participant = #{participant}
 
 	</select>
+	
+	
 	<insert id="insertParticipantChallenge" parameterType="challenge">
 		INSERT INTO participant_challenge (challenge_board_id, participant)
 			 VALUES (#{challengeBoardId},#{writer})
-
 	</insert>
-
-
+	
+	<!-- 유저가 참여한 챌린지 조회  -->
+	<select id="selectChallengeByNickName" resultType="challenge" parameterType="string">
+		SELECT cb.*
+		FROM participant_challenge pc
+		JOIN challenge_board cb
+		ON pc.challenge_board_id = cb.challenge_board_id
+		WHERE pc.participant = #{nickName}
+	</select>
 </mapper>

@@ -31,9 +31,6 @@ requestChallengeSearch();
 </script>
 
 <style scoped>
-.router-link {
-  text-decoration: none;
-}
 .page-wrapper {
   height: 780px;
   overflow-y: hidden;

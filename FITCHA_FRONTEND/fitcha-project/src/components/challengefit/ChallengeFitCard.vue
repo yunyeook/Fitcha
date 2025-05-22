@@ -88,6 +88,10 @@ const imgUrl = computed(() => {
 </script>
 
 <style scoped>
+.router-link {
+  text-decoration: none;
+  margin: 0 auto;
+}
 /* 챌린지 카드 디자인 */
 
 .challenge-card {

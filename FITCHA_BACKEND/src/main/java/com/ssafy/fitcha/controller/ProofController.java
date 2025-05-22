@@ -155,6 +155,7 @@ public class ProofController {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
 	}
+	
 
 	// ----- 좋아요-----
 	@Operation(summary = "인증 게시글 좋아요 갱신")

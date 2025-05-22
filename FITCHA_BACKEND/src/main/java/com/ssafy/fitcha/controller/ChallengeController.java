@@ -131,8 +131,21 @@ public class ChallengeController {
 			return ResponseEntity.ok().build();
 		
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
 	}
+	
+	@Operation(summary ="유저가 참여한 챌린지 조회")
+	@GetMapping(("/participate/{nickName}"))
+	public ResponseEntity<List<Challenge>> getChallengeByNickName(
+			@PathVariable("nickName") String userNickName) throws Exception {
+		List<Challenge> challenges = null;
+		challenges = challengeService.getChallengeByNickName(userNickName);
+		if(challenges != null) {
+			return ResponseEntity.ok(challenges);
+		}
+		return ResponseEntity.badRequest().build();
+	}
+	
+	
 
 	// -------- 댓 글 ------------
 

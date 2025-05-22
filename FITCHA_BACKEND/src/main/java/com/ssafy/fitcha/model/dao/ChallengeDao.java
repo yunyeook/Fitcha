@@ -35,5 +35,8 @@ public interface ChallengeDao {
 	//현재 유저의 챌린지 참여 여부.
 	public int selectChallengeParticipated(Participate participate);
 
+	// 유저가 참여한 챌린지 조회 
+	public List<Challenge> selectChallengeByNickName(String userNickName);
+
 
 }
