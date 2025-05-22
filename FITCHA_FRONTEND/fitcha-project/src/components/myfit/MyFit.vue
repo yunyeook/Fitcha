@@ -89,7 +89,7 @@ onMounted(async () => {
   try {
     const [userInfoList, challengeList, fitlogList] = await Promise.all([
       api.get(`/user/${nickName.value}`),
-      api.get(`/challenge/participatde/${nickName.value}`),
+      api.get(`/challenge/participate/${nickName.value}`),
       api.get(`/proof`, {
         params: { key: "writer", word: nickName.value },
       }),
