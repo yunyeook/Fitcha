@@ -1,12 +1,12 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia';
 
-export const useUserStore = defineStore("user", {
+export const useUserStore = defineStore('user', {
   state: () => ({
     userId: null,
     nickName: null,
   }),
   getters: {
-    isLoggedIn: (state) => !!state.userId,
+    isLoggedIn: state => !!state.userId,
   },
   actions: {
     // 로그인 성공 시 호출할 유저 정보 세팅 함수
