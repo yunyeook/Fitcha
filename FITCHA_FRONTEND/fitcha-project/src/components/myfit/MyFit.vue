@@ -1,7 +1,7 @@
 <template>
   <div class="profile-wrapper">
     <!-- 프로필 헤더 -->
-    <div class="profile-info-wrapper">
+    <div v-if="!isEditing" class="profile-info-wrapper">
       <img
         src="../../assets/images/run.jpg"
         alt="프로필 사진"
@@ -11,17 +11,15 @@
         <h2 class="user-name">{{ userInfo.name }}</h2>
         <p class="user-nickname">@{{ userInfo.nickName }}</p>
       </div>
-      <a href="../views/myFitUpdate.html">
-        <button class="edit-btn">프로필 수정</button>
-      </a>
-
-      <!-- 관심 분야 태그 -->
-      <!-- <div class="tags">
-        <span class="tag">헬스</span>
-        <span class="tag">요가</span>
-        <span class="tag">홈트레이닝</span>
-      </div> -->
+      <button class="edit-btn" type="button" @click="isEditing = true">
+        프로필 수정
+      </button>
     </div>
+    <MyFitUpdate
+      v-if="isEditing"
+      :nickName="userInfo.nickName"
+      @close="isEditing = false"
+    />
 
     <!-- 탭 메뉴 -->
     <div class="tab-menu">
@@ -70,7 +68,9 @@ import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 import FitLogCard from "../fitlog/FitLogCard.vue";
 import ChallengeFitCard from "../challengefit/ChallengeFitCard.vue";
+import MyFitUpdate from "./MyFitUpdate.vue";
 
+const isEditing = ref(false);
 const userStore = useUserStore();
 const { nickName } = storeToRefs(userStore);
 const userInfo = ref({});
