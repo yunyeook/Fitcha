@@ -12,4 +12,6 @@ public interface YoutubeService {
 //	Map<String, Object>getSearchVideos(String query);
 
 	Map<String, Object> getSearchVideos(String query, String pageToken);
+
+	Map<String, Object> getVideo(String videoId);
 }
