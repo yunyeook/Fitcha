@@ -60,28 +60,18 @@ public class ChallengeController {
 		return ResponseEntity.ok(challenges);
 	}
 
-//	@Operation(summary ="챌린지 게시글 상세 조회")
-//	@GetMapping("/{challengeBoardId}")
-//	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
-//			@RequestParam("isViewCounted") boolean isViewCounted, HttpSession session) {
-//		User user = (User) session.getAttribute("loginUser");
-//		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId, user.getNickName(), isViewCounted);
-//
-//		if (challenge == null)
-//			return ResponseEntity.noContent().build();
-//		return ResponseEntity.ok(challenge);
-//	}
-	
-	// 로그인 기능 구현 전 vue test
 	@Operation(summary ="챌린지 게시글 상세 조회")
 	@GetMapping("/{challengeBoardId}")
 	public ResponseEntity<Challenge> getDetailChallenge(@PathVariable("challengeBoardId") int challengeBoardId,
-			@RequestParam(value="isViewCounted",required=false) boolean isViewCounted) {
-		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId,"길동이", isViewCounted);
+			@RequestParam("isViewCounted") String isViewCounted, @RequestParam("writer") String writer) {
+
+		Challenge challenge = challengeService.getChallengeDetail(challengeBoardId, writer, isViewCounted);
+
 		if (challenge == null)
 			return ResponseEntity.noContent().build();
 		return ResponseEntity.ok(challenge);
 	}
+	
 
 
 	@Operation(summary ="챌린지 게시글 수정 " , description="게시글 수정 후 상세화면으로 이동")
@@ -151,7 +141,6 @@ public class ChallengeController {
 
 	@Operation(summary ="챌린지 게시글의 전체 댓글 조회 ")
 	@GetMapping("/{challengeBoardId}/comment")	
-	//프론트에서 comment에 보드번호 포함 필요한 정보 다보내니까 생략가능.
 	public ResponseEntity<List<Comment>> getChallengeComment(@PathVariable("challengeBoardId") int challengeBoardId) {
 		List<Comment> comments = commentService.getChallengeCommentList(challengeBoardId);
 		if (comments==null||comments.size()==0) {
@@ -164,8 +153,7 @@ public class ChallengeController {
 
 	@Operation(summary ="챌린지 게시글에 댓글 등록")
 	@PostMapping("/{challengeBoardId}/comment")	
-	//프론트에서 comment에 보드번호 포함 필요한 정보 다보내니까 생략가능.
-	public ResponseEntity<Void> registChallengeComment(
+		public ResponseEntity<Void> registChallengeComment(
 			@RequestBody Comment comment) {
 
 		if (commentService.registChallengeComment(comment)) {
@@ -183,8 +171,7 @@ public class ChallengeController {
 
 		if (commentService.deleteChallengeComment(challengeBoardId, challengeCommentId)) {
 
-			URI redirectUri = URI.create("/challenge/" + challengeBoardId);
-			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
