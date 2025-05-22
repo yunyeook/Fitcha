@@ -47,8 +47,13 @@ public class SecurityConfig {
 	            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 	        .and()
 	        .authorizeHttpRequests(auth -> auth
+	        		  .requestMatchers(
+	        				    "/**/*.html", "/**/*.css", "/**/*.js",
+	        				    "/**/*.png",  "/**/*.jpg", "/**/*.jpeg",
+	        				    "/**/*.svg",  "/favicon.ico"
+	        				  ).permitAll()
 	        		//REST로그인, 회원가입,oauth2엔드포인트 허용
-	            .requestMatchers("/user/login", "/user/signup", "/oauth2/**")
+	            .requestMatchers("/user/login", "/user/signup", "/oauth2/**" ,"/uploads/**")
 	            .permitAll()
 	            .anyRequest()
 	            .authenticated()

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import com.ssafy.fitcha.interceptor.LoginInterceptor;
 
@@ -29,5 +30,16 @@ public class WebConfig implements WebMvcConfigurer {
 				.allowedOriginPatterns("*")// 출처 도메인 (현재는 개발중이라 전체로 설정)-> 추후 나의 프론트엔드 도메인으로 변경 필요
 				.allowedMethods("GET", "POST", "PUT", "DELETE").allowCredentials(true);
 	}
+	
+	 // 정적 리소스 핸들러 등록
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // "/uploads/**" 로 시작하는 요청을
+        // 실제 파일 시스템의 "C:/SSAFY/" 폴더에 있는 파일로 응답하도록 설정
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:///C:/SSAFY/upload/");
+
+     
+    }
 
 }

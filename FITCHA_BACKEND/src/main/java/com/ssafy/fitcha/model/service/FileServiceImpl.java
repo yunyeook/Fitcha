@@ -62,7 +62,7 @@ public class FileServiceImpl implements FileService {
 				String originalFileName = file.getOriginalFilename();
 				String uploadFileName = generateUniqueName(originalFileName);
 				file.transferTo(new File(uploadDir, uploadFileName));
-				
+
 				ChallengeFile challengeFile = new ChallengeFile();
 				challengeFile.setChallengeBoardId(challengeBoardId);
 				challengeFile.setFileOriginalName(originalFileName);
@@ -119,7 +119,7 @@ public class FileServiceImpl implements FileService {
 				proofFile.setProofBoardId(proofBoardId);
 				proofFile.setFileOriginalName(originalFileName);
 				proofFile.setFileUploadName(uploadFileName);
-				proofFile.setFileUrl(uploadDirPathProof + uploadFileName); // 경로 저장
+				proofFile.setFileUrl("uploads/" + uploadFileName); // 경로 저장
 				proofFile.setWriter(writer);
 
 				fileDao.insertProofFile(proofFile);

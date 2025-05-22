@@ -49,10 +49,16 @@ public class ProofServiceImpl implements ProofService {
 			hashtagMap.computeIfAbsent(boardId, k -> new ArrayList<>()).add(tag);
 		}
 
-		// 4. 인증글에 해시태그 세팅
+		// 4. 인증글에 해시태그 세팅 및 파일정보 세팅
 		for (Proof proof : proofList) {
+			int boardId = proof.getProofBoardId();
+
 			List<String> tags = hashtagMap.getOrDefault(proof.getProofBoardId(), new ArrayList<>());
 			proof.setHashTags(tags);
+
+			// 파일 정보
+			List<ProofFile> proofFiles = fileService.getProofFileList(boardId);
+			proof.setProofFiles(proofFiles); // 이미지 URL 포함
 		}
 
 		return proofList;
