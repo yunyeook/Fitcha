@@ -149,10 +149,9 @@ const showCommentModal = ref(false);
 const showProofModal = ref(false);
 const imgUrl = computed(() => {
   return props.fitlog?.proofFiles?.length > 0
-    ? props.fitlog.proofFiles[0].fileUrl
+    ? "http://localhost:8080/" + props.fitlog.proofFiles[0].fileUrl
     : "";
 });
-
 // 댓글 수정 삭제 모달
 const openCommentModal = () => {
   showCommentModal.value = true;
@@ -257,7 +256,8 @@ const deleteProof = async () => {
 /* 인증 이미지 */
 .proof-image img {
   width: 100%;
-  height: auto;
+  max-height: 500px;
+  object-fit: cover; /* 비율 유지하면서 채우기 (일부 잘릴 수 있음) */
   border-radius: 12px;
   margin-bottom: 16px;
 }

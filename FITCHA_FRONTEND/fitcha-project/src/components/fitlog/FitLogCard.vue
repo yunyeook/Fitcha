@@ -5,11 +5,7 @@
       <a style="text-decoration: none" href="../views/fitLogDetail.html">
         <!-- 헤더 작성자 정보 -->
         <div class="header">
-          <img
-            class="user-profile-image"
-            src="../assets/images/user1.jpg"
-            alt="작성자 프로필"
-          />
+          <img class="user-profile-image" src="" alt="작성자 프로필" />
           <div class="user-info">
             <span class="title">{{ fitlog.title }}</span>
             <span class="user-name">{{ fitlog.writer }}</span>
@@ -18,7 +14,7 @@
 
         <!-- 운동 인증 이미지 -->
         <div class="main-image">
-          <img src="../../assets/images/run.jpg" alt="운동 인증 사진" />
+          <img :src="imgUrl" alt="운동 인증 사진" />
         </div>
 
         <!-- 운동 정보 뱃지 -->
@@ -54,10 +50,18 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
+
 const props = defineProps({
   fitlog: {
     type: Object,
   },
+});
+
+const imgUrl = computed(() => {
+  return props.fitlog?.proofFiles?.length > 0
+    ? "http://localhost:8080/" + props.fitlog.proofFiles[0].fileUrl
+    : "";
 });
 </script>
 
