@@ -6,8 +6,8 @@
         <div class="userAndTitle">
           <img class="user-profile-image" src="../assets/images/user1.jpg" alt="작성자 프로필" />
           <div class="user-info">
-            <span class="title">{{ fitlog.title }}</span>
-            <span class="user-name">{{ fitlog.writer }}</span>
+            <span class="title">제목 </span>
+            <span class="user-name">작성자 </span>
           </div>
         </div>
         <div class="proof-menu" @click="openProofModal">
@@ -22,36 +22,31 @@
 
       <!-- 운동 정보 뱃지 -->
       <div class="badges">
-        <span class="badge distance">{{ fitlog.exerciseType }}</span>
-        <span class="badge time">{{ fitlog.bodyPart }}</span>
-        <span class="badge kcal">🔥 {{ fitlog.level }}</span>
+        <span class="badge distance">운동타입 </span>
+        <span class="badge time">운동부위 </span>
+        <span class="badge kcal">🔥 난이도 </span>
       </div>
 
       <!-- 인증글 내용 -->
       <div class="proof-content">
-        <p>
-          {{ fitlog.content }}
-        </p>
+        <p>내용</p>
 
         <div class="content-bottom">
           <div class="hashtags">#5일차성공 #아침러닝 #챌린지인증</div>
-          <router-link class="go-challenge" :to="`/challengefit/${fitlog.challengeBoardId}`"
-            >참여한 챌린지 보기 &rarr;
-          </router-link>
         </div>
       </div>
 
       <!-- 하단 날짜 + 좋아요 -->
       <div class="footer">
-        <div class="write-date">{{ fitlog.regDate }}</div>
+        <div class="write-date">작성일</div>
         <div class="stats">
           <div class="views">
             <i class="fas fa-eye"></i>
-            <span>{{ fitlog.viewCount }}</span>
+            <span>조회수</span>
           </div>
           <div class="like">
             <i class="fas fa-heart"></i>
-            <span>{{ fitlog.likeCount }}</span>
+            <span>좋아요수</span>
           </div>
         </div>
       </div>
@@ -95,20 +90,24 @@
 </template>
 
 <script setup>
-const props = defineProps({
-  fitlog: {
-    type: Object,
-  },
-});
-
-import axios from 'axios';
+import api from '@/api/api';
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 
-const router = useRouter();
+const route = useRoute();
+const videoId = route.params.id;
+const video = ref({});
+
+const requestFitTubeVideo = async () => {
+  const { data } = await api.get(`/youtube/${videoId.value}`);
+  console.log(data);
+  video.value = data;
+};
+
+requestFitTubeVideo();
+
 const showCommentModal = ref(false);
 const showProofModal = ref(false);
-const BASE_URL = 'http://localhost:8080/proof';
 
 // 댓글 수정 삭제 모달
 const openCommentModal = () => {

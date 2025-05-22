@@ -27,6 +27,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import axios from 'axios';
+import api from '@/api/api';
 
 import MainHeader from '@/components/common/MainHeader.vue';
 import MainContentSearch from '@/components/common/MainContentSearch.vue';
@@ -49,12 +50,10 @@ async function requestYoutubeVideos() {
   isLoading.value = true;
 
   try {
-    const { data } = await axios.get(BASE_URL, {
-      headers: {
-        Authorization: `Bearer ${token}`, // 서버가 발급한 JWT 토큰
-      },
+    const { data } = await api.get(`youtube/search`, {
       params: { pageToken: nextPageToken.value },
     });
+    // console.log(data);
     videos.value.push(...data.items);
     nextPageToken.value = data.nextPageToken || '';
   } catch (error) {

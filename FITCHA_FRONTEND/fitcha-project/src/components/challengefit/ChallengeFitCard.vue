@@ -1,5 +1,12 @@
 <template>
-  <!-- 챌린지 게시글 카드 구조 -->
+<router-link
+          class="router-link"
+          :to="{
+            name: 'ChallengeFitDetail',
+            params: { id: challenge.challengeBoardId },
+            query: { isViewCounted: true },
+          }"
+        > <!-- 챌린지 게시글 카드 구조 -->
   <div class="challenge-card">
     <a style="text-decoration: none" href="../views/challengeFitDetail.html">
       <!-- 챌린지 카드 이미지 -->
@@ -62,6 +69,11 @@
       </div>
     </a>
   </div>
+        
+        </router-link>
+
+
+ 
 </template>
 
 <script setup>

@@ -39,7 +39,7 @@ public class SecurityConfig {
 	            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 	        .and()
 	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers("/user/login", "/user/signup", "/oauth2/**").permitAll()
+	            .requestMatchers("/user/login", "/user/signup", "/oauth2/**","/youtube/**").permitAll()
 	            .anyRequest().authenticated()
 	        )
 	        // 로그인 페이지 경로는 서버 내부 경로로 지정하거나 생략

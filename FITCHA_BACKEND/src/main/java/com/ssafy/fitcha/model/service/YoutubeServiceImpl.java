@@ -21,6 +21,7 @@ public class YoutubeServiceImpl implements YoutubeService {
 	private String apiKey;
 
 	private final String YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
+	private final String YOUTUBE_VIDEO_URL = "https://www.googleapis.com/youtube/v3/videos";
 
 	@Override
 	public Map<String, Object> getSearchVideos(String query, String pageToken) {
@@ -41,5 +42,19 @@ public class YoutubeServiceImpl implements YoutubeService {
 	    String searchUrl = builder.build().toUriString();
 	    return restTemplate.getForObject(searchUrl, Map.class);
 	}
+	@Override
+	public Map<String, Object> getVideo(String videoId) {
+	    RestTemplate restTemplate = new RestTemplate();
+
+	    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(YOUTUBE_VIDEO_URL)
+	            .queryParam("part", "snippet,contentDetails")
+	            .queryParam("id", videoId)
+	            .queryParam("key", apiKey);
+	    
+System.out.println(builder);
+	    String searchUrl = builder.build().toUriString();
+	    return restTemplate.getForObject(searchUrl, Map.class);
+	}
+	
 
 }
