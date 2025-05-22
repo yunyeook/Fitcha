@@ -78,6 +78,7 @@
 
 <script setup>
 import { computed } from 'vue';
+const BASE_URL = "http://localhost:8080";
 const props = defineProps({ challenge: { type: Object } });
 const imgUrl = computed(() => {
   return props.challenge?.challengeFiles?.[0]?.fileUploadName
