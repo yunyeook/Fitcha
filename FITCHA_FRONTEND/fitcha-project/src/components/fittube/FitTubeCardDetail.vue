@@ -1,13 +1,25 @@
 <template>
-  <div>
+  <div v-if="videoInfo">
     <div class="proof-detail">
-      <!-- 상단 작성자 정보 -->
+      <div class="proof-image">
+        <iframe
+          width="560"
+          height="315"
+          :src="videoUrl"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+
       <div class="header">
         <div class="userAndTitle">
-          <img class="user-profile-image" src="../assets/images/user1.jpg" alt="작성자 프로필" />
+          <!-- <img class="user-profile-image" src="../assets/images/user1.jpg" alt="작성자 프로필" /> -->
           <div class="user-info">
-            <span class="title">제목 </span>
-            <span class="user-name">작성자 </span>
+            <span class="title">{{ videoInfo.snippet.title }} </span>
+            <span class="user-name">{{ videoInfo.snippet.channelTitle }}</span>
           </div>
         </div>
         <div class="proof-menu" @click="openProofModal">
@@ -15,16 +27,20 @@
         </div>
       </div>
 
-      <!-- 인증 이미지 -->
-      <div class="proof-image">
-        <img src="../../assets/images/run.jpg" alt="운동 인증" />
-      </div>
-
-      <!-- 운동 정보 뱃지 -->
+      <!-- 태그 -->
       <div class="badges">
-        <span class="badge distance">운동타입 </span>
-        <span class="badge time">운동부위 </span>
-        <span class="badge kcal">🔥 난이도 </span>
+        <span
+          v-for="(tag, idx) in Tags"
+          :key="tag"
+          class="badge"
+          :class="{
+            distance: idx % 3 === 0,
+            time: idx % 3 === 1,
+            kcal: idx % 3 === 2,
+          }"
+        >
+          {{ tag }}
+        </span>
       </div>
 
       <!-- 인증글 내용 -->
@@ -91,20 +107,29 @@
 
 <script setup>
 import api from '@/api/api';
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const videoId = route.params.id;
-const video = ref({});
+const videoInfo = ref(null);
 
-const requestFitTubeVideo = async () => {
-  const { data } = await api.get(`/youtube/${videoId.value}`);
-  console.log(data);
-  video.value = data;
-};
-
-requestFitTubeVideo();
+const videoUrl = computed(() => `https://www.youtube.com/embed/${videoId}`);
+// tags 중 앞 3개만 안전하게 꺼내는 computed
+const Tags = computed(() => {
+  // videoInfo.value 가 아직 null 이면 빈 배열
+  const tags = videoInfo.value?.snippet?.tags ?? [];
+  return tags.slice(0, 5);
+});
+onMounted(async () => {
+  try {
+    const { data } = await api.get(`/youtube/${videoId}`);
+    // data.items 가 배열일 때만 첫 번째 객체를 할당
+    videoInfo.value = Array.isArray(data.items) ? data.items[0] : null;
+  } catch (e) {
+    console.error('영상 요청 실패', e);
+  }
+});
 
 const showCommentModal = ref(false);
 const showProofModal = ref(false);
@@ -211,11 +236,8 @@ const deleteProof = async () => {
 }
 
 /* 인증 이미지 */
-.proof-image img {
-  width: 100%;
-  height: auto;
+iframe {
   border-radius: 12px;
-  margin-bottom: 16px;
 }
 
 /* 운동 정보 뱃지 */
