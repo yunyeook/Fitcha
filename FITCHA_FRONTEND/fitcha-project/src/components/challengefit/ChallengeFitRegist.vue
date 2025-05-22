@@ -87,7 +87,8 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+
+import api from '@/api/api';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -137,7 +138,7 @@ const requestChallengeRegist = async () => {
       formData.append('files', thumbnailFile.value);
     }
 
-    const response = await axios.post(BASE_URL, formData, {
+    const response = await api.post(BASE_URL, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
