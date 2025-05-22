@@ -6,8 +6,7 @@
       <div class="challenge-detail__header">
         <h2>{{ challenge.title }}</h2>
 
-        <!--'길동이' -> 세션에서 사용자 닉네임가져오기-->
-        <template v-if="challenge.writer === '길동이'">
+        <template v-if="challenge.writer === nickName">
           <div class="challenge-detail__options" @click="openChallengeFitModal">
             <i class="fas fa-ellipsis-v"></i>
           </div>
@@ -120,7 +119,6 @@
             <button @click="requestChallengeCommentRegist">작성</button>
           </div>
           <div class="challenge-detail__comment" v-for="comment in comments" :key="comment.challengeCommentId">
-            <!-- <p>{{ challenge.comments }}</p> -->
             <img src="https://via.placeholder.com/36/FF5733" />
             <div class="challenge-detail__comment-body">
               <div>
@@ -145,8 +143,7 @@
                 </div>
               </div>
 
-              <!--'길동이' -> 세션에서 사용자 닉네임가져오기-->
-              <template v-if="comment.writer === '길동이'">
+              <template v-if="comment.writer === nickName">
                 <div
                   class="challenge-detail__options"
                   @click="openCommentModal(comment.challengeCommentId, comment.content)"
@@ -186,7 +183,7 @@
       <button class="modal-close-button" @click="closeCommentModal(false)">×</button>
       <div class="modal-title">댓글 관리</div>
       <button class="modal-button" @click="closeCommentModal(true)">수정하기</button>
-      <button class="modal-button delete" @click="deleteComment">삭제하기</button>
+      <button class="modal-button delete" @click="requestDeleteComment">삭제하기</button>
     </div>
   </div>
 
@@ -206,8 +203,10 @@ import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/api';
 import axios from 'axios';
+import { useUserStore } from '@/stores/user';
 
-const BASE_URL = 'http://localhost:8080/challenge';
+const { userId, nickName } = useUserStore();
+
 const IMG_BASE_URL = 'http://localhost:8080/';
 const imgUrl = ref('');
 const route = useRoute();
@@ -215,37 +214,27 @@ const router = useRouter();
 const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
-const updateCommwzentId = ref(-1);
-const token = localStorage.getItem('access-token');
+const editChallengeCommentId = ref(-1);
+const editCommentContent = ref('');
+const comments = ref({});
 
 const commentsCount = computed(() => {
   const comments = challenge.value.comments;
   return Array.isArray(comments) ? comments.length : 0;
 });
 
-async function requestChallengeCommentUpdate(id) {
-  await api.put(`challenge/${challengeBoardId.value}/comment/${id}`, {
-    challengeCommentId: id,
-    challengeBoardId: challengeBoardId.value,
-    content: editCommentContent.value,
-  });
-
-  requestChallengeComment();
-
-  editChallengeCommentId.value = -1;
-  editCommentContent.value = '';
-}
-
+// 챌린지글 조회
 async function requestChallengeDetail() {
   const { data } = await api.get(`/challenge/${challengeBoardId.value}`, {
     params: {
-      // user:
       isViewCounted: isViewCounted.value,
+      writer: nickName,
     },
   });
   challenge.value = data;
   imgUrl.value = IMG_BASE_URL + data.challengeFiles[0].fileUploadName;
-  isViewCounted.value = !isViewCounted.value;
+  isViewCounted.value = 'false';
+  comments.value = data.comments;
 }
 requestChallengeDetail();
 
@@ -254,26 +243,52 @@ const comment = ref('');
 //댓글등록.
 async function requestChallengeCommentRegist() {
   const { status } = await api.post(`/challenge/${challengeBoardId.value}/comment`, {
-    boardId: challengeBoardId.value,
-    userId: 'fituser1', // 세션에서 가져오기
+    challengeBoardId: challengeBoardId.value,
+    userId: userId,
     content: comment.value,
-    writer: '길동이', //세션에서 가져오기
+    writer: nickName,
   });
   comment.value = '';
   //성공시 다시 전체 댓글 목록 불러오기
   if (status === axios.HttpStatusCode.Created) {
     const { data } = await api.get(`/challenge/${challengeBoardId.value}/comment`);
-    challenge.value.comments = data;
+    comments.value = data;
     //실패시
   } else {
     //작성하기
   }
 }
+//댓글 수정.
+async function requestChallengeCommentUpdate(id) {
+  await api.put(`/challenge/${challengeBoardId.value}/comment/${id}`, {
+    challengeCommentId: id,
+    challengeBoardId: challengeBoardId.value,
+    content: editCommentContent.value,
+  });
 
+  editChallengeCommentId.value = -1;
+  editCommentContent.value = '';
+  requestChallengeComments();
+}
+
+//댓글들 조회.
+async function requestChallengeComments() {
+  const { data } = await api.get(`/challenge/${challengeBoardId.value}/comment`);
+  comments.value = data;
+}
+
+//댓글 삭제.
+const requestDeleteComment = async () => {
+  await api.delete(`/challenge/${challengeBoardId.value}/comment/${editChallengeCommentId.value}`);
+  requestChallengeComments();
+  closeCommentModal(false);
+};
+
+//챌린지 참여.
 async function requestChallengeParticipate() {
   const { status } = await api.post(`/challenge/${challengeBoardId.value}/participate`, {
     boardId: challengeBoardId.value,
-    writer: '길동이', //세션에서 가져오기
+    writer: nickName,
   });
   if (status === axios.HttpStatusCode.Ok) {
     challenge.value.participated = true;
@@ -283,7 +298,6 @@ async function requestChallengeParticipate() {
   }
 }
 const props = defineProps({ challenge: Object });
-// const commentsCount = ref(props.challenge.comments.length);
 
 const showCommentModal = ref(false);
 const showChallengeFitModal = ref(false);
@@ -309,16 +323,6 @@ const closeCommentModal = isContinue => {
   }
 };
 
-// const editComment = () => {
-//   closeCommentModal();
-// };
-
-const deleteComment = async () => {
-  await api.delete(`${BASE_URL}/${challengeBoardId.value}/comment/${editChallengeCommentId.value}`);
-  requestChallengeComment();
-  closeCommentModal(false);
-};
-
 const editChallengeFit = () => {
   closeChallengeFitModal();
   router.push({ name: 'ChallengeFitUpdate', params: { id: challengeBoardId.value } });
@@ -327,8 +331,7 @@ const editChallengeFit = () => {
 const deleteChallengeFit = async () => {
   closeChallengeFitModal();
 
-  //토큰으로 하면 길동이를 굳이 안보내도 되니 이건 프론트랑 백이랑 후에 모두 수정하기
-  await api.delete(`${BASE_URL}/${challengeBoardId.value}/길동이`);
+  await api.delete(`/challenge/${challengeBoardId.value}/${nickName}`);
   router.push({ name: 'ChallengeFit' });
 };
 </script>

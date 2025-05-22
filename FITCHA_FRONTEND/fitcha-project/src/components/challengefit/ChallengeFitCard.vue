@@ -4,11 +4,11 @@
           :to="{
             name: 'ChallengeFitDetail',
             params: { id: challenge.challengeBoardId },
-            query: { isViewCounted: true },
+            query: { isViewCounted: 'true' , writer : nickName},
           }"
         > <!-- 챌린지 게시글 카드 구조 -->
   <div class="challenge-card">
-    <a style="text-decoration: none" href="../views/challengeFitDetail.html">
+    <a style="text-decoration: none">
       <!-- 챌린지 카드 이미지 -->
       <img :src="imgUrl" alt="" />
       <!-- 챌린지 카드 내용 -->
@@ -78,8 +78,10 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useUserStore } from '@/stores/user';
 const BASE_URL = "http://localhost:8080";
 const props = defineProps({ challenge: { type: Object } });
+const { userId, nickName } = useUserStore();
 const imgUrl = computed(() => {
   return props.challenge?.challengeFiles?.[0]?.fileUploadName
     ? BASE_URL + props.challenge.challengeFiles[0].fileUploadName
@@ -252,13 +254,4 @@ const imgUrl = computed(() => {
   color: #868e96;
 }
 
-/* .card-footer .like {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.like i {
-  color: #ff6b6b;
-} */
 </style>

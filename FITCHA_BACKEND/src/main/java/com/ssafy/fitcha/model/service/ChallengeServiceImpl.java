@@ -45,9 +45,9 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 	// 상세 조회
 	@Override
-	public Challenge getChallengeDetail(int challengeBoardId, String nickName, boolean isViewCounted) {
+	public Challenge getChallengeDetail(int challengeBoardId, String nickName, String isViewCounted) {
 		// 조회일때만 조회수 증가.
-		if (isViewCounted)
+		if (Boolean.parseBoolean(isViewCounted))
 			challengeDao.updateChallengeViewCount(challengeBoardId);
 
 		Challenge challenge = challengeDao.selectChallengeBoard(challengeBoardId);

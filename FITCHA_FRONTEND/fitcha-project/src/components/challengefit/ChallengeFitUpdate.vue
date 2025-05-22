@@ -92,13 +92,15 @@
 import { ref, watch } from 'vue';
 import api from '@/api/api';
 import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 const route = useRoute();
 const router = useRouter();
-const BASE_URL = 'http://localhost:8080/challenge';
 const IMG_BASE_URL = 'http://localhost:8080/';
 const imgUrl = ref('');
 const challenge = ref({});
 const challengeBoardId = ref(route.params.id);
+
+const { userId, nickName } = useUserStore();
 
 // 폼 데이터 상태
 const title = ref('');
@@ -112,9 +114,10 @@ const thumbnailPreview = ref('');
 const duration = ref(1);
 
 async function requestChallengeDetail() {
-  const { data } = await api.get(`${BASE_URL}/${challengeBoardId.value}`, {
+  const { data } = await api.get(`/challenge/${challengeBoardId.value}`, {
     params: {
-      // user:
+      isViewCounted: 'false',
+      writer: nickName,
     },
   });
   challenge.value = data;
@@ -156,8 +159,8 @@ const requestChallengeRegist = async () => {
   try {
     const formData = new FormData();
     formData.append('challengeBoardId', challengeBoardId.value);
-    formData.append('userId', 'fituser1'); //  수정하기
-    formData.append('writer', '길동이'); // 수정하기
+    formData.append('userId', userId); //  수정하기
+    formData.append('writer', nickName); // 수정하기
     formData.append('title', title.value);
     formData.append('content', content.value);
     formData.append('exerciseType', exerciseType.value);
@@ -173,14 +176,18 @@ const requestChallengeRegist = async () => {
       }
     }
 
-    const response = await api.put(`${BASE_URL}/${challengeBoardId.value}`, formData, {
+    const response = await api.put(`/challenge/${challengeBoardId.value}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
 
     if (response.status === 200) {
-      router.push({ name: 'ChallengeFitDetail', params: { id: response.data } });
+      router.push({
+        name: 'ChallengeFitDetail',
+        params: { id: response.data },
+        query: { isViewCounted: false, writer: nickName },
+      });
     }
   } catch (err) {
     console.error('등록 실패:', err);
