@@ -7,21 +7,38 @@
       <div class="form-group">
         <label for="thumbnail">썸네일 이미지</label>
         <div class="image-preview" id="imagePreview">
-          <span v-if="!thumbnailPreview">이미지를 선택하면 미리보기가 표시됩니다</span>
+          <span v-if="!thumbnailPreview"
+            >이미지를 선택하면 미리보기가 표시됩니다</span
+          >
         </div>
-        <input type="file" id="thumbnail" accept="image/*" @change="thumbnailPreviewChange" />
+        <input
+          type="file"
+          id="thumbnail"
+          accept="image/*"
+          @change="thumbnailPreviewChange"
+        />
       </div>
 
       <!-- 제목 -->
       <div class="form-group">
         <label for="title">챌린지 제목</label>
-        <input type="text" id="title" placeholder="예: 30일 아침 러닝 챌린지!!" v-model="title" />
+        <input
+          type="text"
+          id="title"
+          placeholder="예: 30일 아침 러닝 챌린지!!"
+          v-model="title"
+        />
       </div>
 
       <!-- 설명 -->
       <div class="form-group">
         <label for="content">설명</label>
-        <textarea id="content" rows="4" placeholder="챌린지 내용을 입력하세요." v-model="content"></textarea>
+        <textarea
+          id="content"
+          rows="4"
+          placeholder="챌린지 내용을 입력하세요."
+          v-model="content"
+        ></textarea>
       </div>
 
       <!-- 운동 타입 -->
@@ -74,7 +91,14 @@
       <!-- 챌린지 기간 -->
       <div class="form-group">
         <label for="duration">챌린지 기간</label>
-        <input type="number" id="duration" placeholder="예: 10" min="1" max="100" v-model="duration" />
+        <input
+          type="number"
+          id="duration"
+          placeholder="예: 10"
+          min="1"
+          max="100"
+          v-model="duration"
+        />
       </div>
 
       <!-- 제출 버튼 -->
@@ -86,32 +110,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import api from "@/api/api";
 
 const router = useRouter();
-const BASE_URL = 'http://localhost:8080/challenge';
+const BASE_URL = "http://localhost:8080/challenge";
 
 // 폼 데이터 상태
-const title = ref('');
-const content = ref('');
-const exerciseType = ref('');
-const bodyPart = ref('');
-const level = ref('');
+const title = ref("");
+const content = ref("");
+const exerciseType = ref("");
+const bodyPart = ref("");
+const level = ref("");
 const totalParticipantCount = ref(1);
 const thumbnailFile = ref(null);
-const thumbnailPreview = ref('');
+const thumbnailPreview = ref("");
 const duration = ref(1);
 
 // 이미지 미리보기 및 파일 저장
-const thumbnailPreviewChange = e => {
+const thumbnailPreviewChange = (e) => {
   const file = e.target.files[0];
   if (file) {
     thumbnailFile.value = file;
     const reader = new FileReader();
     reader.onload = () => {
-      const preview = document.getElementById('imagePreview');
+      const preview = document.getElementById("imagePreview");
       preview.style.backgroundImage = `url(${reader.result})`;
       thumbnailPreview.value = reader.result;
     };
@@ -123,32 +147,35 @@ const thumbnailPreviewChange = e => {
 const requestChallengeRegist = async () => {
   try {
     const formData = new FormData();
-    formData.append('userId', 'fituser1'); //  수정하기
-    formData.append('writer', '길동이'); // 수정하기
-    formData.append('title', title.value);
-    formData.append('content', content.value);
-    formData.append('exerciseType', exerciseType.value);
-    formData.append('bodyPart', bodyPart.value);
-    formData.append('level', level.value);
-    formData.append('totalParticipantCount', totalParticipantCount.value);
-    formData.append('duration', duration.value);
+    formData.append("userId", "fituser1"); //  수정하기
+    formData.append("writer", "길동이"); // 수정하기
+    formData.append("title", title.value);
+    formData.append("content", content.value);
+    formData.append("exerciseType", exerciseType.value);
+    formData.append("bodyPart", bodyPart.value);
+    formData.append("level", level.value);
+    formData.append("totalParticipantCount", totalParticipantCount.value);
+    formData.append("duration", duration.value);
 
     if (thumbnailFile.value) {
-      formData.append('files', thumbnailFile.value);
+      formData.append("files", thumbnailFile.value);
     }
 
-    const response = await axios.post(BASE_URL, formData, {
+    const response = await api.post("/challenge", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
 
     if (response.status === 200) {
-      router.push({ name: 'ChallengeFitDetail', params: { id: response.data } });
+      router.push({
+        name: "ChallengeFitDetail",
+        params: { id: response.data },
+      });
     }
   } catch (err) {
-    console.error('등록 실패:', err);
-    alert('등록에 실패했습니다.');
+    console.error("등록 실패:", err);
+    alert("등록에 실패했습니다.");
   }
 };
 </script>
@@ -164,7 +191,7 @@ const requestChallengeRegist = async () => {
   border-radius: 15px;
   box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
   padding: 24px;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 .challenge-form-wrapper h2 {

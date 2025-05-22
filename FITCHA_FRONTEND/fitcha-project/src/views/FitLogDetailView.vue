@@ -23,6 +23,7 @@ const fitlog = ref({});
 const requestFitLogDetail = async () => {
   const { data } = await api.get(`/proof/${proofBoardId}`);
   fitlog.value = data;
+  console.log(data);
 };
 onMounted(() => {
   requestFitLogDetail();

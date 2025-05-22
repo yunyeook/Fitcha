@@ -4,7 +4,11 @@
       <!-- 상단 작성자 정보 -->
       <div class="header">
         <div class="userAndTitle">
-          <img class="user-profile-image" src="../assets/images/user1.jpg" alt="작성자 프로필" />
+          <img
+            class="user-profile-image"
+            src="../assets/images/user1.jpg"
+            alt="작성자 프로필"
+          />
           <div class="user-info">
             <span class="title">{{ fitlog.title }}</span>
             <span class="user-name">{{ fitlog.writer }}</span>
@@ -17,7 +21,7 @@
 
       <!-- 인증 이미지 -->
       <div class="proof-image">
-        <img src="../../assets/images/run.jpg" alt="운동 인증" />
+        <img :src="imgUrl" alt="운동 인증" />
       </div>
 
       <!-- 운동 정보 뱃지 -->
@@ -35,7 +39,9 @@
 
         <div class="content-bottom">
           <div class="hashtags">#5일차성공 #아침러닝 #챌린지인증</div>
-          <router-link class="go-challenge" :to="`/challengefit/${fitlog.challengeBoardId}`"
+          <router-link
+            class="go-challenge"
+            :to="`/challengefit/${fitlog.challengeBoardId}`"
             >참여한 챌린지 보기 &rarr;
           </router-link>
         </div>
@@ -59,7 +65,11 @@
       <!-- 댓글 영역 -->
       <div class="comment-list">
         <div class="comment-card">
-          <img class="comment-profile" src="../assets/images/user1.jpg" alt="프로필" />
+          <img
+            class="comment-profile"
+            src="../assets/images/user1.jpg"
+            alt="프로필"
+          />
           <div class="comment-body">
             <div class="comment-header">
               <span class="comment-author">사용자1</span>
@@ -67,27 +77,47 @@
                 <i class="fas fa-ellipsis-v"></i>
               </div>
             </div>
-            <div class="comment-text">저도 참가할게요! 매일 아침 달리기 기대돼요.</div>
+            <div class="comment-text">
+              저도 참가할게요! 매일 아침 달리기 기대돼요.
+            </div>
             <div class="comment-date">2025년 5월 5일</div>
           </div>
         </div>
       </div>
       <!-- 댓글 수정/삭제 모달 -->
-      <div v-if="showCommentModal" class="modal-overlay" @click.self="openCommentModal">
+      <div
+        v-if="showCommentModal"
+        class="modal-overlay"
+        @click.self="openCommentModal"
+      >
         <div class="modal-box">
-          <button class="modal-close-button" @click="closeCommentModal">×</button>
+          <button class="modal-close-button" @click="closeCommentModal">
+            ×
+          </button>
           <div class="modal-title">댓글 관리</div>
           <button class="modal-button" @click="editComment">수정하기</button>
-          <button class="modal-button delete" @click="deleteComment">삭제하기</button>
+          <button class="modal-button delete" @click="deleteComment">
+            삭제하기
+          </button>
         </div>
       </div>
       <!-- 인증글 수정/삭제 모달 -->
-      <div v-if="showProofModal" class="modal-overlay" @click.self="closeProofModal">
+      <div
+        v-if="showProofModal"
+        class="modal-overlay"
+        @click.self="closeProofModal"
+      >
         <div class="modal-box">
           <button class="modal-close-button" @click="closeProofModal">×</button>
           <div class="modal-title">인증글 관리</div>
           <button class="modal-button" @click="editProof">수정하기</button>
-          <button class="modal-button delete" type="button" @click="deleteProof">삭제하기</button>
+          <button
+            class="modal-button delete"
+            type="button"
+            @click="deleteProof"
+          >
+            삭제하기
+          </button>
         </div>
       </div>
     </div>
@@ -101,11 +131,11 @@ const props = defineProps({
   },
 });
 
-import api from '@/api/api';
-import { useUserStore } from '@/stores/user';
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia';
+import api from "@/api/api";
+import { useUserStore } from "@/stores/user";
+import { ref, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 
 const userStore = useUserStore();
 const { nickName } = storeToRefs(userStore);
@@ -117,8 +147,11 @@ const isMyFitLog = computed(() => {
 const router = useRouter();
 const showCommentModal = ref(false);
 const showProofModal = ref(false);
-
-const BASE_URL = 'http://localhost:8080/proof';
+const imgUrl = computed(() => {
+  return props.fitlog?.proofFiles?.length > 0
+    ? props.fitlog.proofFiles[0].fileUrl
+    : "";
+});
 
 // 댓글 수정 삭제 모달
 const openCommentModal = () => {
@@ -137,7 +170,7 @@ const closeProofModal = () => {
 };
 
 const editComment = () => {
-  alert('수정 기능은 여기에 구현하면 됨.');
+  alert("수정 기능은 여기에 구현하면 됨.");
   closeCommentModal();
 };
 
@@ -145,7 +178,7 @@ const deleteComment = async () => {
   closeCommentModal();
 };
 const editProof = () => {
-  alert('수정 기능은 여기에 구현하면 됨.');
+  alert("수정 기능은 여기에 구현하면 됨.");
   closeProofModal();
 };
 
@@ -155,7 +188,7 @@ const deleteProof = async () => {
     closeProofModal();
     router.push(`/fitlog`);
   } catch (error) {
-    console.error('인증글 삭제 중 오류 발생:', error);
+    console.error("인증글 삭제 중 오류 발생:", error);
   }
 };
 </script>
