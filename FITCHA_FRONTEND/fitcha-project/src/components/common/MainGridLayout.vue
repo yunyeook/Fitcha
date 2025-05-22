@@ -15,7 +15,7 @@
   height: 650px;
   overflow-y: auto;
   margin: 0px;
-  padding: 20px 14px 50px;
+  padding: 10px 14px 50px;
 }
 
 .main-content {

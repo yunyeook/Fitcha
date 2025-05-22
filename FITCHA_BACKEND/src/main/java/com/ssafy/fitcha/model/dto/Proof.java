@@ -21,7 +21,15 @@ public class Proof {
 	private int viewCount; // 조회수
 	private int likeCount; // 좋아요수
 	private String regDate; // 작성일
-	private List<MultipartFile> files; // 인증글 파일 리스트
+	private List<ProofFile> proofFiles; // 인증글 파일 리스트
+	public List<ProofFile> getProofFiles() {
+		return proofFiles;
+	}
+
+	public void setProofFiles(List<ProofFile> proofFiles) {
+		this.proofFiles = proofFiles;
+	}
+
 	// 챌린지 글에서 설정한 운동 타입, 부위, 레벨 
 	private String exerciseType;  
 	private String bodyPart;
@@ -136,19 +144,8 @@ public class Proof {
 	}
 
 	
-	public List<MultipartFile> getFiles() {
-		return files;
-	}
+	
 
-	public void setFiles(List<MultipartFile> files) {
-		this.files = files;
-	}
-
-	@Override
-	public String toString() {
-		return "Proof [challengeBoardId=" + challengeBoardId + ", proofBoardId=" + proofBoardId + ", userId=" + userId
-				+ ", title=" + title + ", content=" + content + ", writer=" + writer + ", regDate=" + regDate
-				+ ", files=" + files + "]";
-	}
+	
 
 }

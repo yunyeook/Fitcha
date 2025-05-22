@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.fitcha.model.dao.ProofDao;
 import com.ssafy.fitcha.model.dto.Proof;
+import com.ssafy.fitcha.model.dto.ProofFile;
 import com.ssafy.fitcha.model.dto.SearchProof;
 
 @Service
@@ -28,41 +29,48 @@ public class ProofServiceImpl implements ProofService {
 	// 인증글 검색 조회 ( 검색 없으실 전체 조회 )
 	@Override
 	public List<Proof> getSearchProofs(SearchProof search) {
-	    List<Proof> proofList = proofDao.selectSearchProofList(search);
+		List<Proof> proofList = proofDao.selectSearchProofList(search);
 
 		// 1. 인증글 ID만 추출
-	    List<Integer> proofBoardIds = proofList.stream()
-	            .map(Proof::getProofBoardId)
-	            .collect(Collectors.toList());
+		List<Integer> proofBoardIds = proofList.stream().map(Proof::getProofBoardId).collect(Collectors.toList());
 
-	    if (proofBoardIds.isEmpty()) {
-	        return proofList; // 게시글 없음
-	    }
+		if (proofBoardIds.isEmpty()) {
+			return proofList; // 게시글 없음
+		}
 
-	    // 2. 해시태그 목록 가져오기
-	    List<Map<String, Object>> rawHashtags = proofDao.selectHashTagsByProofBoardIds(proofBoardIds);
+		// 2. 해시태그 목록 가져오기
+		List<Map<String, Object>> rawHashtags = proofDao.selectHashTagsByProofBoardIds(proofBoardIds);
 
-	    // 3. Map<proofBoardId, List<hashtag>> 형태로 정리
-	    Map<Integer, List<String>> hashtagMap = new HashMap<>();
-	    for (Map<String, Object> row : rawHashtags) {
-	        Integer boardId = (Integer) row.get("proof_board_id");
-	        String tag = (String) row.get("hashtag");
-	        hashtagMap.computeIfAbsent(boardId, k -> new ArrayList<>()).add(tag);
-	    }
+		// 3. Map<proofBoardId, List<hashtag>> 형태로 정리
+		Map<Integer, List<String>> hashtagMap = new HashMap<>();
+		for (Map<String, Object> row : rawHashtags) {
+			Integer boardId = (Integer) row.get("proof_board_id");
+			String tag = (String) row.get("hashtag");
+			hashtagMap.computeIfAbsent(boardId, k -> new ArrayList<>()).add(tag);
+		}
 
-	    // 4. 인증글에 해시태그 세팅
-	    for (Proof proof : proofList) {
-	        List<String> tags = hashtagMap.getOrDefault(proof.getProofBoardId(), new ArrayList<>());
-	        proof.setHashTags(tags);
-	    }
+		// 4. 인증글에 해시태그 세팅 및 파일정보 세팅
+		for (Proof proof : proofList) {
+			int boardId = proof.getProofBoardId();
 
-	    return proofList;
+			List<String> tags = hashtagMap.getOrDefault(proof.getProofBoardId(), new ArrayList<>());
+			proof.setHashTags(tags);
+
+			// 파일 정보
+			List<ProofFile> proofFiles = fileService.getProofFileList(boardId);
+			proof.setProofFiles(proofFiles); // 이미지 URL 포함
+		}
+
+		return proofList;
 	}
 
 	// 인증글 상세 조회
 	@Override
 	public Proof getProofDetails(int proofBoardId) {
-		return proofDao.selectProofBoard(proofBoardId);
+		Proof proof = proofDao.selectProofBoard(proofBoardId);
+		List<ProofFile> proofFiles = fileService.getProofFileList(proofBoardId);
+		proof.setProofFiles(proofFiles);
+		return proof;
 	}
 
 	// 인증글 등록

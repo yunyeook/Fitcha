@@ -1,7 +1,7 @@
 <template>
   <div class="profile-wrapper">
     <!-- 프로필 헤더 -->
-    <div class="profile-info-wrapper">
+    <div v-if="!isEditing" class="profile-info-wrapper">
       <img
         src="../../assets/images/run.jpg"
         alt="프로필 사진"
@@ -11,27 +11,52 @@
         <h2 class="user-name">{{ userInfo.name }}</h2>
         <p class="user-nickname">@{{ userInfo.nickName }}</p>
       </div>
-      <a href="../views/myFitUpdate.html">
-        <button class="edit-btn">프로필 수정</button>
-      </a>
-
-      <!-- 관심 분야 태그 -->
-      <!-- <div class="tags">
-        <span class="tag">헬스</span>
-        <span class="tag">요가</span>
-        <span class="tag">홈트레이닝</span>
-      </div> -->
+      <button class="edit-btn" type="button" @click="isEditing = true">
+        프로필 수정
+      </button>
     </div>
+    <MyFitUpdate
+      v-if="isEditing"
+      :nickName="userInfo.nickName"
+      @close="isEditing = false"
+    />
 
     <!-- 탭 메뉴 -->
     <div class="tab-menu">
-      <button class="tab active">참여한 챌린지</button>
-      <button class="tab">내 인증 게시글</button>
+      <button
+        class="tab"
+        :class="{ active: activeTab === 'challenge' }"
+        @click="changeTab('challenge')"
+      >
+        참여한 챌린지
+      </button>
+      <button
+        class="tab"
+        :class="{ active: activeTab === 'posts' }"
+        @click="changeTab('posts')"
+      >
+        내 인증 게시글
+      </button>
     </div>
 
-    <!-- 콘텐츠 예시 -->
+    <!-- 탭 콘텐츠 -->
     <div class="tab-content">
-      <!-- 아래는 테스트 위한 복붙 -->
+      <div class="tab-content-challenge" v-if="activeTab === 'challenge'">
+        <!-- 참여한 챌린지 컴포넌트 -->
+        <ChallengeFitCard
+          v-for="challenge in challenges"
+          :key="challenge.challengeBoardId"
+          :challenge="challenge"
+        />
+      </div>
+      <div class="tab-content-proof" v-else-if="activeTab === 'posts'">
+        <!-- 인증 게시글 컴포넌트 -->
+        <FitLogCard
+          v-for="fitlog in fitlogs"
+          :key="fitlog.proofBoardId"
+          :fitlog="fitlog"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -41,17 +66,45 @@ import api from "@/api/api";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
+import FitLogCard from "../fitlog/FitLogCard.vue";
+import ChallengeFitCard from "../challengefit/ChallengeFitCard.vue";
+import MyFitUpdate from "./MyFitUpdate.vue";
+
+const isEditing = ref(false);
 const userStore = useUserStore();
 const { nickName } = storeToRefs(userStore);
 const userInfo = ref({});
+const fitlogs = ref([]);
+const challenges = ref([]);
+
+// 탭 상태
+const activeTab = ref("challenge"); // 초기값은 'challenge'
+// 탭 클릭 핸들러
+const changeTab = (tab) => {
+  activeTab.value = tab;
+};
 onMounted(async () => {
   if (!nickName.value) return; // 값이 없으면 요청 안 보냄
 
   try {
-    const response = await api.get(`/user/${nickName.value}`);
-    userInfo.value = response.data;
+    const [userInfoList, challengeList, fitlogList] = await Promise.all([
+      api.get(`/user/${nickName.value}`),
+      api.get(`/challenge/participate/${nickName.value}`),
+      api.get(`/proof`, {
+        params: { key: "writer", word: nickName.value },
+      }),
+    ]);
+
+    userInfo.value = userInfoList.data;
+    challenges.value = challengeList.data;
+    fitlogs.value = fitlogList.data;
+
+    console.dir(challenges.value);
   } catch (error) {
-    console.error("유저 정보 불러오기 실패:", error);
+    console.error(
+      "병렬 처리(유저 정보, 챌린지글, 인증글) 불러오기 실패:",
+      error
+    );
   }
 });
 </script>
@@ -158,6 +211,17 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 20px;
+}
+
+.tab-content-challenge {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.tab-content-proof {
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 </style>

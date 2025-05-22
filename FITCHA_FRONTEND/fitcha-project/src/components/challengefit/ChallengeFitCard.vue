@@ -46,7 +46,7 @@
             {{ challenge.regDate }}
           </div>
           <div>
-            <span class="comment-count">{{ challenge.comments.length }}</span>
+            <span class="comment-count">{{ challenge.comments?.length || 0 }}</span>
             개의 댓글
           </div>
         </p>
@@ -78,8 +78,8 @@
 
 <script setup>
 import { computed } from 'vue';
+const BASE_URL = "http://localhost:8080";
 const props = defineProps({ challenge: { type: Object } });
-const BASE_URL = 'http://localhost:8080/';
 const imgUrl = computed(() => {
   return props.challenge?.challengeFiles?.[0]?.fileUploadName
     ? BASE_URL + props.challenge.challengeFiles[0].fileUploadName
@@ -88,6 +88,10 @@ const imgUrl = computed(() => {
 </script>
 
 <style scoped>
+.router-link {
+  text-decoration: none;
+  margin: 0 auto;
+}
 /* 챌린지 카드 디자인 */
 
 .challenge-card {

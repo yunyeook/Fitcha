@@ -130,5 +130,13 @@ public class ChallengeServiceImpl implements ChallengeService {
 	public boolean registChallengeParticipate(Challenge challenge) {
 		return challengeDao.insertParticipantChallenge(challenge)==1;
 	}
+	
+	// 유저가 참여한 챌린지 조회 
+	@Override
+	public List<Challenge> getChallengeByNickName(String userNickName) {
+		
+		
+		return challengeDao.selectChallengeByNickName(userNickName);
+	}
 
 }

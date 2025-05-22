@@ -30,5 +30,8 @@ public interface ChallengeService {
 
 	//챌린지 참여 등록
 	boolean registChallengeParticipate(Challenge challenge);
+	
+	// 유저가 참여한 챌린지 조회 (마이핏 페이지)
+	List<Challenge> getChallengeByNickName(String userNickName);
 
 }

@@ -53,7 +53,7 @@ public class SecurityConfig {
 	        				    "/**/*.svg",  "/favicon.ico"
 	        				  ).permitAll()
 	        		//REST로그인, 회원가입,oauth2엔드포인트 허용
-	            .requestMatchers("/user/login", "/user/signup", "/oauth2/**")
+	            .requestMatchers("/user/login", "/user/signup", "/oauth2/**" ,"/uploads/**")
 	            .permitAll()
 	            .anyRequest()
 	            .authenticated()

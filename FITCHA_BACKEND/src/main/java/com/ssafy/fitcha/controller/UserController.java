@@ -167,6 +167,7 @@ public class UserController {
 
 	}
 	
+	@Operation(summary = "유저 정보 조회")
 	@GetMapping("/{userNickName}")
 	public ResponseEntity<User> getUserInfo(@PathVariable("userNickName") String userNickName){
 		User selectedUser = userService.getUserInfo(userNickName);
