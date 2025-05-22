@@ -202,21 +202,21 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import axios from "axios";
-import { useRoute, useRouter } from "vue-router";
-import api from "@/api/api";
+import { ref, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import api from '@/api/api';
+import axios from 'axios';
 
-const BASE_URL = "http://localhost:8080/challenge";
-const IMG_BASE_URL = "http://localhost:8080/";
-const imgUrl = ref("");
+const BASE_URL = 'http://localhost:8080/challenge';
+const IMG_BASE_URL = 'http://localhost:8080/';
+const imgUrl = ref('');
 const route = useRoute();
 const router = useRouter();
 const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
 const updateCommwzentId = ref(-1);
-const token = localStorage.getItem("access-token");
+const token = localStorage.getItem('access-token');
 
 const commentsCount = computed(() => {
   const comments = challenge.value.comments;
@@ -253,21 +253,16 @@ const comment = ref('');
 
 //댓글등록.
 async function requestChallengeCommentRegist() {
-  const { status } = await api.post(
-    `/challenge/${challengeBoardId.value}/comment`,
-    {
-      boardId: challengeBoardId.value,
-      userId: "fituser1", // 세션에서 가져오기
-      content: comment.value,
-      writer: "길동이", //세션에서 가져오기
-    }
-  );
-  comment.value = "";
+  const { status } = await api.post(`/challenge/${challengeBoardId.value}/comment`, {
+    boardId: challengeBoardId.value,
+    userId: 'fituser1', // 세션에서 가져오기
+    content: comment.value,
+    writer: '길동이', //세션에서 가져오기
+  });
+  comment.value = '';
   //성공시 다시 전체 댓글 목록 불러오기
   if (status === axios.HttpStatusCode.Created) {
-    const { data } = await api.get(
-      `/challenge/${challengeBoardId.value}/comment`
-    );
+    const { data } = await api.get(`/challenge/${challengeBoardId.value}/comment`);
     challenge.value.comments = data;
     //실패시
   } else {
@@ -276,13 +271,10 @@ async function requestChallengeCommentRegist() {
 }
 
 async function requestChallengeParticipate() {
-  const { status } = await api.post(
-    `/challenge/${challengeBoardId.value}/participate`,
-    {
-      boardId: challengeBoardId.value,
-      writer: "길동이", //세션에서 가져오기
-    }
-  );
+  const { status } = await api.post(`/challenge/${challengeBoardId.value}/participate`, {
+    boardId: challengeBoardId.value,
+    writer: '길동이', //세션에서 가져오기
+  });
   if (status === axios.HttpStatusCode.Ok) {
     challenge.value.participated = true;
     //실패시
@@ -322,7 +314,7 @@ const closeCommentModal = isContinue => {
 // };
 
 const deleteComment = async () => {
-  await axios.delete(`${BASE_URL}/${challengeBoardId.value}/comment/${editChallengeCommentId.value}`);
+  await api.delete(`${BASE_URL}/${challengeBoardId.value}/comment/${editChallengeCommentId.value}`);
   requestChallengeComment();
   closeCommentModal(false);
 };
@@ -336,7 +328,7 @@ const deleteChallengeFit = async () => {
   closeChallengeFitModal();
 
   //토큰으로 하면 길동이를 굳이 안보내도 되니 이건 프론트랑 백이랑 후에 모두 수정하기
-  await axios.delete(`${BASE_URL}/${challengeBoardId.value}/길동이`);
+  await api.delete(`${BASE_URL}/${challengeBoardId.value}/길동이`);
   router.push({ name: 'ChallengeFit' });
 };
 </script>

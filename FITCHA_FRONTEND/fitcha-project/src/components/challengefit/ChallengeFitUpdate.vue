@@ -90,7 +90,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import axios from 'axios';
+import api from '@/api/api';
 import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
@@ -112,7 +112,7 @@ const thumbnailPreview = ref('');
 const duration = ref(1);
 
 async function requestChallengeDetail() {
-  const { data } = await axios.get(`${BASE_URL}/${challengeBoardId.value}`, {
+  const { data } = await api.get(`${BASE_URL}/${challengeBoardId.value}`, {
     params: {
       // user:
     },
@@ -173,7 +173,7 @@ const requestChallengeRegist = async () => {
       }
     }
 
-    const response = await axios.put(`${BASE_URL}/${challengeBoardId.value}`, formData, {
+    const response = await api.put(`${BASE_URL}/${challengeBoardId.value}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
