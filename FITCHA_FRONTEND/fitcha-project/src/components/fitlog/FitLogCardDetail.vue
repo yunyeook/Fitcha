@@ -57,9 +57,20 @@
             <i class="fas fa-eye"></i>
             <span>{{ fitlog.viewCount }}</span>
           </div>
-          <div class="like">
-            <i class="fas fa-heart"></i>
-            <span>{{ fitlog.likeCount }}</span>
+          <div
+            class="like"
+            @click="toggleLike"
+            @animationend="likeAnimation = false"
+          >
+            <i
+              :class="[
+                'fas',
+                isLiked ? 'fa-heart' : 'fa-heart',
+                likeAnimation && 'pop',
+              ]"
+              :style="{ color: isLiked ? '#ff6b6b' : '#ccc' }"
+            ></i>
+            <span>{{ likeCount }}</span>
           </div>
         </div>
       </div>
@@ -163,6 +174,35 @@ const imgUrl = computed(() => {
     ? "http://localhost:8080/" + props.fitlog.proofFiles[0].fileUrl
     : "";
 });
+
+// 좋아요
+const likeAnimation = ref(false);
+const isLiked = ref(false);
+const likeCount = ref(props.fitlog.likeCount);
+
+// 초기 좋아요 여부 로컬스토리지 확인
+onMounted(() => {
+  const liked = localStorage.getItem(`liked-${proofBoardId.value}`);
+  isLiked.value = liked === "true";
+  if (isLiked.value) likeCount.value++;
+});
+
+const toggleLike = async () => {
+  likeAnimation.value = true;
+  if (isLiked.value) {
+    // 좋아요 취소
+    likeCount.value--;
+    isLiked.value = false;
+    localStorage.removeItem(`liked-${proofBoardId.value}`);
+    await api.delete(`/proof/${proofBoardId.value}/like`);
+  } else {
+    // 좋아요 추가
+    likeCount.value++;
+    isLiked.value = true;
+    localStorage.setItem(`liked-${proofBoardId.value}`, "true");
+    await api.post(`/proof/${proofBoardId.value}/like`);
+  }
+};
 
 // 댓글 조회
 const comments = ref([]);
@@ -451,10 +491,44 @@ const deleteProof = async () => {
   font-size: 1rem;
   gap: 7px;
 }
-
 .stats .like {
+  cursor: pointer;
+}
+
+.stats .like i {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.stats .like:hover i {
+  transform: scale(1.8);
+  color: #ff8787; /* hover 시 색 강조 */
+}
+
+.fa-heart.liked {
+  color: #ff6b6b;
+}
+.fa-heart {
+  color: #ccc;
+  transition: color 0.3s;
+}
+/* .stats .like {
   color: #ff6b6b;
   cursor: pointer;
+} */
+.pop {
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .stats .views {
