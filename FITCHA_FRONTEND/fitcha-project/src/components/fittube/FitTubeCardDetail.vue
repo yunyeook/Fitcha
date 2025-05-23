@@ -1,45 +1,56 @@
 <template>
   <div v-if="videoInfo">
     <div class="proof-detail">
-      <div class="proof-image">
-        <iframe
-          width="560"
-          height="315"
-          :src="videoUrl"
-          title="YouTube video player"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
-      </div>
+      <iframe
+        width="600"
+        height="315"
+        :src="videoUrl"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      ></iframe>
 
       <div class="header">
         <div class="userAndTitle">
           <!-- <img class="user-profile-image" src="../assets/images/user1.jpg" alt="작성자 프로필" /> -->
           <div class="user-info">
             <span class="title">{{ videoInfo.snippet.title }} </span>
-            <span class="user-name">{{ videoInfo.snippet.channelTitle }}</span>
+            <!-- <span class="user-name">{{ videoInfo.snippet.channelTitle }}</span> -->
           </div>
         </div>
       </div>
 
-      <!-- 태그 -->
-      <div class="badges">
-        <span
-          v-for="(tag, idx) in Tags"
-          :key="tag"
-          class="badge"
-          :class="{
-            distance: idx % 3 === 0,
-            time: idx % 3 === 1,
-            kcal: idx % 3 === 2,
-          }"
-        >
-          {{ tag }}
-        </span>
+      <div class="header-lower">
+        <!-- 태그 -->
+        <div class="bages-like-container">
+          <div class="user-name">{{ videoInfo.snippet.channelTitle }}</div>
+          <div class="badges">
+            <span
+              v-for="(tag, idx) in Tags"
+              :key="tag"
+              class="badge"
+              :class="{
+                distance: idx % 3 === 0,
+                time: idx % 3 === 1,
+                kcal: idx % 3 === 2,
+              }"
+            >
+              {{ tag }}
+            </span>
+          </div>
+          <!-- 좋아요 -->
+        </div>
+        <div class="like-btn">
+          <i
+            class="fa-heart fa-2x"
+            :class="isLike == 1 ? 'fas' : 'far'"
+            :style="isLike == 1 ? { color: '#ff6b6b' } : { color: '#ccc' }"
+            @click="updateLike"
+          ></i>
+        </div>
       </div>
-
       <!-- 하단 날짜 + 좋아요 -->
       <div class="footer">
         <div class="write-date"></div>
@@ -49,11 +60,10 @@
           </div>
           <div class="like">
             <i class="fas fa-heart"></i>
-            <span>좋아요수</span>
+            <span>좋아요 {{ likeCount }}</span>
           </div>
         </div>
       </div>
-
       <!-- 댓글 영역 -->
       <div class="comment-list">
         <div class="challenge-detail__comment-form">
@@ -103,7 +113,7 @@
 
 <script setup>
 import api from '@/api/api';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
@@ -130,18 +140,18 @@ onMounted(async () => {
     let { data } = await api.get(`/youtube/${videoId}`);
     // data.items 가 배열일 때만 첫 번째 객체를 할당
     videoInfo.value = Array.isArray(data.items) ? data.items[0] : null;
-    console.log(videoInfo);
     requestVideoCommentList();
+    requestVideoLike();
   } catch (e) {
     console.error('영상 요청 실패', e);
   }
 });
+
 //댓글 조회
 async function requestVideoCommentList() {
   const { data } = await api.get(`/youtube/${videoId}/comment`);
   comments.value = data;
 }
-
 //댓글 등록
 async function requestVideoCommentRegist() {
   const { status } = await api.post(`/youtube/${videoId}/comment`, {
@@ -177,29 +187,52 @@ async function requestVideoCommentUpdate() {
     console.log('댓글수정 실패..');
   }
 }
-
+//댓글 삭제
 const requestDeleteComment = async () => {
   const { status } = await api.delete(`/youtube/${videoId}/comment/${editVideoCommentId.value}`);
   requestVideoCommentList();
   closeCommentModal(false);
 };
 
-const showCommentModal = ref(false);
-
 // 댓글 수정 삭제 모달
+const showCommentModal = ref(false);
 const openCommentModal = (commentId, content) => {
   showCommentModal.value = true;
-
   editVideoCommentId.value = commentId;
   editCommentContent.value = content;
 };
-
 const closeCommentModal = isContinue => {
   showCommentModal.value = false;
   if (!isContinue) {
     editVideoCommentId.value = '';
   }
 };
+
+//좋아요
+
+const likeCount = ref(0);
+const isLike = ref(0);
+//좋아요 조회
+async function requestVideoLike() {
+  const { data } = await api.get(`/youtube/${videoId}/like/${nickName}`);
+  isLike.value = data.like;
+  likeCount.value = data.likeCount;
+}
+// watch(isLike, (newValue, oldValue) => {
+//   likeCount.value = newValue;
+// });
+
+//좋아요 수정
+async function updateLike() {
+  isLike.value = isLike.value == 0 ? 1 : 0;
+  console.log(isLike.value);
+  const { data } = await api.post(`/youtube/${videoId}/like`, {
+    videoId: videoId,
+    writer: nickName,
+    like: isLike.value,
+  });
+  requestVideoLike();
+}
 </script>
 
 <style scoped>
@@ -214,12 +247,21 @@ const closeCommentModal = isContinue => {
 }
 
 /* 작성자 정보 */
-/* 작성자 정보 */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px;
+  padding-bottom: 0px;
+  gap: 10px;
+}
+
+.header-lower {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px;
+  padding-bottom: 0px;
   gap: 10px;
 }
 
@@ -252,6 +294,9 @@ const closeCommentModal = isContinue => {
   color: #777;
   margin-top: 7px;
 }
+.user-name {
+  gap: 10px;
+}
 
 .proof-menu {
   font-size: 1.3rem;
@@ -263,7 +308,7 @@ const closeCommentModal = isContinue => {
   justify-content: end;
 }
 
-/* 인증 이미지 */
+/* 영상 */
 iframe {
   border-radius: 12px;
 }
@@ -273,6 +318,7 @@ iframe {
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 .badge {
@@ -297,14 +343,6 @@ iframe {
 .badge.kcal {
   background-color: #ffe3e3;
   color: #e03131;
-}
-
-/* 인증글 본문 */
-.proof-content p {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #444;
-  margin-bottom: 8px;
 }
 
 /* 해시태그 + 챌린지 링크 라인 */
@@ -338,7 +376,7 @@ iframe {
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid #eee;
-  padding-top: 12px;
+  padding-top: 5px;
   font-size: 0.85rem;
   color: #666;
 }
@@ -365,6 +403,10 @@ iframe {
 
 .stats .like {
   color: #ff6b6b;
+  cursor: pointer;
+}
+.like-btn {
+  margin: 0px;
   cursor: pointer;
 }
 
@@ -413,7 +455,7 @@ iframe {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 24px;
+  margin-top: 10px;
 }
 
 .comment-card {
@@ -426,8 +468,8 @@ iframe {
 }
 
 .comment-profile {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   object-fit: cover;
   margin-right: 12px;

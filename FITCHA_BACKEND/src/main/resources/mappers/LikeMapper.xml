@@ -48,5 +48,38 @@
 	     WHERE proof_board_id = #{boardId}
 		   AND writer = #{writer}
 	</delete>
-
+	
+	
+		<!-- ============ 영상 좋아요=================== -->
+	<!-- 좋아요 등록 -->
+	<insert id="insertVideoLike" parameterType="like">
+		INSERT INTO fittube_like(video_id, writer)
+		     VALUES (#{videoId},#{writer})
+	</insert>
+	
+	<!-- 좋아요 취소 -->
+	<delete id="deleteVideoLike" parameterType="like">
+		DELETE FROM fittube_like
+	     WHERE video_id = #{videoId}
+		   AND writer = #{writer}
+	</delete>
+	
+	<!-- 좋아요 수  조회 -->
+	<select id="selectVideoLikeCount" parameterType="java.lang.String" resultType="int">
+		SELECT count(*)
+	 	 FROM fittube_like
+	    WHERE video_id = #{videoId}
+		  
+	</select>
+	
+	<!-- 좋아요 여부  조회 -->
+	<select id="selectUserVideoLiked" parameterType="like" resultType="int">
+		SELECT count(*)
+		  FROM fittube_like
+	     WHERE video_id = #{videoId}
+		   AND writer = #{writer}  
+	</select>
+	
+	
+	
 </mapper>

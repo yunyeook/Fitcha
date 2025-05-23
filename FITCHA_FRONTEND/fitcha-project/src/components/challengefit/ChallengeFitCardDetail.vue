@@ -53,6 +53,7 @@
           <img src="https://via.placeholder.com/32/FFD433" />
           <span class="challenge-detail__more-count">+5</span>
         </div>
+        <div>dd</div>
       </div>
 
       <!-- 현재 참여중인경우 -->
