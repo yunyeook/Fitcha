@@ -71,6 +71,7 @@
             type="text"
             placeholder="댓글을 입력하세요..."
             v-model="commentContent"
+            @keyup.enter="submitComment"
           />
           <button @click="submitComment">등록</button>
         </div>

@@ -22,6 +22,7 @@
           :value="editingContent"
           @input="onInput"
           placeholder="댓글을 수정하세요"
+          @keyup.enter="submitEdit"
         />
         <button class="edit-button" @click="submitEdit">수정 완료</button>
       </div>
