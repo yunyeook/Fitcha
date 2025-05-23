@@ -22,9 +22,6 @@
             <span class="user-name">{{ videoInfo.snippet.channelTitle }}</span>
           </div>
         </div>
-        <div class="proof-menu" @click="openProofModal">
-          <i class="fas fa-ellipsis-v"></i>
-        </div>
       </div>
 
       <!-- 태그 -->
@@ -43,22 +40,12 @@
         </span>
       </div>
 
-      <!-- 인증글 내용 -->
-      <div class="proof-content">
-        <p>내용</p>
-
-        <div class="content-bottom">
-          <div class="hashtags">#5일차성공 #아침러닝 #챌린지인증</div>
-        </div>
-      </div>
-
       <!-- 하단 날짜 + 좋아요 -->
       <div class="footer">
-        <div class="write-date">작성일</div>
+        <div class="write-date"></div>
         <div class="stats">
           <div class="views">
-            <i class="fas fa-eye"></i>
-            <span>조회수</span>
+            <span>댓글 {{ comments?.length || 0 }} 개</span>
           </div>
           <div class="like">
             <i class="fas fa-heart"></i>
@@ -69,36 +56,45 @@
 
       <!-- 댓글 영역 -->
       <div class="comment-list">
-        <div class="comment-card">
+        <div class="challenge-detail__comment-form">
+          <input type="text" placeholder="댓글을 남기세요..." v-model="comment" />
+          <button @click="requestVideoCommentRegist">작성</button>
+        </div>
+
+        <div class="comment-card" v-for="comment in comments" :key="comment.videoId">
           <img class="comment-profile" src="../assets/images/user1.jpg" alt="프로필" />
           <div class="comment-body">
             <div class="comment-header">
-              <span class="comment-author">사용자1</span>
-              <div class="comment-menu" @click="openCommentModal">
-                <i class="fas fa-ellipsis-v"></i>
-              </div>
+              <span class="comment-author">{{ comment.writer }}</span>
+
+              <template v-if="editVideoCommentId != comment.commentId">
+                <div class="comment-text">{{ comment.content }}</div>
+              </template>
+              <template v-else>
+                <div class="challenge-detail__comment-form">
+                  <input type="text" v-model="editCommentContent" />
+                  <button @click="requestVideoCommentUpdate()">수정완료</button>
+                </div>
+              </template>
+              <template v-if="comment.writer === nickName">
+                <div class="challenge-detail__options" @click="openCommentModal(comment.commentId, comment.content)">
+                  <i class="fas fa-ellipsis-v"></i>
+                </div>
+              </template>
             </div>
-            <div class="comment-text">저도 참가할게요! 매일 아침 달리기 기대돼요.</div>
-            <div class="comment-date">2025년 5월 5일</div>
+
+            <div class="comment-date">{{ comment.regDate }}</div>
           </div>
         </div>
       </div>
+
       <!-- 댓글 수정/삭제 모달 -->
-      <div v-if="showCommentModal" class="modal-overlay" @click.self="openCommentModal">
+      <div v-if="showCommentModal" class="modal-overlay" @click.self="closeCommentModal(false)">
         <div class="modal-box">
-          <button class="modal-close-button" @click="closeCommentModal">×</button>
+          <button class="modal-close-button" @click="closeCommentModal(false)">×</button>
           <div class="modal-title">댓글 관리</div>
-          <button class="modal-button" @click="editComment">수정하기</button>
-          <button class="modal-button delete" @click="deleteComment">삭제하기</button>
-        </div>
-      </div>
-      <!-- 인증글 수정/삭제 모달 -->
-      <div v-if="showProofModal" class="modal-overlay" @click.self="closeProofModal">
-        <div class="modal-box">
-          <button class="modal-close-button" @click="closeProofModal">×</button>
-          <div class="modal-title">인증글 관리</div>
-          <button class="modal-button" @click="editProof">수정하기</button>
-          <button class="modal-button delete" type="button" @click="deleteProof">삭제하기</button>
+          <button class="modal-button" @click="closeCommentModal(true)">수정하기</button>
+          <button class="modal-button delete" @click="requestDeleteComment">삭제하기</button>
         </div>
       </div>
     </div>
@@ -109,13 +105,21 @@
 import api from '@/api/api';
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import axios from 'axios';
+import { useUserStore } from '@/stores/user';
 
+const { userId, nickName } = useUserStore();
 const route = useRoute();
 const videoId = route.params.id;
 const videoInfo = ref(null);
 
+const editVideoCommentId = ref(-1);
+const editCommentContent = ref('');
+const comments = ref({});
+const comment = ref('');
+
 const videoUrl = computed(() => `https://www.youtube.com/embed/${videoId}`);
-// tags 중 앞 3개만 안전하게 꺼내는 computed
+// tags 중 앞 5개만 안전하게 꺼내는 computed
 const Tags = computed(() => {
   // videoInfo.value 가 아직 null 이면 빈 배열
   const tags = videoInfo.value?.snippet?.tags ?? [];
@@ -123,53 +127,77 @@ const Tags = computed(() => {
 });
 onMounted(async () => {
   try {
-    const { data } = await api.get(`/youtube/${videoId}`);
+    let { data } = await api.get(`/youtube/${videoId}`);
     // data.items 가 배열일 때만 첫 번째 객체를 할당
     videoInfo.value = Array.isArray(data.items) ? data.items[0] : null;
+    console.log(videoInfo);
+    requestVideoCommentList();
   } catch (e) {
     console.error('영상 요청 실패', e);
   }
 });
+//댓글 조회
+async function requestVideoCommentList() {
+  const { data } = await api.get(`/youtube/${videoId}/comment`);
+  comments.value = data;
+}
+
+//댓글 등록
+async function requestVideoCommentRegist() {
+  const { status } = await api.post(`/youtube/${videoId}/comment`, {
+    videoId: videoId,
+    userId: userId,
+    content: comment.value,
+    writer: nickName,
+  });
+  comment.value = '';
+
+  //성공시 전체 댓글 불러오기
+  if (status === axios.HttpStatusCode.Created) {
+    requestVideoCommentList();
+  } else {
+    console.log('댓글불러오기 실패..');
+  }
+}
+//댓글 수정
+async function requestVideoCommentUpdate() {
+  const { status } = await api.put(`/youtube/${videoId}/comment/${editVideoCommentId.value}`, {
+    videoId: videoId,
+    commentId: editVideoCommentId.value,
+    content: editCommentContent.value,
+  });
+
+  editVideoCommentId.value = -1;
+  editCommentContent.value = '';
+
+  //성공시 전체 댓글 불러오기
+  if (status === axios.HttpStatusCode.Ok) {
+    requestVideoCommentList();
+  } else {
+    console.log('댓글수정 실패..');
+  }
+}
+
+const requestDeleteComment = async () => {
+  const { status } = await api.delete(`/youtube/${videoId}/comment/${editVideoCommentId.value}`);
+  requestVideoCommentList();
+  closeCommentModal(false);
+};
 
 const showCommentModal = ref(false);
-const showProofModal = ref(false);
 
 // 댓글 수정 삭제 모달
-const openCommentModal = () => {
+const openCommentModal = (commentId, content) => {
   showCommentModal.value = true;
+
+  editVideoCommentId.value = commentId;
+  editCommentContent.value = content;
 };
 
-const closeCommentModal = () => {
+const closeCommentModal = isContinue => {
   showCommentModal.value = false;
-};
-const openProofModal = () => {
-  showProofModal.value = true;
-};
-
-const closeProofModal = () => {
-  showProofModal.value = false;
-};
-
-const editComment = () => {
-  alert('수정 기능은 여기에 구현하면 됨.');
-  closeCommentModal();
-};
-
-const deleteComment = async () => {
-  closeCommentModal();
-};
-const editProof = () => {
-  alert('수정 기능은 여기에 구현하면 됨.');
-  closeProofModal();
-};
-
-const deleteProof = async () => {
-  try {
-    await axios.delete(`${BASE_URL}/${props.fitlog.proofBoardId}`);
-    closeProofModal();
-    router.push(`/fitlog`);
-  } catch (error) {
-    console.error('인증글 삭제 중 오류 발생:', error);
+  if (!isContinue) {
+    editVideoCommentId.value = '';
   }
 };
 </script>
@@ -525,5 +553,29 @@ iframe {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* 댓글 영역 */
+.challenge-detail__comment-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.challenge-detail__comment-form input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.challenge-detail__comment-form button {
+  padding: 10px 16px;
+  background: #51cf66;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
 }
 </style>
