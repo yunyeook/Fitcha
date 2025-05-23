@@ -53,6 +53,7 @@
           <img src="https://via.placeholder.com/32/FFD433" />
           <span class="challenge-detail__more-count">+5</span>
         </div>
+        <div>dd</div>
       </div>
 
       <!-- 현재 참여중인경우 -->
@@ -97,7 +98,7 @@
       <div class="challenge-detail__meta">
         <span>{{ challenge.regDate }}</span>
         <div class="challenge-detail__meta-right">
-          <span>댓글 {{ commentsCount }}개</span>
+          <span>댓글 {{ comments?.length || 0 }}개</span>
           <span class="challenge-detail__likes">
             <i class="fas fa-heart"></i>
             {{ challenge.likeCount }}명
@@ -216,12 +217,7 @@ const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
 const editChallengeCommentId = ref(-1);
 const editCommentContent = ref('');
-const comments = ref({});
-
-const commentsCount = computed(() => {
-  const comments = challenge.value.comments;
-  return Array.isArray(comments) ? comments.length : 0;
-});
+const comments = ref([]);
 
 // 챌린지글 조회
 async function requestChallengeDetail() {

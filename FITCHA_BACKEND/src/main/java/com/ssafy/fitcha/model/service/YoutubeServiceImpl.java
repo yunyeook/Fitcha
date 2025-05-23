@@ -51,7 +51,6 @@ public class YoutubeServiceImpl implements YoutubeService {
 	            .queryParam("id", videoId)
 	            .queryParam("key", apiKey);
 	    
-System.out.println(builder);
 	    String searchUrl = builder.build().toUriString();
 	    return restTemplate.getForObject(searchUrl, Map.class);
 	}

@@ -95,9 +95,7 @@ public class FileServiceImpl implements FileService {
 	// 인증글 파일 등록
 	@Override
 	public void insertProofFile(List<MultipartFile> files, int proofBoardId, String writer) throws Exception {
-		System.out.println(files);
-		System.out.println(proofBoardId);
-		System.out.println(writer);
+		
 		if (files == null || files.isEmpty()) {
 			return;
 		}
@@ -112,8 +110,6 @@ public class FileServiceImpl implements FileService {
 				String originalFileName = file.getOriginalFilename();
 				String uploadFileName = generateUniqueName(originalFileName);
 				file.transferTo(new File(uploadDir, uploadFileName));
-
-				System.out.println(new File(uploadDir, uploadFileName));
 
 				ProofFile proofFile = new ProofFile();
 				proofFile.setProofBoardId(proofBoardId);

@@ -2,11 +2,23 @@ package com.ssafy.fitcha.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description="좋아요 DTO")
+@Schema(description = "좋아요 DTO")
 public class Like {
 	private int boardId;
 	private String writer;
 	private boolean isLiked;
+	private String videoId;
+
+	private int like;
+	private int likeCount;
+
+	public String getVideoId() {
+		return videoId;
+	}
+
+	public void setVideoId(String videoId) {
+		this.videoId = videoId;
+	}
 
 	public boolean isLiked() {
 		return isLiked;
@@ -30,6 +42,22 @@ public class Like {
 
 	public void setWriter(String writer) {
 		this.writer = writer;
+	}
+
+	public int getLikeCount() {
+		return likeCount;
+	}
+
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
+	}
+
+	public int getLike() {
+		return like;
+	}
+
+	public void setLike(int like) {
+		this.like = like;
 	}
 
 }

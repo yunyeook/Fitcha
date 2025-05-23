@@ -39,7 +39,6 @@ public class LikeServiceImpl implements LikeService {
 
 	}
 
-
 	// -------------------- 인증글 좋아요-------------------------------------------------
 
 	// 로그인 유저의 인증글 좋아요 여부 조회
@@ -63,6 +62,34 @@ public class LikeServiceImpl implements LikeService {
 			return 1 == likeDao.insertProofLike(like);
 		else
 			return 1 == likeDao.deleteProofLike(like);
+
+	}
+	// -------------------- 영상 좋아요-------------------------------------------------
+
+	@Override
+	public boolean updateVideoLike(Like like) {
+
+		// 좋아요 누르면 true
+		if (like.getLike() == 1) {
+			return 1 == likeDao.insertVideoLike(like);
+		}
+
+		return 1 == likeDao.deleteVideoLike(like);
+
+	}
+
+	// 좋아요 여부 및 좋아요 수 조회
+	@Override
+	public Like getVideoLike(String videoId, String writer) {
+		Like like = new Like();
+		like.setVideoId(videoId);
+		like.setWriter(writer);
+		int likeCount = likeDao.selectVideoLikeCount(videoId);
+		int isLike = likeDao.selectUserVideoLiked(like);
+		like.setLikeCount(likeCount);
+		like.setLike(isLike);
+
+		return like;
 
 	}
 
