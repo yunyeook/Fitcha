@@ -120,7 +120,6 @@ public class ProofController {
 	@GetMapping("/{proofBoardId}/comment")	
 	public ResponseEntity<List<CommentProof>> getProofCommentAll(@PathVariable("proofBoardId") int proofBoardId) {
 		
-		System.out.println(proofBoardId);
 		List<CommentProof> comments = commentService.getProofCommentList(proofBoardId);
 		if (comments==null||comments.size()==0) {
 			return ResponseEntity.noContent().build();
@@ -132,11 +131,10 @@ public class ProofController {
 	@Operation(summary = "인증글 게시글의 댓글 등록")
 	@PostMapping("/{proofBoardId}/comment")
 	public ResponseEntity<Void> registProofComment(@PathVariable("proofBoardId") int proofBoardId,
-			@RequestBody Comment comment) {
+			@RequestBody CommentProof comment) {
 
 		if (commentService.registProofComment(proofBoardId, comment)) {
-			URI redirectUri = URI.create("/proof/" + proofBoardId);
-			return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
+			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
@@ -156,7 +154,7 @@ public class ProofController {
 	@Operation(summary = "인증글 게시글의 댓글 수정")
 	@PutMapping("/{proofBoardId}/comment/{proofCommentId}")
 	public ResponseEntity<Void> updateProofComment(@PathVariable("proofBoardId") int proofBoardId,
-			@PathVariable("proofCommentId") int proofCommentId, @RequestBody Comment comment) {
+			@PathVariable("proofCommentId") int proofCommentId, @RequestBody CommentProof comment) {
 
 		if (commentService.updateProofComment(proofBoardId, proofCommentId, comment)) {
 			URI redirectUri = URI.create("/proof/" + proofBoardId);

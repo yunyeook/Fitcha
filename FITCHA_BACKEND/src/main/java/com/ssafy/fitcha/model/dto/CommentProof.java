@@ -11,8 +11,12 @@ public class CommentProof {
 	private String writer ;
 	private String regDate;
 	
+	
+	
 
 
+	public CommentProof() {
+	}
 	public int getProofCommentId() {
 		return proofCommentId;
 	}

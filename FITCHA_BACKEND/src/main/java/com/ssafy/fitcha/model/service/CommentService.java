@@ -24,11 +24,11 @@ public interface CommentService {
 	List<CommentProof> getProofCommentList(int proofBoardId);
 
 	// 인증글 댓글 등록
-	boolean registProofComment(int proofBoardId, Comment comment);
+	boolean registProofComment(int proofBoardId, CommentProof comment);
 
 	// 인증글 댓글 삭제
 	boolean deleteProofComment(int proofBoardId, int proofCommentId);
 
 	// 인증글 댓글 수정
-	boolean updateProofComment(int proofBoardId, int proofCommentId, Comment comment);
+	boolean updateProofComment(int proofBoardId, int proofCommentId, CommentProof comment);
 }

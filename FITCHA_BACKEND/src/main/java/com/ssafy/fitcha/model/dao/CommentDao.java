@@ -25,12 +25,12 @@ public interface CommentDao {
 	List<CommentProof> selectProofCommentList(int proofBoardId);
 	
 	// 인증글 댓글 등록
-	int insertProofComment(Comment comment);
+	int insertProofComment(CommentProof comment);
 	
 	// 인증글 댓글 삭제
-	int deleteProofComment(Comment comment);
+	int deleteProofComment(CommentProof comment);
 
 	// 인증글 댓글 수정 
-	int updateProofComment(Comment comment);
+	int updateProofComment(CommentProof comment);
 
 }

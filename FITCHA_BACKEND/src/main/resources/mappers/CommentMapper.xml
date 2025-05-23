@@ -42,6 +42,7 @@
 		SELECT *
 		  FROM proof_comment
 		 WHERE proof_board_id = #{id}
+		 ORDER BY reg_date DESC
 	</select>
 	
 	<!-- 인증글 댓글 등록 -->

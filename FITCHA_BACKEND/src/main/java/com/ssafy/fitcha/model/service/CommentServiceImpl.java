@@ -59,25 +59,25 @@ public class CommentServiceImpl implements CommentService {
 	
 	// 인증글 댓글 등록
 	@Override
-	public boolean registProofComment(int proofBoardId, Comment comment) {
-		comment.setBoardId(proofBoardId);
+	public boolean registProofComment(int proofBoardId, CommentProof comment) {
+		comment.setProofBoardId(proofBoardId);
 		return 1 == commentDao.insertProofComment(comment);
 	}
 	
 	// 인증글 댓글 삭제 
 	@Override
 	public boolean deleteProofComment(int proofBoardId, int proofCommentId) {
-		Comment comment = new Comment();
-		comment.setBoardId(proofBoardId);
-		comment.setCommentId(proofCommentId);
+		CommentProof comment = new CommentProof();
+		comment.setProofBoardId(proofBoardId);
+		comment.setProofCommentId(proofCommentId);
 		return 1 == commentDao.deleteProofComment(comment);
 	}
 	
 	// 인증글 댓글 수정 
 	@Override
-	public boolean updateProofComment(int proofBoardId, int proofCommentId, Comment comment) {
-		comment.setBoardId(proofBoardId);
-		comment.setCommentId(proofCommentId);
+	public boolean updateProofComment(int proofBoardId, int proofCommentId, CommentProof comment) {
+		comment.setProofBoardId(proofBoardId);
+		comment.setProofCommentId(proofCommentId);
 		return 1 == commentDao.updateProofComment(comment);
 	}
 
