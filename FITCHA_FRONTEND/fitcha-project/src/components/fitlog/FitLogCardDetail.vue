@@ -79,13 +79,14 @@
           v-for="comment in comments"
           :key="comment.proofCommentId"
           :comment="comment"
+          @open-comment-modal="openCommentModal"
         />
       </div>
       <!-- 댓글 수정/삭제 모달 -->
       <div
         v-if="showCommentModal"
         class="modal-overlay"
-        @click.self="openCommentModal"
+        @click.self="closeCommentModal"
       >
         <div class="modal-box">
           <button class="modal-close-button" @click="closeCommentModal">

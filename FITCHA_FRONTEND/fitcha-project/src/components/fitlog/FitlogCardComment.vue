@@ -8,7 +8,7 @@
     <div class="comment-body">
       <div class="comment-header">
         <span class="comment-author">{{ comment.writer }}</span>
-        <div class="comment-menu" @click="openCommentModal">
+        <div class="comment-menu" v-if="isMyComment" @click="openCommentModal">
           <i class="fas fa-ellipsis-v"></i>
         </div>
       </div>
@@ -21,11 +21,27 @@
 </template>
 
 <script setup>
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { computed, ref } from "vue";
+
+const userStore = useUserStore();
+const { nickName, userId } = storeToRefs(userStore);
 const props = defineProps({
   comment: {
     type: Object,
   },
 });
+
+const isMyComment = computed(() => {
+  return props.comment?.writer === nickName.value;
+});
+
+// 댓글 모달 띄우기 부모에 emit
+const emit = defineEmits(["openCommentModal"]);
+const openCommentModal = () => {
+  emit("openCommentModal");
+};
 </script>
 
 <style scoped>
