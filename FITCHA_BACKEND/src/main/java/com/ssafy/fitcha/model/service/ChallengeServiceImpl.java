@@ -39,6 +39,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 			int challengeBoardId = challenge.getChallengeBoardId();
 			challenge.setChallengeFiles(fileService.getChallengeFileList(challengeBoardId));
 			challenge.setComments(commentService.getChallengeCommentList(challenge.getChallengeBoardId()));
+			challenge.setParticipantCount(challengeDao.selectChallengeParticipantCount(challengeBoardId));
 		}
 		return challengeBoardList;
 	}
@@ -51,6 +52,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 			challengeDao.updateChallengeViewCount(challengeBoardId);
 
 		Challenge challenge = challengeDao.selectChallengeBoard(challengeBoardId);
+		challenge.setParticipantCount(challengeDao.selectChallengeParticipantCount(challengeBoardId));
 
 		// 현재 유저가 참여중인 챌린지인지
 		Participate participate = new Participate(challengeBoardId, nickName);

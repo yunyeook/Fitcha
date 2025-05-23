@@ -106,7 +106,7 @@
 
 	</select>
 	
-	
+	<!-- 참여 등록 -->
 	<insert id="insertParticipantChallenge" parameterType="challenge">
 		INSERT INTO participant_challenge (challenge_board_id, participant)
 			 VALUES (#{challengeBoardId},#{writer})
@@ -130,7 +130,7 @@
 	</select>
 	
 	
-	
+	<!-- 참여 취소 -->
 	<delete id="deleteChallengeParticipate" parameterType="Participate">
 		DELETE FROM participant_challenge
 		 WHERE challenge_board_id = #{challengeBoardId}
