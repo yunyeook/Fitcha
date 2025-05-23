@@ -199,7 +199,11 @@ const submitComment = async () => {
 };
 
 // 댓글 수정 삭제 모달
-const openCommentModal = () => {
+// 선택된 댓글 정보
+const selectedComment = ref(null);
+const openCommentModal = (comment) => {
+  console.log(comment);
+  selectedComment.value = comment;
   showCommentModal.value = true;
 };
 
@@ -220,6 +224,14 @@ const editComment = () => {
 };
 
 const deleteComment = async () => {
+  try {
+    await api.delete(
+      `proof/${proofBoardId.value}/comment/${selectedComment.value.proofCommentId}`
+    );
+    //  댓글 다시 불러오기
+    const res = await api.get(`/proof/${proofBoardId.value}/comment`);
+    comments.value = res.data;
+  } catch (err) {}
   closeCommentModal();
 };
 const editProof = () => {

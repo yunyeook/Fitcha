@@ -40,7 +40,7 @@ const isMyComment = computed(() => {
 // 댓글 모달 띄우기 부모에 emit
 const emit = defineEmits(["openCommentModal"]);
 const openCommentModal = () => {
-  emit("openCommentModal");
+  emit("open-comment-modal", props.comment);
 };
 </script>
 
