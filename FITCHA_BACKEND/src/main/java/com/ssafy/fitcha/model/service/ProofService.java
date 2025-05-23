@@ -28,5 +28,8 @@ public interface ProofService {
 	//챌린지글 삭제시 내 인증글 삭제
 	boolean deleteMyProofBoard(Proof proof);
 	
+	// 인증글 조회수 증가 
+	void increaseViewCount(int proofBoardId);
+	
 
 }

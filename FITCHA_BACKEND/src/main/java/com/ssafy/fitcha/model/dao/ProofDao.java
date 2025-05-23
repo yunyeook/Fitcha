@@ -37,5 +37,8 @@ public interface ProofDao {
 	
 	// 인증글 수정을 위해 해쉬태그 삭제 
 	void deleteProofBoardHashtags(int proofBoardId);
+	
+	// 인증글 조회수 증가 
+	void increaseViewCount(int proofBoardId);
 
 }

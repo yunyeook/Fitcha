@@ -63,7 +63,8 @@
 		UPDATE proof_board
 		SET title = #{title},
 		content = #{content}
-		WHERE proof_board_id = #{proofBoardId}
+		WHERE proof_board_id =
+		#{proofBoardId}
 	</update>
 
 	<!-- 인증글 삭제 -->
@@ -95,24 +96,34 @@
 		parameterType="list">
 		SELECT proof_board_id, hashtag
 		FROM proof_board_hashtag
-		WHERE proof_board_id IN
+		WHERE
+		proof_board_id IN
 		<foreach collection="list" item="id" open="(" separator=","
 			close=")">
 			#{id}
 		</foreach>
 	</select>
-	
-	<!-- 인증글 상세에서 해쉬태그 가져오기  -->
+
+	<!-- 인증글 상세에서 해쉬태그 가져오기 -->
 	<select id="selectHashTagByProofBoardId" parameterType="int">
-		SELECT hashtag
+		SELECT
+		hashtag
 		FROM proof_board_hashtag
 		WHERE proof_board_id = #{proofBoardId}
 	</select>
-	
+
 	<!-- 인증글에 있는 해쉬태그 수정을 위한 삭제 -->
 	<update id="deleteProofBoardHashtags" parameterType="int">
 		DELETE
-		FROM proof_board_hashtag
+		FROM
+		proof_board_hashtag
+		WHERE proof_board_id = #{proofBoardId}
+	</update>
+
+	<!-- 인증글 조회수 증가 -->
+	<update id="increaseViewCount" parameterType="int">
+		UPDATE proof_board
+		SET view_count = view_count + 1
 		WHERE proof_board_id = #{proofBoardId}
 	</update>
 </mapper>

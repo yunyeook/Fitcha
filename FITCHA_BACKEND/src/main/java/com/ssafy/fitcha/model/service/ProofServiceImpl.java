@@ -128,4 +128,10 @@ public class ProofServiceImpl implements ProofService {
 		return 1 == proofDao.deleteMyProofBoard(proof);
 	}
 
+	// 인증글 조회수 증가
+	@Override
+	public void increaseViewCount(int proofBoardId) {
+		proofDao.increaseViewCount(proofBoardId);
+	}
+
 }

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.fitcha.model.dto.Comment;
 import com.ssafy.fitcha.model.dto.CommentProof;
 import com.ssafy.fitcha.model.dto.Proof;
 import com.ssafy.fitcha.model.dto.SearchProof;
@@ -28,6 +27,9 @@ import com.ssafy.fitcha.model.service.ProofService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -64,11 +66,41 @@ public class ProofController {
 
 	@Operation(summary = "인증글 게시글 상세 조회")
 	@GetMapping("/{proofBoardId}")
-	public ResponseEntity<Proof> getDetailProof(@PathVariable("proofBoardId") int proofBoardId) {
+	public ResponseEntity<Proof> getDetailProof(@PathVariable("proofBoardId") int proofBoardId,
+			HttpServletRequest request, HttpServletResponse response) {
+
+		// 쿠키 이름 정의
+		String cookieName = "viewed_proof_" + proofBoardId;
+		boolean isViewed = false;
+
+		// 기존 쿠키들 확인
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals(cookieName)) {
+					isViewed = true;
+					break;
+				}
+			}
+		}
+
+		// 조회수 증가 로직 - 쿠키에 없을 때만
+		if (!isViewed) {
+			proofService.increaseViewCount(proofBoardId);
+
+			// 새 쿠키 생성 (예: 1시간 동안 유지)
+			Cookie viewCookie = new Cookie(cookieName, "true");
+			viewCookie.setMaxAge(60 * 60); // 1시간
+			viewCookie.setPath("/"); // 전체 경로에서 유효
+			response.addCookie(viewCookie);
+		}
+
+		// 게시글 상세정보 반환
 		Proof proof = proofService.getProofDetails(proofBoardId);
 		if (proof == null) {
 			return ResponseEntity.noContent().build();
 		}
+
 		return ResponseEntity.ok(proof);
 	}
 
@@ -88,7 +120,7 @@ public class ProofController {
 	@PutMapping("/{proofBoardId}")
 	public ResponseEntity<Void> updateProof(@PathVariable("proofBoardId") int proofBoardId, @ModelAttribute Proof proof,
 			@RequestParam(value = "files", required = false) List<MultipartFile> files// 새로운 파일
-			
+
 	) throws Exception {
 		proof.setProofBoardId(proofBoardId);
 		boolean isUpdated = proofService.updateProof(proof, files);
@@ -110,18 +142,14 @@ public class ProofController {
 
 	}
 
-	
-	
-	
-
 	// ---댓글-------------------------------------------------------------------------------
-	
-	@Operation(summary ="인증글 게시글의 전체 댓글 조회 ")
-	@GetMapping("/{proofBoardId}/comment")	
+
+	@Operation(summary = "인증글 게시글의 전체 댓글 조회 ")
+	@GetMapping("/{proofBoardId}/comment")
 	public ResponseEntity<List<CommentProof>> getProofCommentAll(@PathVariable("proofBoardId") int proofBoardId) {
-		
+
 		List<CommentProof> comments = commentService.getProofCommentList(proofBoardId);
-		if (comments==null||comments.size()==0) {
+		if (comments == null || comments.size() == 0) {
 			return ResponseEntity.noContent().build();
 		}
 		return ResponseEntity.ok(comments);
@@ -164,7 +192,6 @@ public class ProofController {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
 	}
-	
 
 	// ----- 좋아요-----
 	@Operation(summary = "인증 게시글 좋아요 갱신")
