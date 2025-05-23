@@ -173,7 +173,6 @@ watch(
       try {
         const { data } = await api.get(`/proof/${id}/comment`);
         comments.value = data;
-        console.dir(comments.value);
       } catch (err) {
         console.error("댓글 로딩 실패:", err);
       }
@@ -230,7 +229,6 @@ const updateComment = async (proofCommentId) => {
 // 선택된 댓글 정보
 const selectedComment = ref(null);
 const openCommentModal = (comment) => {
-  console.log(comment);
   selectedComment.value = comment;
   showCommentModal.value = true;
 };

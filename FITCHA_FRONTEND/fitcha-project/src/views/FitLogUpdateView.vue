@@ -20,9 +20,10 @@ const proofBoardId = route.params?.proofBoardId;
 const fitlog = ref({});
 
 const requestFitLogDetail = async () => {
-  const { data } = await api.get(`/proof/${proofBoardId}`);
+  const { data } = await api.get(`/proof/${proofBoardId}`, {
+    withCredentials: true,
+  });
   fitlog.value = data;
-  console.log(fitlog.value);
 };
 
 onMounted(() => {

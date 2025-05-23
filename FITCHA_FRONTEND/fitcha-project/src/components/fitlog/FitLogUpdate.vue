@@ -184,10 +184,6 @@ const submitUpdateProof = async () => {
     formData.append("hashTags", tag);
   });
 
-  console.log(title.value);
-  console.log(props.fitlog?.proofBoardId);
-  console.log(formData);
-
   await api.put(`/proof/${props.fitlog?.proofBoardId}`, formData);
 
   router.replace(`/fitlog/${props.fitlog?.proofBoardId}`);
