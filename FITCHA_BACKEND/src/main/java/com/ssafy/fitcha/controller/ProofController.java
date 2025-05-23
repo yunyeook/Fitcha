@@ -194,14 +194,22 @@ public class ProofController {
 	}
 
 	// ----- 좋아요-----
-	@Operation(summary = "인증 게시글 좋아요 갱신")
+	@Operation(summary = "인증 게시글 좋아요 추가")
+	// 좋아요 추가
 	@PostMapping("/{proofBoardId}/like")
-	public ResponseEntity<Void> updateProofLike(@PathVariable("proofBoardId") int proofBoardId,
-			@RequestParam("like") boolean isLiked, HttpSession session) {
+	public ResponseEntity<Void> addLike(@PathVariable int proofBoardId, HttpSession session) {
 		User user = (User) session.getAttribute("loginUser");
-		if (likeService.updateProofLike(isLiked, proofBoardId, user.getNickName()))
-			return ResponseEntity.ok().build();
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		boolean success = likeService.addLike(proofBoardId, user.getNickName());
+		return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	}
+
+	@Operation(summary = "인증 게시글 좋아요 취소")
+	// 좋아요 취소
+	@DeleteMapping("/{proofBoardId}/like")
+	public ResponseEntity<Void> removeLike(@PathVariable int proofBoardId, HttpSession session) {
+		User user = (User) session.getAttribute("loginUser");
+		boolean success = likeService.removeLike(proofBoardId, user.getNickName());
+		return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
 
 }

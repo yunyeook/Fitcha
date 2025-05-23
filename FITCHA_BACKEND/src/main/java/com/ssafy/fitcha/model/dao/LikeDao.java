@@ -25,7 +25,6 @@ public interface LikeDao {
 	int deleteProofLike(Like like);
 	
 	
-	
 	// --------------------------------------------------------------------------
 
 	//영상 좋아요 등록
@@ -40,4 +39,6 @@ public interface LikeDao {
 	
 	//영상 좋아요 여부 조회
 	int selectUserVideoLiked(Like like);
+
+	
 }
