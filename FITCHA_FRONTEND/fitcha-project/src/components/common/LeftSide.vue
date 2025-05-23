@@ -38,12 +38,12 @@
           MyFit
         </router-link>
       </li>
-      <li>
+      <!-- <li>
         <a href="#">
           <i class="fas fa-comments"></i>
           FitTalk
         </a>
-      </li>
+      </li> -->
     </ul>
 
     <!-- 로그아웃 버튼 -->
@@ -125,7 +125,7 @@ const handleLogout = () => {
   border: none;
   color: #9fa3a6;
   font-size: 1rem;
-  margin-top: 150px;
+  margin-top: 200px;
   cursor: pointer;
 }
 </style>

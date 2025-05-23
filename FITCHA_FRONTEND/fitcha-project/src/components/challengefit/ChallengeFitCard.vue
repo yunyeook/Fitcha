@@ -79,7 +79,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useUserStore } from '@/stores/user';
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:8080/";
 const props = defineProps({ challenge: { type: Object } });
 const { userId, nickName } = useUserStore();
 const imgUrl = computed(() => {

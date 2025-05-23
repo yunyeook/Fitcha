@@ -36,14 +36,17 @@
           <div class="challenge-detail__progress-fill" style="width: 50%"></div>
         </div>
         <p class="challenge-detail__participants">
-          참여:{{ challenge.participantCount }} / {{ challenge.totalParticipantCount }}명
+          참여:{{ challenge.participantCount }} /
+          {{ challenge.totalParticipantCount }}명
         </p>
       </div>
 
       <div class="challenge-detail__avatars-section">
         <div class="challenge-detail__host">
           <img src="https://via.placeholder.com/32" alt="Host" />
-          <span class="challenge-detail__host-badge">{{ challenge.writer }}</span>
+          <span class="challenge-detail__host-badge">{{
+            challenge.writer
+          }}</span>
         </div>
         <div class="challenge-detail__avatar-stack">
           <img src="https://via.placeholder.com/32/FF5733" />
@@ -66,7 +69,10 @@
             <router-link
               :to="{
                 name: 'FitLogRegistView',
-                params: { challengeBoardId: challenge.challengeBoardId },
+                params: {
+                  challengeBoardId: challenge.challengeBoardId,
+                  writer: challenge.writer,
+                },
               }"
               style="text-decoration: none"
             >
@@ -79,9 +85,14 @@
 
       <!-- 현재 참여중이 아닌경우 -->
       <template v-else>
-        <template v-if="challenge.participantCount < challenge.totalParticipantCount">
+        <template
+          v-if="challenge.participantCount < challenge.totalParticipantCount"
+        >
           <div class="challenge-detail__actions">
-            <button class="challenge-detail__join-btn" @click="requestChallengeParticipate">
+            <button
+              class="challenge-detail__join-btn"
+              @click="requestChallengeParticipate"
+            >
               <i class="fas fa-sign-in-alt"></i>
               참여하기
             </button>
@@ -108,17 +119,27 @@
       <!-- 탭 섹션 시작 -->
       <div class="challenge-detail__tab-section">
         <div class="challenge-detail__tabs">
-          <div class="challenge-detail__tab active" data-tab="comments">댓글 보기</div>
+          <div class="challenge-detail__tab active" data-tab="comments">
+            댓글 보기
+          </div>
           <div class="challenge-detail__tab" data-tab="certs">인증글 보기</div>
         </div>
 
         <!-- 댓글 탭 -->
         <div class="challenge-detail__tab-content active" id="comments">
           <div class="challenge-detail__comment-form">
-            <input type="text" placeholder="댓글을 남기세요..." v-model="comment" />
+            <input
+              type="text"
+              placeholder="댓글을 남기세요..."
+              v-model="comment"
+            />
             <button @click="requestChallengeCommentRegist">작성</button>
           </div>
-          <div class="challenge-detail__comment" v-for="comment in comments" :key="comment.challengeCommentId">
+          <div
+            class="challenge-detail__comment"
+            v-for="comment in comments"
+            :key="comment.challengeCommentId"
+          >
             <img src="https://via.placeholder.com/36/FF5733" />
             <div class="challenge-detail__comment-body">
               <div>
@@ -126,7 +147,9 @@
                   {{ comment.writer }}
                 </div>
 
-                <template v-if="editChallengeCommentId !== comment.challengeCommentId">
+                <template
+                  v-if="editChallengeCommentId !== comment.challengeCommentId"
+                >
                   <div class="challenge-detail__comment-text">
                     {{ comment.content }}
                   </div>
@@ -134,7 +157,13 @@
                 <template v-else>
                   <div class="challenge-detail__comment-form">
                     <input type="text" v-model="editCommentContent" />
-                    <button @click="requestChallengeCommentUpdate(editChallengeCommentId)">수정완료</button>
+                    <button
+                      @click="
+                        requestChallengeCommentUpdate(editChallengeCommentId)
+                      "
+                    >
+                      수정완료
+                    </button>
                   </div>
                 </template>
 
@@ -146,7 +175,12 @@
               <template v-if="comment.writer === nickName">
                 <div
                   class="challenge-detail__options"
-                  @click="openCommentModal(comment.challengeCommentId, comment.content)"
+                  @click="
+                    openCommentModal(
+                      comment.challengeCommentId,
+                      comment.content
+                    )
+                  "
                 >
                   <i class="fas fa-ellipsis-v"></i>
                 </div>
@@ -165,7 +199,9 @@
               </div>
               <span class="date">5월 10일</span>
             </div>
-            <div class="challenge-detail__cert-body">오늘도 5km 완주했어요! 상쾌한 하루 시작 💪</div>
+            <div class="challenge-detail__cert-body">
+              오늘도 5km 완주했어요! 상쾌한 하루 시작 💪
+            </div>
           </div>
         </div>
       </div>
@@ -178,44 +214,62 @@
   </div>
 
   <!-- 댓글 수정/삭제 모달 -->
-  <div v-if="showCommentModal" class="modal-overlay" @click.self="closeCommentModal(false)">
+  <div
+    v-if="showCommentModal"
+    class="modal-overlay"
+    @click.self="closeCommentModal(false)"
+  >
     <div class="modal-box">
-      <button class="modal-close-button" @click="closeCommentModal(false)">×</button>
+      <button class="modal-close-button" @click="closeCommentModal(false)">
+        ×
+      </button>
       <div class="modal-title">댓글 관리</div>
-      <button class="modal-button" @click="closeCommentModal(true)">수정하기</button>
-      <button class="modal-button delete" @click="requestDeleteComment">삭제하기</button>
+      <button class="modal-button" @click="closeCommentModal(true)">
+        수정하기
+      </button>
+      <button class="modal-button delete" @click="requestDeleteComment">
+        삭제하기
+      </button>
     </div>
   </div>
 
   <!-- 챌린지 수정/삭제 모달 -->
-  <div v-if="showChallengeFitModal" class="modal-overlay" @click.self="closeChallengeFitModal">
+  <div
+    v-if="showChallengeFitModal"
+    class="modal-overlay"
+    @click.self="closeChallengeFitModal"
+  >
     <div class="modal-box">
-      <button class="modal-close-button" @click="closeChallengeFitModal">×</button>
+      <button class="modal-close-button" @click="closeChallengeFitModal">
+        ×
+      </button>
       <div class="modal-title">첼린지 관리</div>
       <button class="modal-button" @click="editChallengeFit">수정하기</button>
-      <button class="modal-button delete" @click="deleteChallengeFit">삭제하기</button>
+      <button class="modal-button delete" @click="deleteChallengeFit">
+        삭제하기
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import api from '@/api/api';
-import axios from 'axios';
-import { useUserStore } from '@/stores/user';
+import { ref, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import api from "@/api/api";
+import axios from "axios";
+import { useUserStore } from "@/stores/user";
 
 const { userId, nickName } = useUserStore();
 
-const IMG_BASE_URL = 'http://localhost:8080/';
-const imgUrl = ref('');
+const IMG_BASE_URL = "http://localhost:8080/";
+const imgUrl = ref("");
 const route = useRoute();
 const router = useRouter();
 const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
 const editChallengeCommentId = ref(-1);
-const editCommentContent = ref('');
+const editCommentContent = ref("");
 const comments = ref({});
 
 const commentsCount = computed(() => {
@@ -233,25 +287,30 @@ async function requestChallengeDetail() {
   });
   challenge.value = data;
   imgUrl.value = IMG_BASE_URL + data.challengeFiles[0].fileUploadName;
-  isViewCounted.value = 'false';
+  isViewCounted.value = "false";
   comments.value = data.comments;
 }
 requestChallengeDetail();
 
-const comment = ref('');
+const comment = ref("");
 
 //댓글등록.
 async function requestChallengeCommentRegist() {
-  const { status } = await api.post(`/challenge/${challengeBoardId.value}/comment`, {
-    challengeBoardId: challengeBoardId.value,
-    userId: userId,
-    content: comment.value,
-    writer: nickName,
-  });
-  comment.value = '';
+  const { status } = await api.post(
+    `/challenge/${challengeBoardId.value}/comment`,
+    {
+      challengeBoardId: challengeBoardId.value,
+      userId: userId,
+      content: comment.value,
+      writer: nickName,
+    }
+  );
+  comment.value = "";
   //성공시 다시 전체 댓글 목록 불러오기
   if (status === axios.HttpStatusCode.Created) {
-    const { data } = await api.get(`/challenge/${challengeBoardId.value}/comment`);
+    const { data } = await api.get(
+      `/challenge/${challengeBoardId.value}/comment`
+    );
     comments.value = data;
     //실패시
   } else {
@@ -267,29 +326,36 @@ async function requestChallengeCommentUpdate(id) {
   });
 
   editChallengeCommentId.value = -1;
-  editCommentContent.value = '';
+  editCommentContent.value = "";
   requestChallengeComments();
 }
 
 //댓글들 조회.
 async function requestChallengeComments() {
-  const { data } = await api.get(`/challenge/${challengeBoardId.value}/comment`);
+  const { data } = await api.get(
+    `/challenge/${challengeBoardId.value}/comment`
+  );
   comments.value = data;
 }
 
 //댓글 삭제.
 const requestDeleteComment = async () => {
-  await api.delete(`/challenge/${challengeBoardId.value}/comment/${editChallengeCommentId.value}`);
+  await api.delete(
+    `/challenge/${challengeBoardId.value}/comment/${editChallengeCommentId.value}`
+  );
   requestChallengeComments();
   closeCommentModal(false);
 };
 
 //챌린지 참여.
 async function requestChallengeParticipate() {
-  const { status } = await api.post(`/challenge/${challengeBoardId.value}/participate`, {
-    boardId: challengeBoardId.value,
-    writer: nickName,
-  });
+  const { status } = await api.post(
+    `/challenge/${challengeBoardId.value}/participate`,
+    {
+      boardId: challengeBoardId.value,
+      writer: nickName,
+    }
+  );
   if (status === axios.HttpStatusCode.Ok) {
     challenge.value.participated = true;
     //실패시
@@ -316,7 +382,7 @@ const openCommentModal = (challengeCommentId, content) => {
   editCommentContent.value = content;
 };
 
-const closeCommentModal = isContinue => {
+const closeCommentModal = (isContinue) => {
   showCommentModal.value = false;
   if (!isContinue) {
     editChallengeCommentId.value = -1;
@@ -325,14 +391,17 @@ const closeCommentModal = isContinue => {
 
 const editChallengeFit = () => {
   closeChallengeFitModal();
-  router.push({ name: 'ChallengeFitUpdate', params: { id: challengeBoardId.value } });
+  router.push({
+    name: "ChallengeFitUpdate",
+    params: { id: challengeBoardId.value },
+  });
 };
 
 const deleteChallengeFit = async () => {
   closeChallengeFitModal();
 
   await api.delete(`/challenge/${challengeBoardId.value}/${nickName}`);
-  router.push({ name: 'ChallengeFit' });
+  router.push({ name: "ChallengeFit" });
 };
 </script>
 

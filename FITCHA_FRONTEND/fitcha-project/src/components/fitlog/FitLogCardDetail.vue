@@ -64,25 +64,22 @@
 
       <!-- 댓글 영역 -->
       <div class="comment-list">
-        <div class="comment-card">
-          <img
-            class="comment-profile"
-            src="../assets/images/user1.jpg"
-            alt="프로필"
+        <!-- 댓글 입력 폼 -->
+        <div class="comment-form">
+          <img class="comment-profile" src="" alt="내 프로필" />
+          <input
+            type="text"
+            placeholder="댓글을 입력하세요..."
+            v-model="commentContent"
           />
-          <div class="comment-body">
-            <div class="comment-header">
-              <span class="comment-author">사용자1</span>
-              <div class="comment-menu" @click="openCommentModal">
-                <i class="fas fa-ellipsis-v"></i>
-              </div>
-            </div>
-            <div class="comment-text">
-              저도 참가할게요! 매일 아침 달리기 기대돼요.
-            </div>
-            <div class="comment-date">2025년 5월 5일</div>
-          </div>
+          <button @click="submitComment">등록</button>
         </div>
+        <!-- 댓글 -->
+        <FitlogCardComment
+          v-for="comment in comments"
+          :key="comment.proofCommentId"
+          :comment="comment"
+        />
       </div>
       <!-- 댓글 수정/삭제 모달 -->
       <div
@@ -131,14 +128,20 @@ const props = defineProps({
   },
 });
 
+const fitlog = computed(() => props.fitlog);
+const proofBoardId = computed(() => {
+  return fitlog.value?.proofBoardId;
+});
+
 import api from "@/api/api";
 import { useUserStore } from "@/stores/user";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
+import FitlogCardComment from "./FitlogCardComment.vue";
 
 const userStore = useUserStore();
-const { nickName } = storeToRefs(userStore);
+const { nickName, userId } = storeToRefs(userStore);
 
 const isMyFitLog = computed(() => {
   return props.fitlog?.writer === nickName.value;
@@ -152,6 +155,48 @@ const imgUrl = computed(() => {
     ? "http://localhost:8080/" + props.fitlog.proofFiles[0].fileUrl
     : "";
 });
+
+// 댓글 조회
+
+const comments = ref([]);
+watch(
+  proofBoardId,
+  async (id) => {
+    if (id) {
+      try {
+        const { data } = await api.get(`/proof/${id}/comment`);
+        comments.value = data;
+        console.dir(comments.value);
+      } catch (err) {
+        console.error("댓글 로딩 실패:", err);
+      }
+    } else {
+      console.warn("proofBoardId가 아직 정의되지 않음");
+    }
+  },
+  { immediate: true }
+);
+
+// 댓글 등록
+const commentContent = ref("");
+const submitComment = async () => {
+  try {
+    const data = {
+      content: commentContent.value,
+      writer: nickName.value,
+      userId: userId.value,
+      proofBoardId: proofBoardId.value,
+    };
+    await api.post(`/proof/${proofBoardId.value}/comment`, data);
+    commentContent.value = "";
+    //  댓글 다시 불러오기
+    const res = await api.get(`/proof/${proofBoardId.value}/comment`);
+    comments.value = res.data;
+  } catch (err) {
+    console.error("댓글 등록 실패: ", err);
+  }
+};
+
 // 댓글 수정 삭제 모달
 const openCommentModal = () => {
   showCommentModal.value = true;
