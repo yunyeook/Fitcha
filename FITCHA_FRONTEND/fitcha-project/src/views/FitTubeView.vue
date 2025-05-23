@@ -25,20 +25,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
-import axios from 'axios';
-import api from '@/api/api';
-
 import MainHeader from '@/components/common/MainHeader.vue';
 import MainContentSearch from '@/components/common/MainContentSearch.vue';
 import MainGridLayout from '@/components/common/MainGridLayout.vue';
 import FitTubeCard from '@/components/fittube/FitTubeCard.vue';
-
-const BASE_URL = 'http://localhost:8080/youtube/search';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import api from '@/api/api';
 
 const videos = ref([]);
-
-const token = localStorage.getItem('access-token');
 
 const nextPageToken = ref('');
 const isLoading = ref(false);
@@ -50,10 +44,9 @@ async function requestYoutubeVideos() {
   isLoading.value = true;
 
   try {
-    const { data } = await api.get(`youtube/search`, {
+    const { data } = await api.get(`/youtube/search`, {
       params: { pageToken: nextPageToken.value },
     });
-    // console.log(data);
     videos.value.push(...data.items);
     nextPageToken.value = data.nextPageToken || '';
   } catch (error) {

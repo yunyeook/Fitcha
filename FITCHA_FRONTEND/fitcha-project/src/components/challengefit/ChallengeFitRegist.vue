@@ -110,11 +110,10 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-
-import api from "@/api/api";
-import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/user";
+import { ref } from 'vue';
+import api from '@/api/api';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
 const router = useRouter();
 

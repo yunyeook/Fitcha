@@ -31,4 +31,16 @@ public interface CommentService {
 
 	// 인증글 댓글 수정
 	boolean updateProofComment(int proofBoardId, int proofCommentId, CommentProof comment);
+
+	//영상 댓글 조회 
+	List<Comment> getVideoCommentList(String videoId);
+
+	//영상 댓글 등록
+	boolean registVideoComment(Comment comment);
+
+	//영상 댓글 삭제 
+	boolean deleteVideoComment(String videoId, int videoCommentId);
+
+	//영상 댓글 수정
+	boolean updateVideoComment(Comment comment);
 }

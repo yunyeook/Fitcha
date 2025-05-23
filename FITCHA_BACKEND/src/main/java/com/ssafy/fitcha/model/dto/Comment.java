@@ -14,6 +14,16 @@ public class Comment {
 	private int challengeCommentId;
 	private int challengeBoardId;
 	
+	private String VideoId;
+	
+	
+	
+	public String getVideoId() {
+		return VideoId;
+	}
+	public void setVideoId(String videoId) {
+		VideoId = videoId;
+	}
 	public int getChallengeCommentId() {
 		return challengeCommentId;
 	}

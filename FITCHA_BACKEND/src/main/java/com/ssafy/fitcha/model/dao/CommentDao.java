@@ -32,5 +32,20 @@ public interface CommentDao {
 
 	// 인증글 댓글 수정 
 	int updateProofComment(CommentProof comment);
+	
+	
+	// --------------------------------- 영상 댓글----------------------------------------------------------
+
+	//영상 댓글 목록 조회
+	List<Comment> selectVideoCommentList(String videoId);
+
+	//영상 댓글 등록
+	int insertVideoComment(Comment comment);
+
+	//영상 댓글 삭제
+	int deleteVideoComment(Comment comment);
+
+	//영상 댓글 수정
+	int updateVideoComment(Comment comment);
 
 }

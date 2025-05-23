@@ -80,5 +80,36 @@ public class CommentServiceImpl implements CommentService {
 		comment.setProofCommentId(proofCommentId);
 		return 1 == commentDao.updateProofComment(comment);
 	}
+	
+	//-------------------- 영상 댓글 ---------------------
+
+	//영상 댓글 목록 조회 
+	@Override
+	public List<Comment> getVideoCommentList(String videoId) {
+		return commentDao.selectVideoCommentList(videoId);
+
+	}
+
+	//영상 댓글 등록 
+	@Override
+	public boolean registVideoComment(Comment comment) {
+		return 1 == commentDao.insertVideoComment(comment);
+
+	}
+
+	//영상 댓글 삭제
+	@Override
+	public boolean deleteVideoComment(String videoId, int videoCommentId) {
+		
+		Comment comment = new Comment();
+		comment.setVideoId(videoId);
+		comment.setCommentId(videoCommentId);
+		return 1 == commentDao.deleteVideoComment(comment);
+	}
+
+	@Override
+	public boolean updateVideoComment(Comment comment) {
+		return 1 == commentDao.updateVideoComment(comment);
+	}
 
 }

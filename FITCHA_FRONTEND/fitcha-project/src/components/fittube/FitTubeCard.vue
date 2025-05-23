@@ -30,6 +30,7 @@ import { computed } from "vue";
 const props = defineProps({
   video: Object,
 });
+// console.log(props.video);
 
 const formattedDate = computed(() => {
   const raw = props.video?.snippet?.publishedAt;

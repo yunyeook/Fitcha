@@ -68,10 +68,6 @@ public class WeatherServiceImpl implements WeatherService {
 				.bodyToMono(String.class) // Mono로 비동기 응답처리 (String 타입으로 받음)
 				.block(); // 비동기 -> 동기로 전환
 
-//		System.out.println("초단기실황 : " +  ncstJson);
-		
-//		System.out.printf("Requesting forecast: base_date=%s, base_time=%s, nx=%d, ny=%d%n", baseDate, baseTime, nx, ny);
-
 		
 		// 초단기 예보 데이터 (하늘 상태 얻어오기 위해)
 		String fcstUrl = UriComponentsBuilder
@@ -86,7 +82,6 @@ public class WeatherServiceImpl implements WeatherService {
 				.build(false).toUriString();
 		String fcstJson = weatherWebClient.get().uri(fcstUrl).retrieve().bodyToMono(String.class).block();
 		
-//		System.out.println("초단기예보 : " + fcstJson);
 		
 		// 파싱 및 병합
 		Weather weather = parseWeather(ncstJson, fcstJson);
