@@ -120,4 +120,22 @@
 		ON pc.challenge_board_id = cb.challenge_board_id
 		WHERE pc.participant = #{nickName}
 	</select>
+	
+	
+	<!-- 챌린지의 참여자 수 조회 -->
+	<select id="selectChallengeParticipantCount" parameterType="int" resultType="int">
+		SELECT COUNT(*)
+		  FROM participant_challenge
+		 WHERE challenge_board_id = #{challengeBoardId}
+	</select>
+	
+	
+	
+	<delete id="deleteChallengeParticipate" parameterType="Participate">
+		DELETE FROM participant_challenge
+		 WHERE challenge_board_id = #{challengeBoardId}
+   		   AND participant = #{participant}
+	</delete>
+	
+	
 </mapper>

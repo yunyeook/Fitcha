@@ -16,26 +16,27 @@ public class LikeServiceImpl implements LikeService {
 
 	// 로그인 유저의 챌린지 글 좋아요 여부 조회
 	@Override
-	public boolean getChallengeLike(int challengeBoardId, String nickName) {
+	public Like getChallengeLike(int challengeBoardId, String writer) {
 		Like like = new Like();
 		like.setBoardId(challengeBoardId);
-		like.setWriter(nickName);
-
-		return null != likeDao.selectChallengeLike(like);
+		like.setWriter(writer);
+		int likeCount = likeDao.selectChallengeLikeCount(challengeBoardId);
+		int isLike = likeDao.selectUserChallengeLiked(like);
+		like.setLikeCount(likeCount);
+		like.setLike(isLike);
+		return like;
 	}
 
 	// 로그인 유저의 챌린지 글 좋아요 상태 수정
 	@Override
-	public boolean updateChallengeLike(boolean isLiked, int challengeBoardId, String nickName) {
-		Like like = new Like();
-		like.setBoardId(challengeBoardId);
-		like.setWriter(nickName);
+	public boolean updateChallengeLike(Like like) {
 
-		// 좋아요버튼눌렀다면
-		if (isLiked) {
+		// 좋아요 누르면 true
+		if (like.getLike() == 1) {
 			return 1 == likeDao.insertChallengeLike(like);
-		} else
-			return 1 == likeDao.deleteChallengeLike(like);
+		}
+
+		return 1 == likeDao.deleteChallengeLike(like);
 
 	}
 

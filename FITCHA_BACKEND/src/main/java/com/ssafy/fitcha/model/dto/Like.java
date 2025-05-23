@@ -7,6 +7,7 @@ public class Like {
 	private int boardId;
 	private String writer;
 	private boolean isLiked;
+
 	private String videoId;
 
 	private int like;
