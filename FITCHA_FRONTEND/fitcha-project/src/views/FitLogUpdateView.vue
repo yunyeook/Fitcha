@@ -2,7 +2,7 @@
   <div>
     <MainHeader />
     <MainDetailLayout>
-      <FitLogUpdate />
+      <FitLogUpdate :fitlog="fitlog" />
     </MainDetailLayout>
   </div>
 </template>
@@ -11,6 +11,23 @@
 import MainHeader from "@/components/common/MainHeader.vue";
 import MainDetailLayout from "@/components/common/MainDetailLayout.vue";
 import FitLogUpdate from "@/components/fitlog/FitLogUpdate.vue";
+import { useRoute } from "vue-router";
+import { onMounted, ref } from "vue";
+import api from "@/api/api";
+
+const route = useRoute();
+const proofBoardId = route.params?.proofBoardId;
+const fitlog = ref({});
+
+const requestFitLogDetail = async () => {
+  const { data } = await api.get(`/proof/${proofBoardId}`);
+  fitlog.value = data;
+  console.log(fitlog.value);
+};
+
+onMounted(() => {
+  requestFitLogDetail();
+});
 </script>
 
 <style scoped></style>

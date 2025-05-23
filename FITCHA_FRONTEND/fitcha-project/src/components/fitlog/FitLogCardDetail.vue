@@ -38,7 +38,9 @@
         </p>
 
         <div class="content-bottom">
-          <div class="hashtags">#5일차성공 #아침러닝 #챌린지인증</div>
+          <div class="hashtags">
+            <span v-for="hashtag in fitlog.hashTags">{{ hashtag }}</span>
+          </div>
           <router-link
             class="go-challenge"
             :to="`/challengefit/${fitlog.challengeBoardId}`"
@@ -262,9 +264,16 @@ const deleteComment = async () => {
   } catch (err) {}
   closeCommentModal();
 };
+
+// 인증글 수정 & 삭제
 const editProof = () => {
-  alert("수정 기능은 여기에 구현하면 됨.");
   closeProofModal();
+  router.push({
+    name: "FitLogUpdateView",
+    params: {
+      proofBoardId: fitlog.value.proofBoardId,
+    },
+  });
 };
 
 const deleteProof = async () => {
@@ -319,12 +328,12 @@ const deleteProof = async () => {
 
 .user-info .title {
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   color: #222;
 }
 
 .user-info .user-name {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #777;
   margin-top: 7px;
 }
@@ -356,7 +365,7 @@ const deleteProof = async () => {
 }
 
 .badge {
-  font-size: 0.75rem;
+  font-size: 1rem;
   padding: 2px 10px;
   border-radius: 12px;
   font-weight: 500;
@@ -381,7 +390,7 @@ const deleteProof = async () => {
 
 /* 인증글 본문 */
 .proof-content p {
-  font-size: 1rem;
+  font-size: 1.25rem;
   line-height: 1.6;
   color: #444;
   margin-bottom: 8px;
@@ -397,11 +406,13 @@ const deleteProof = async () => {
 
 .hashtags {
   color: #3cb371;
-  font-size: 0.8rem;
+  font-size: 1rem;
+  display: flex;
+  gap: 10px;
 }
 
 .go-challenge {
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: #3cb371;
   font-weight: bold;
   text-decoration: none;
@@ -419,12 +430,12 @@ const deleteProof = async () => {
   align-items: center;
   border-top: 1px solid #eee;
   padding-top: 12px;
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: #666;
 }
 
 .write-date {
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: #888;
 }
 

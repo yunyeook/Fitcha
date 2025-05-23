@@ -58,7 +58,11 @@ const routes = [
     name: "FitLogRegistView",
     component: FitLogRegistView,
   },
-  { path: "/fitlog/update", component: FitLogUpdateView },
+  {
+    path: "/fitlog/update/:proofBoardId",
+    name: "FitLogUpdateView",
+    component: FitLogUpdateView,
+  },
 
   { path: "/login", component: LoginView },
   { path: "/oauth-success", name: "OAuthSuccess", component: OAuthSuccessView },
