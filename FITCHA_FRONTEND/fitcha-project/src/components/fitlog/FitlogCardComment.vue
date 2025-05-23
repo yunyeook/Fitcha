@@ -12,9 +12,20 @@
           <i class="fas fa-ellipsis-v"></i>
         </div>
       </div>
-      <div class="comment-text">
+      <div v-if="!isEditing" class="comment-text">
         {{ comment.content }}
       </div>
+      <div v-else class="comment-edit">
+        <input
+          type="text"
+          class="edit-input"
+          :value="editingContent"
+          @input="onInput"
+          placeholder="댓글을 수정하세요"
+        />
+        <button class="edit-button" @click="submitEdit">수정 완료</button>
+      </div>
+
       <div class="comment-date">{{ comment.regDate }}</div>
     </div>
   </div>
@@ -30,6 +41,15 @@ const { nickName, userId } = storeToRefs(userStore);
 const props = defineProps({
   comment: {
     type: Object,
+    required: true,
+  },
+  isEditing: {
+    type: Boolean,
+    default: false,
+  },
+  editingContent: {
+    type: String,
+    default: "",
   },
 });
 
@@ -38,7 +58,20 @@ const isMyComment = computed(() => {
 });
 
 // 댓글 모달 띄우기 부모에 emit
-const emit = defineEmits(["openCommentModal"]);
+const emit = defineEmits([
+  "updateEditingContent",
+  "submitEdit",
+  "open-comment-modal",
+]);
+
+const onInput = (e) => {
+  emit("updateEditingContent", e.target.value);
+};
+
+const submitEdit = () => {
+  emit("submitEdit", props.comment.proofCommentId);
+};
+
 const openCommentModal = () => {
   emit("open-comment-modal", props.comment);
 };
@@ -102,5 +135,45 @@ const openCommentModal = () => {
 .comment-date {
   font-size: 0.75rem;
   color: #999;
+}
+
+/* 댓글 수정 폼 */
+.comment-edit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.edit-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #c0d5c2;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+  /* background-color: #f4fdf5; */
+  color: #2d4930;
+}
+
+.edit-input:focus {
+  border-color: #7db97e;
+  box-shadow: 0 0 0 2px rgba(125, 185, 126, 0.2);
+}
+
+.edit-button {
+  padding: 6px 12px;
+  background-color: #7db97e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.edit-button:hover {
+  background-color: #639e67;
 }
 </style>

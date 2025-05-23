@@ -79,6 +79,10 @@
           v-for="comment in comments"
           :key="comment.proofCommentId"
           :comment="comment"
+          :isEditing="editingCommentId === comment.proofCommentId"
+          :editingContent="editingCommentContent"
+          @updateEditingContent="updateCommentContent"
+          @submitEdit="updateComment"
           @open-comment-modal="openCommentModal"
         />
       </div>
@@ -158,7 +162,6 @@ const imgUrl = computed(() => {
 });
 
 // 댓글 조회
-
 const comments = ref([]);
 watch(
   proofBoardId,
@@ -198,6 +201,28 @@ const submitComment = async () => {
   }
 };
 
+// 댓글 수정
+const editingCommentId = ref(null);
+const editingCommentContent = ref("");
+const updateCommentContent = (val) => {
+  editingCommentContent.value = val;
+};
+const updateComment = async (proofCommentId) => {
+  try {
+    await api.put(`/proof/${proofBoardId.value}/comment/${proofCommentId}`, {
+      content: editingCommentContent.value,
+    });
+    // 댓글 다시 불러오기
+    const res = await api.get(`/proof/${proofBoardId.value}/comment`);
+    comments.value = res.data;
+    // 수정 모드 종료
+    editingCommentId.value = null;
+    editingCommentContent.value = "";
+  } catch (error) {
+    console.error("댓글 수정 실패", error);
+  }
+};
+
 // 댓글 수정 삭제 모달
 // 선택된 댓글 정보
 const selectedComment = ref(null);
@@ -219,7 +244,9 @@ const closeProofModal = () => {
 };
 
 const editComment = () => {
-  alert("수정 기능은 여기에 구현하면 됨.");
+  // 수정 모드로 전환, 수정할 댓글 id와 내용 세팅
+  editingCommentId.value = selectedComment.value.proofCommentId;
+  editingCommentContent.value = selectedComment.value.content;
   closeCommentModal();
 };
 
