@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.fitcha.model.dao.CommentDao;
 import com.ssafy.fitcha.model.dto.Comment;
+import com.ssafy.fitcha.model.dto.CommentProof;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -52,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
 	
 	// 인증글 댓글 목록 조회 
 	@Override
-	public List<Comment> getProofCommentList(int proofBoardId) {
+	public List<CommentProof> getProofCommentList(int proofBoardId) {
 		return commentDao.selectProofCommentList(proofBoardId);
 	}
 	

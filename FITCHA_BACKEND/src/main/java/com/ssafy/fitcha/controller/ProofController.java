@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +14,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.fitcha.model.dto.Challenge;
 import com.ssafy.fitcha.model.dto.Comment;
+import com.ssafy.fitcha.model.dto.CommentProof;
 import com.ssafy.fitcha.model.dto.Proof;
 import com.ssafy.fitcha.model.dto.SearchProof;
 import com.ssafy.fitcha.model.dto.User;
@@ -117,6 +115,19 @@ public class ProofController {
 	
 
 	// ---댓글-------------------------------------------------------------------------------
+	
+	@Operation(summary ="인증글 게시글의 전체 댓글 조회 ")
+	@GetMapping("/{proofBoardId}/comment")	
+	public ResponseEntity<List<CommentProof>> getProofCommentAll(@PathVariable("proofBoardId") int proofBoardId) {
+		
+		System.out.println(proofBoardId);
+		List<CommentProof> comments = commentService.getProofCommentList(proofBoardId);
+		if (comments==null||comments.size()==0) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(comments);
+
+	}
 
 	@Operation(summary = "인증글 게시글의 댓글 등록")
 	@PostMapping("/{proofBoardId}/comment")
