@@ -1,6 +1,7 @@
 package com.ssafy.fitcha.model.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -95,9 +96,6 @@ public class FileServiceImpl implements FileService {
 	// 인증글 파일 등록
 	@Override
 	public void insertProofFile(List<MultipartFile> files, int proofBoardId, String writer) throws Exception {
-		System.out.println(files);
-		System.out.println(proofBoardId);
-		System.out.println(writer);
 		if (files == null || files.isEmpty()) {
 			return;
 		}
@@ -113,16 +111,44 @@ public class FileServiceImpl implements FileService {
 				String uploadFileName = generateUniqueName(originalFileName);
 				file.transferTo(new File(uploadDir, uploadFileName));
 
-				System.out.println(new File(uploadDir, uploadFileName));
-
 				ProofFile proofFile = new ProofFile();
 				proofFile.setProofBoardId(proofBoardId);
 				proofFile.setFileOriginalName(originalFileName);
 				proofFile.setFileUploadName(uploadFileName);
-				proofFile.setFileUrl("uploads/" + uploadFileName); // 경로 저장
+				proofFile.setFileUrl("upload/" + uploadFileName); // 경로 저장
 				proofFile.setWriter(writer);
 
 				fileDao.insertProofFile(proofFile);
+			}
+		}
+	}
+
+	// 인증글 파일 수정
+	@Override
+	public void updateProofFile(List<MultipartFile> files, int proofBoardId, String writer) throws IllegalStateException, IOException {
+		if (files == null || files.isEmpty()) {
+			return;
+		}
+
+		File uploadDir = new File(uploadDirPathProof);
+		if (!uploadDir.exists()) {
+			uploadDir.mkdirs();
+		}
+		for (MultipartFile file : files) {
+			if (!file.isEmpty()) {
+				String originalFileName = file.getOriginalFilename();
+				String uploadFileName = generateUniqueName(originalFileName);
+				file.transferTo(new File(uploadDir, uploadFileName));
+				
+				
+				ProofFile proofFile = new ProofFile();
+				proofFile.setProofBoardId(proofBoardId);
+				proofFile.setFileOriginalName(originalFileName);
+				proofFile.setFileUploadName(uploadFileName);
+				proofFile.setFileUrl("upload/" + uploadFileName); // 경로 저장
+				proofFile.setWriter(writer);
+
+				fileDao.updateProofFile(proofFile);
 			}
 		}
 	}

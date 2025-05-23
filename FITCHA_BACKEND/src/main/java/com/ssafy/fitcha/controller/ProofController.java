@@ -86,12 +86,12 @@ public class ProofController {
 
 	@Operation(summary = "인증글 게시글 수정 ")
 	@PutMapping("/{proofBoardId}")
-	public ResponseEntity<Void> updateProof(@PathVariable("proofBoardId") int proofBoardId, @RequestBody Proof proof,
-			@RequestParam(value = "files", required = false) List<MultipartFile> files, // 추가된 파일
-			@RequestParam(value = "deleteProofFileIds", required = false) List<Integer> deleteProofFileIds // 삭제할 파일
+	public ResponseEntity<Void> updateProof(@PathVariable("proofBoardId") int proofBoardId, @ModelAttribute Proof proof,
+			@RequestParam(value = "files", required = false) List<MultipartFile> files// 새로운 파일
+			
 	) throws Exception {
 		proof.setProofBoardId(proofBoardId);
-		boolean isUpdated = proofService.updateProof(proof, files, deleteProofFileIds);
+		boolean isUpdated = proofService.updateProof(proof, files);
 
 		if (isUpdated) {
 			return ResponseEntity.ok().build();

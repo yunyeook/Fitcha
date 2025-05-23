@@ -36,7 +36,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // "/uploads/**" 로 시작하는 요청을
         // 실제 파일 시스템의 "C:/SSAFY/" 폴더에 있는 파일로 응답하도록 설정
-        registry.addResourceHandler("/uploads/**")
+        registry.addResourceHandler("/upload/**")
                 .addResourceLocations("file:///C:/SSAFY/upload/");
 
      

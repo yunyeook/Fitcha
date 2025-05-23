@@ -63,8 +63,7 @@
 		UPDATE proof_board
 		SET title = #{title},
 		content = #{content}
-		WHERE proof_board_id =
-		#{proofBoardId}
+		WHERE proof_board_id = #{proofBoardId}
 	</update>
 
 	<!-- 인증글 삭제 -->
@@ -91,7 +90,7 @@
 			(#{proofBoardId}, #{tag})
 		</foreach>
 	</insert>
-	<!-- 인증글의 해쉬태그 가져오 -->
+	<!-- 인증글 목록에서 모든 해쉬태그 가져오기 -->
 	<select id="selectHashTagsByProofBoardIds" resultType="map"
 		parameterType="list">
 		SELECT proof_board_id, hashtag
@@ -102,6 +101,18 @@
 			#{id}
 		</foreach>
 	</select>
-
-
+	
+	<!-- 인증글 상세에서 해쉬태그 가져오기  -->
+	<select id="selectHashTagByProofBoardId" parameterType="int">
+		SELECT hashtag
+		FROM proof_board_hashtag
+		WHERE proof_board_id = #{proofBoardId}
+	</select>
+	
+	<!-- 인증글에 있는 해쉬태그 수정을 위한 삭제 -->
+	<update id="deleteProofBoardHashtags" parameterType="int">
+		DELETE
+		FROM proof_board_hashtag
+		WHERE proof_board_id = #{proofBoardId}
+	</update>
 </mapper>

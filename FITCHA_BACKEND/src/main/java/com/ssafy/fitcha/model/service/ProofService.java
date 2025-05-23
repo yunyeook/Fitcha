@@ -20,7 +20,7 @@ public interface ProofService {
 	boolean registProof(Proof proof, List<MultipartFile> file) throws Exception;
 	
 	// 인증글 수정
-	boolean updateProof(Proof proof, List<MultipartFile> files, List<Integer> deleteProofFileIds) throws Exception;
+	boolean updateProof(Proof proof, List<MultipartFile> files) throws Exception;
 	
 	// 인증글 삭제
 	boolean deleteProofBoard(int challengeFileId);

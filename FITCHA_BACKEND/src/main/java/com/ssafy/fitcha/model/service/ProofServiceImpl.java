@@ -68,8 +68,14 @@ public class ProofServiceImpl implements ProofService {
 	@Override
 	public Proof getProofDetails(int proofBoardId) {
 		Proof proof = proofDao.selectProofBoard(proofBoardId);
+
+		// 인증글에 파일 세팅
 		List<ProofFile> proofFiles = fileService.getProofFileList(proofBoardId);
 		proof.setProofFiles(proofFiles);
+
+		// 인증글에 해쉬태그 세팅
+		proof.setHashTags(proofDao.selectHashTagByProofBoardId(proofBoardId));
+
 		return proof;
 	}
 
@@ -93,18 +99,19 @@ public class ProofServiceImpl implements ProofService {
 
 	// 인증글 수정
 	@Override
-	public boolean updateProof(Proof proof, List<MultipartFile> files, List<Integer> deleteProofFileIds)
-			throws Exception {
+	public boolean updateProof(Proof proof, List<MultipartFile> files) throws Exception {
 		boolean isUpdated = (1 == proofDao.updateProofBoard(proof));
-		// 인증글 파일 삭제
-		if (deleteProofFileIds != null && deleteProofFileIds.size() > 0) {
-			fileService.deleteProofFile(deleteProofFileIds);
 
-		}
-		// 인증글 파일 등록 (새로 추가된것 등록)
+		// 해쉬태그 수정을 위해 기존에 있는 해쉬 태그 삭제 후 새로운 해쉬태그들 등록
+		Map<String, Object> params = new HashMap<>();
+		params.put("proofBoardId", proof.getProofBoardId());
+		params.put("hashTags", proof.getHashTags());
+		proofDao.deleteProofBoardHashtags(proof.getProofBoardId());
+		proofDao.insertProofBoardHashtags(params);
+
+		// 인증글 파일 교체
 		if (files != null && files.size() > 0) {
-			fileService.insertProofFile(files, proof.getChallengeBoardId(), proof.getWriter());
-
+			fileService.updateProofFile(files, proof.getProofBoardId(), proof.getWriter());
 		}
 		return isUpdated;
 	}

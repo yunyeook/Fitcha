@@ -5,7 +5,8 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-@Schema(description="인증 게시글 DTO")
+
+@Schema(description = "인증 게시글 DTO")
 public class Proof {
 
 	// 생성자
@@ -22,6 +23,14 @@ public class Proof {
 	private int likeCount; // 좋아요수
 	private String regDate; // 작성일
 	private List<ProofFile> proofFiles; // 인증글 파일 리스트
+	// 챌린지 글에서 설정한 운동 타입, 부위, 레벨
+	private String exerciseType;
+	private String bodyPart;
+	private String level;
+	private List<String> hashTags; // 해쉬태그
+
+	
+	
 	public List<ProofFile> getProofFiles() {
 		return proofFiles;
 	}
@@ -30,13 +39,6 @@ public class Proof {
 		this.proofFiles = proofFiles;
 	}
 
-	// 챌린지 글에서 설정한 운동 타입, 부위, 레벨 
-	private String exerciseType;  
-	private String bodyPart;
-	private String level;
-	private List<String> hashTags; // 해쉬태그 
-
-	
 	public List<String> getHashTags() {
 		return hashTags;
 	}
@@ -84,7 +86,6 @@ public class Proof {
 	public void setLikeCount(int likeCount) {
 		this.likeCount = likeCount;
 	}
-
 
 	// getter / setter
 	public int getChallengeBoardId() {
@@ -143,9 +144,14 @@ public class Proof {
 		this.regDate = regDate;
 	}
 
+	@Override
+	public String toString() {
+		return "Proof [challengeBoardId=" + challengeBoardId + ", proofBoardId=" + proofBoardId + ", userId=" + userId
+				+ ", title=" + title + ", content=" + content + ", writer=" + writer + ", viewCount=" + viewCount
+				+ ", likeCount=" + likeCount + ", regDate=" + regDate + ", proofFiles=" + proofFiles + ", exerciseType="
+				+ exerciseType + ", bodyPart=" + bodyPart + ", level=" + level + ", hashTags=" + hashTags + "]";
+	}
 	
 	
-
 	
-
 }

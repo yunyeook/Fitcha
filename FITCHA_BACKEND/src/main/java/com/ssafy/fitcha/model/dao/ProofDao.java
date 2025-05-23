@@ -29,7 +29,13 @@ public interface ProofDao {
 	// 인증글에 있는 해쉬 태그 별도 테이블에 저장
 	int insertProofBoardHashtags(Map<String, Object> map);
 	
-	// 인증글에 해당하는 해쉬태그 가져오
+	// 인증글에 해당하는 해쉬태그 가져오기
 	List<Map<String, Object>> selectHashTagsByProofBoardIds(List<Integer> proofBoardIds);
+	
+	// 인증글 상세 보기에서 해쉬태그 가져오기 
+	List<String> selectHashTagByProofBoardId(int proofBoardId);
+	
+	// 인증글 수정을 위해 해쉬태그 삭제 
+	void deleteProofBoardHashtags(int proofBoardId);
 
 }

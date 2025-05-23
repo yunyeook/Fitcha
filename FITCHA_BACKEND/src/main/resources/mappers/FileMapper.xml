@@ -35,7 +35,14 @@
 			 VALUES (#{proofBoardId},#{fileUploadName},#{fileOriginalName},#{fileUrl},#{writer})
 	</insert>
 	
-	
+	<!-- 인증글 파일 수정 -->
+	<update id="updateProofFile" parameterType="proofFile">
+		UPDATE proof_file
+		SET file_upload_name = #{fileUploadName},
+			file_original_name = #{fileOriginalName},
+			file_url = #{fileUrl}
+		WHERE proof_board_id = #{proofBoardId}
+	</update>
 
 	
 
