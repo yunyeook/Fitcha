@@ -1,5 +1,7 @@
 package com.ssafy.fitcha.model.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -39,6 +41,11 @@ public class ChallengeServiceImpl implements ChallengeService {
 			int challengeBoardId = challenge.getChallengeBoardId();
 			challenge.setChallengeFiles(fileService.getChallengeFileList(challengeBoardId));
 			challenge.setComments(commentService.getChallengeCommentList(challenge.getChallengeBoardId()));
+			challenge.setParticipantCount(challengeDao.selectChallengeParticipantCount(challengeBoardId));
+
+			// 종료되었는지 확인후 저장
+			checkAndUpdateFinish(challenge);
+
 		}
 		return challengeBoardList;
 	}
@@ -51,6 +58,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 			challengeDao.updateChallengeViewCount(challengeBoardId);
 
 		Challenge challenge = challengeDao.selectChallengeBoard(challengeBoardId);
+		challenge.setParticipantCount(challengeDao.selectChallengeParticipantCount(challengeBoardId));
 
 		// 현재 유저가 참여중인 챌린지인지
 		Participate participate = new Participate(challengeBoardId, nickName);
@@ -69,6 +77,9 @@ public class ChallengeServiceImpl implements ChallengeService {
 		// 로그인 유저의 챌린지글 좋아요 여부
 		boolean isLiked = likeService.getChallengeLike(challengeBoardId, nickName).getLike() == 1;
 		challenge.setLiked(isLiked);
+
+		// 챌린지 종료되었는지 확인 후 저장
+		checkAndUpdateFinish(challenge);
 
 		return challenge;
 	}
@@ -147,6 +158,29 @@ public class ChallengeServiceImpl implements ChallengeService {
 	public List<Challenge> getChallengeByNickName(String userNickName) {
 
 		return challengeDao.selectChallengeByNickName(userNickName);
+	}
+
+	/**
+	 * regDate + duration 기간이 지났으면 finish 를 true 로 바꿔서 DTO에 반영하고 DB에도 동기화한다.
+	 */
+	private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	private void checkAndUpdateFinish(Challenge c) {
+		if (c.isFinish()) {
+			return;
+		}
+
+		// regDate의 "yyyy-MM-dd HH:mm:ss" -> yyyy-MM-dd 로 파싱
+		LocalDate start = LocalDate.parse(c.getRegDate().substring(0, 10), DATE_FMT);
+		LocalDate end = start.plusDays(c.getDuration());
+
+		// 종료일 지났으면 true로 바꿈
+		if (LocalDate.now().isAfter(end)) {
+			// 3-1) DTO에 반영
+			c.setFinish(true);
+			// 3-2) DB에도 반영
+			challengeDao.updateChallengeFinish(c.getChallengeBoardId());
+		}
 	}
 
 }

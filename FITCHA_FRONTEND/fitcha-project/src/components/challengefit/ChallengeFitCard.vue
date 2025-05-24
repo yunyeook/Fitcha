@@ -33,7 +33,12 @@
         <!-- 참여 인원 프로그래스바 -->
         <div class="progress-container">
           <div class="progress-bar">
-            <div class="fill"></div>
+            <div
+  class="fill"
+  :class="{ complete: isComplete }"
+  :style="{ width: progressWidth }"
+>      <!-- <span class="progress-text">{{ daysText }}</span> -->
+      </div>
           </div>
         </div>
 
@@ -79,6 +84,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useUserStore } from '@/stores/user';
+import dayjs from 'dayjs';
 const BASE_URL = "http://localhost:8080/";
 const props = defineProps({ challenge: { type: Object } });
 const { userId, nickName } = useUserStore();
@@ -87,6 +93,42 @@ const imgUrl = computed(() => {
     ? BASE_URL + props.challenge.challengeFiles[0].fileUploadName
     : '';
 });
+
+// 1) 경과 일수 (0 ~ duration 사이)
+const daysElapsed = computed(() => {
+  const { regDate, duration } = props.challenge;
+  if (!regDate || !duration) return 0;
+  const diff = dayjs().diff(dayjs(regDate), 'day');
+  if (diff < 0) return 0;
+  return diff > duration ? duration : diff;
+});
+
+// 2) 몇 일차: 경과 + 1, 최대 duration
+const dayCount = computed(() => {
+  const cnt = daysElapsed.value + 1;
+  const { duration } = props.challenge;
+  return duration ? Math.min(cnt, duration) : cnt;
+});
+
+// 3) 프로그레스바 너비
+const progressWidth = computed(() => {
+  const { duration } = props.challenge;
+  if (!duration) return '0%';
+  return Math.round((dayCount.value / duration) * 100) + '%';
+});
+
+ // 4) 표시용 텍스트
+// const daysText = computed(() => `${dayCount.value}일차`);
+
+// 5) 
+const isComplete = computed(() => {
+  return props.challenge.finish;
+  // return props.challenge.duration
+  //   ? dayCount.value >= props.challenge.duration
+  //   : false
+})
+
+
 </script>
 
 <style scoped>
@@ -188,6 +230,22 @@ const imgUrl = computed(() => {
   background-color: #3cb371;
   width: 50%;
   transition: width 0.3s;
+}
+.fill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fill.complete {
+  background-color: #7c7c7c;  /* 완료된 경우 */
+}
+
+.progress-text {
+  font-size: 0.7rem;
+  color: #fff;
+  pointer-events: none; /* 누르는 걸 방해하지 않도록 */
 }
 
 .participants {

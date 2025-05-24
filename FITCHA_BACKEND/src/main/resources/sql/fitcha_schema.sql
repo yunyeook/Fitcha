@@ -44,10 +44,10 @@ total_participant_count INT DEFAULT 1 CHECK (total_participant_count >= 1 AND to
 view_count INT DEFAULT 0 CHECK(view_count >= 0) ,
 like_count INT DEFAULT 0 CHECK(like_count >= 0),
 reg_date TIMESTAMP DEFAULT NOW(),
+finish BOOLEAN NOT NULL DEFAULT FALSE,
 CONSTRAINT challenge_board_user_pk FOREIGN KEY (user_id) REFERENCES user_board(user_id)
 ON DELETE CASCADE
 );
-
 CREATE TABLE challenge_file(
 challenge_file_id INT PRIMARY KEY AUTO_INCREMENT,
 challenge_board_id INT,
@@ -404,7 +404,6 @@ BEGIN
 END $$
 DELIMITER ;
 select * from participant_challenge;
-
 
 select * from challenge_board;
 select * from user_board;

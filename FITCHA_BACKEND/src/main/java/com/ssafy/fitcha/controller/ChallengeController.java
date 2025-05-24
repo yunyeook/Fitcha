@@ -76,9 +76,11 @@ public class ChallengeController {
 	public ResponseEntity<Integer> updateChallenge(@ModelAttribute Challenge challenge,
 			@RequestParam(value = "files", required = false) List<MultipartFile> files, // 추가된 파일
 			@RequestParam(value = "deleteChallengeFileIds", required = false) List<Integer> deleteChallengeFileIds // 삭제할
-																													// 파일
-	) throws Exception {
 
+	// 파일
+	) throws Exception {
+		System.out.println("수정기간 : " + challenge.getDuration());
+		System.out.println("수정 모집인원 : " + challenge.getTotalParticipantCount());
 		if (challengeService.updateChallenge(challenge, files, deleteChallengeFileIds))
 			return ResponseEntity.ok(challenge.getChallengeBoardId());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

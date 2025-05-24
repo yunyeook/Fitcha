@@ -53,7 +53,8 @@
 		    	exercise_type = #{exerciseType},
 		    	body_part = #{bodyPart},
 		   		`level` = #{level},
-			    total_participant_count = #{totalParticipantCount}
+			    total_participant_count = #{totalParticipantCount},
+			    duration = #{duration}
 		  WHERE challenge_board_id = #{challengeBoardId} 
 	</update>
 	
@@ -106,7 +107,7 @@
 
 	</select>
 	
-	
+	<!-- 참여 등록 -->
 	<insert id="insertParticipantChallenge" parameterType="challenge">
 		INSERT INTO participant_challenge (challenge_board_id, participant)
 			 VALUES (#{challengeBoardId},#{writer})
@@ -130,12 +131,18 @@
 	</select>
 	
 	
-	
+	<!-- 참여 취소 -->
 	<delete id="deleteChallengeParticipate" parameterType="Participate">
 		DELETE FROM participant_challenge
 		 WHERE challenge_board_id = #{challengeBoardId}
    		   AND participant = #{participant}
 	</delete>
 	
+	<!-- 챌린지 종료 저장-->
+	<update id="updateChallengeFinish" parameterType="int">
+  UPDATE challenge_board
+  SET finish = true
+  WHERE challenge_board_id = #{id}
+</update>
 	
 </mapper>
