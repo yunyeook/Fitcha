@@ -66,8 +66,8 @@
 
 	<!-- 등록 -->
 	<insert id="insertChallengeBoard" parameterType="challenge" useGeneratedKeys="true" keyProperty="challengeBoardId">
-		INSERT INTO challenge_board (user_id, title, content, writer, exercise_type, body_part, level, duration,total_participant_count)
-			 VALUES (#{userId},#{title},#{content},#{writer}, #{exerciseType},#{bodyPart},#{level},#{duration},#{totalParticipantCount})
+		INSERT INTO challenge_board (user_id, title, content, writer, exercise_type, body_part, level, duration,total_participant_count, subhead)
+			 VALUES (#{userId},#{title},#{content},#{writer}, #{exerciseType},#{bodyPart},#{level},#{duration},#{totalParticipantCount},#{subhead})
 	</insert>
 	
 	<!-- 조회수 증가  -->
@@ -95,7 +95,7 @@
             ORDER BY view_count DESC
         </when>
   	  </choose>
- 	   LIMIT 10
+ 	   LIMIT 5
 	</select>
 
 	<!-- 현재 유저의 참여 여부 조회 -->
@@ -112,6 +112,31 @@
 		INSERT INTO participant_challenge (challenge_board_id, participant)
 			 VALUES (#{challengeBoardId},#{writer})
 	</insert>
+	
+		<!-- 참여자 수 증가 -->
+<update id="increaseParticipantCount" parameterType="int">
+  UPDATE challenge_board
+  SET participant_count = participant_count + 1
+  WHERE challenge_board_id = #{challengeBoardId}
+</update>
+
+		<!-- 참여 취소 -->
+	<delete id="deleteChallengeParticipate" parameterType="Participate">
+		DELETE FROM participant_challenge
+		 WHERE challenge_board_id = #{challengeBoardId}
+   		   AND participant = #{participant}
+	</delete>
+	
+
+<!-- 참여자 수 감소 (1 미만으로 내려가지 않도록 제한) -->
+<update id="decreaseParticipantCount" parameterType="int">
+  UPDATE challenge_board
+  SET participant_count = CASE 
+      WHEN participant_count > 1 THEN participant_count - 1
+      ELSE 1
+  END
+  WHERE challenge_board_id = #{challengeBoardId}
+</update>
 	
 	<!-- 유저가 참여한 챌린지 조회  -->
 	<select id="selectChallengeByNickName" resultType="challenge" parameterType="string">
@@ -131,12 +156,6 @@
 	</select>
 	
 	
-	<!-- 참여 취소 -->
-	<delete id="deleteChallengeParticipate" parameterType="Participate">
-		DELETE FROM participant_challenge
-		 WHERE challenge_board_id = #{challengeBoardId}
-   		   AND participant = #{participant}
-	</delete>
 	
 	<!-- 챌린지 종료 저장-->
 	<update id="updateChallengeFinish" parameterType="int">
@@ -144,5 +163,14 @@
   SET finish = true
   WHERE challenge_board_id = #{id}
 </update>
+
+<!-- 챌린지 참여율 높은 top5 유저 조회 -->
+<select id="selectTop5Challengers" resultType="map">
+  SELECT participant, COUNT(*) AS participationCount
+  FROM participant_challenge
+  GROUP BY participant
+  ORDER BY participationCount DESC
+  LIMIT 5
+</select>
 	
 </mapper>

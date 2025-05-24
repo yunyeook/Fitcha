@@ -3,6 +3,7 @@ package com.ssafy.fitcha.model.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,14 +23,16 @@ public class ChallengeServiceImpl implements ChallengeService {
 	private ProofService proofService;
 	private CommentService commentService;
 	private LikeService likeService;
+	private OpenaiService openaiService;
 
 	public ChallengeServiceImpl(ChallengeDao challengeDao, FileService fileService, ProofService proofService,
-			CommentService commentService, LikeService likeService) {
+			CommentService commentService, LikeService likeService, OpenaiService openaiService) {
 		this.challengeDao = challengeDao;
 		this.fileService = fileService;
 		this.proofService = proofService;
 		this.commentService = commentService;
 		this.likeService = likeService;
+		this.openaiService = openaiService;
 	}
 
 	@Override
@@ -121,6 +124,15 @@ public class ChallengeServiceImpl implements ChallengeService {
 	// 등록
 	@Override
 	public boolean registChallenge(Challenge challenge, List<MultipartFile> files) throws Exception {
+
+		// GPT를 호출해서 소제목 받아오기
+		String subhead = openaiService.getSubheadFromGPT(challenge.getTitle(), challenge.getContent());
+		challenge.setSubhead(subhead);
+		System.out.println("지피티 소제목");
+
+		System.out.println(subhead);
+		System.out.println("=======");
+
 		boolean isOk = challengeDao.insertChallengeBoard(challenge) == 1;
 		fileService.insertChallengeFile(files, challenge.getChallengeBoardId(), challenge.getWriter());
 		challengeDao.insertParticipantChallenge(challenge);
@@ -142,12 +154,14 @@ public class ChallengeServiceImpl implements ChallengeService {
 	// 챌린지 참여 등록
 	@Override
 	public boolean registChallengeParticipate(Challenge challenge) {
+		challengeDao.increaseParticipantCount(challenge.getChallengeBoardId());
 		return challengeDao.insertParticipantChallenge(challenge) == 1;
 	}
 
 	// 챌린지 참여 취소
 	@Override
 	public boolean deleteChallengeParticipate(int challengeBoardId, String writer) {
+		challengeDao.decreaseParticipantCount(challengeBoardId);
 		Participate participate = new Participate(challengeBoardId, writer);
 
 		return challengeDao.deleteChallengeParticipate(participate) == 1;
@@ -181,6 +195,11 @@ public class ChallengeServiceImpl implements ChallengeService {
 			// 3-2) DB에도 반영
 			challengeDao.updateChallengeFinish(c.getChallengeBoardId());
 		}
+	}
+
+	@Override
+	public List<Map<String, Object>> getTop5Challengers() {
+		return challengeDao.selectTop5Challengers();
 	}
 
 }

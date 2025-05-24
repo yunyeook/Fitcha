@@ -148,7 +148,7 @@ onMounted(async () => {
   try {
     await requestChallengeDetail();
   } catch (e) {
-    console.error('요청 실패', e);
+    console.error(' 요청 실패', e);
   }
 });
 

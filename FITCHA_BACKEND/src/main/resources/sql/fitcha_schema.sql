@@ -45,6 +45,7 @@ view_count INT DEFAULT 0 CHECK(view_count >= 0) ,
 like_count INT DEFAULT 0 CHECK(like_count >= 0),
 reg_date TIMESTAMP DEFAULT NOW(),
 finish BOOLEAN NOT NULL DEFAULT FALSE,
+subhead TEXT DEFAULT "",
 CONSTRAINT challenge_board_user_pk FOREIGN KEY (user_id) REFERENCES user_board(user_id)
 ON DELETE CASCADE
 );
@@ -413,3 +414,4 @@ select * from challenge_like;
 	SELECT *
 	 	 FROM fittube_like
 	    WHERE video_id = '4kZHHPH6heY';
+        ALTER TABLE challenge_board ADD subhead VARCHAR(100);
