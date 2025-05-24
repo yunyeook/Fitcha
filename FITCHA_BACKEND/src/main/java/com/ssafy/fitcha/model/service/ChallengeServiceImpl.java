@@ -51,11 +51,14 @@ public class ChallengeServiceImpl implements ChallengeService {
 			challengeDao.updateChallengeViewCount(challengeBoardId);
 
 		Challenge challenge = challengeDao.selectChallengeBoard(challengeBoardId);
-		
-		//현재 유저가 참여중인 챌린지인지 
-		Participate participate = new Participate(challengeBoardId,nickName);
-		challenge.setParticipated(challengeDao.selectChallengeParticipated(participate)==1);
-		
+
+		// 현재 유저가 참여중인 챌린지인지
+		Participate participate = new Participate(challengeBoardId, nickName);
+		challenge.setParticipated(challengeDao.selectChallengeParticipated(participate) == 1);
+
+		int participantCount = challengeDao.selectChallengeParticipantCount(challengeBoardId);
+		challenge.setParticipantCount(participantCount);
+
 		// 파일 목록 조회
 		List<ChallengeFile> files = fileService.getChallengeFileList(challengeBoardId);
 		challenge.setChallengeFiles(files);
@@ -64,7 +67,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 		challenge.setComments(comments);
 
 		// 로그인 유저의 챌린지글 좋아요 여부
-		boolean isLiked = likeService.getChallengeLike(challengeBoardId, nickName);
+		boolean isLiked = likeService.getChallengeLike(challengeBoardId, nickName).getLike() == 1;
 		challenge.setLiked(isLiked);
 
 		return challenge;
@@ -74,7 +77,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 	@Override
 	public boolean updateChallenge(Challenge challenge, List<MultipartFile> files, List<Integer> deleteChallengeFileIds)
 			throws Exception {
-		boolean isOk =challengeDao.updateChallengeBoard(challenge)==1;
+		boolean isOk = challengeDao.updateChallengeBoard(challenge) == 1;
 		// 챌린지 파일 삭제
 		if (deleteChallengeFileIds != null && deleteChallengeFileIds.size() > 0) {
 			fileService.deleteChallengeFile(deleteChallengeFileIds);
@@ -107,14 +110,14 @@ public class ChallengeServiceImpl implements ChallengeService {
 	// 등록
 	@Override
 	public boolean registChallenge(Challenge challenge, List<MultipartFile> files) throws Exception {
-		boolean isOk=challengeDao.insertChallengeBoard(challenge)==1;
+		boolean isOk = challengeDao.insertChallengeBoard(challenge) == 1;
 		fileService.insertChallengeFile(files, challenge.getChallengeBoardId(), challenge.getWriter());
 		challengeDao.insertParticipantChallenge(challenge);
-		
+
 		return isOk;
 	}
-	
-	//최근등록한| 참여자수 많은| 좋아요많은 | 조회수 많은 챌린지글 조회
+
+	// 최근등록한| 참여자수 많은| 좋아요많은 | 조회수 많은 챌린지글 조회
 	@Override
 	public List<Challenge> getTop10Challenges(String orderBy) {
 		List<Challenge> challengeBoardList = challengeDao.selectTop10Challenges(orderBy);
@@ -125,17 +128,24 @@ public class ChallengeServiceImpl implements ChallengeService {
 		return challengeBoardList;
 	}
 
-	//챌린지 참여 등록
+	// 챌린지 참여 등록
 	@Override
 	public boolean registChallengeParticipate(Challenge challenge) {
-		return challengeDao.insertParticipantChallenge(challenge)==1;
+		return challengeDao.insertParticipantChallenge(challenge) == 1;
 	}
-	
-	// 유저가 참여한 챌린지 조회 
+
+	// 챌린지 참여 취소
+	@Override
+	public boolean deleteChallengeParticipate(int challengeBoardId, String writer) {
+		Participate participate = new Participate(challengeBoardId, writer);
+
+		return challengeDao.deleteChallengeParticipate(participate) == 1;
+	}
+
+	// 유저가 참여한 챌린지 조회
 	@Override
 	public List<Challenge> getChallengeByNickName(String userNickName) {
-		
-		
+
 		return challengeDao.selectChallengeByNickName(userNickName);
 	}
 

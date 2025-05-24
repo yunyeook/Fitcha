@@ -40,28 +40,37 @@
         </p>
       </div>
 
-      <div class="challenge-detail__avatars-section">
-        <div class="challenge-detail__host">
-          <img src="https://via.placeholder.com/32" alt="Host" />
-          <span class="challenge-detail__host-badge">{{ challenge.writer }}</span>
+      <div class="avatars-like-container">
+        <div class="challenge-detail__avatars-section">
+          <div class="challenge-detail__host">
+            <img src="https://via.placeholder.com/32" alt="Host" />
+            <span class="challenge-detail__host-badge">{{ challenge.writer }}</span>
+          </div>
+          <div class="challenge-detail__avatar-stack">
+            <img src="https://via.placeholder.com/32/FF5733" />
+            <img src="https://via.placeholder.com/32/33C3FF" />
+            <img src="https://via.placeholder.com/32/85FF33" />
+            <img src="https://via.placeholder.com/32/FF33A6" />
+            <img src="https://via.placeholder.com/32/FFD433" />
+            <span class="challenge-detail__more-count">+5</span>
+          </div>
         </div>
-        <div class="challenge-detail__avatar-stack">
-          <img src="https://via.placeholder.com/32/FF5733" />
-          <img src="https://via.placeholder.com/32/33C3FF" />
-          <img src="https://via.placeholder.com/32/85FF33" />
-          <img src="https://via.placeholder.com/32/FF33A6" />
-          <img src="https://via.placeholder.com/32/FFD433" />
-          <span class="challenge-detail__more-count">+5</span>
+        <div class="like-btn">
+          <i
+            class="fa-heart fa-2x"
+            :class="isLike == 1 ? 'fas' : 'far'"
+            :style="isLike == 1 ? { color: '#ff6b6b' } : { color: '#ccc' }"
+            @click="updateLike"
+          ></i>
         </div>
-        <div>dd</div>
       </div>
 
       <!-- 현재 참여중인경우 -->
       <template v-if="challenge.participated">
         <div class="challenge-detail__actions">
-          <button class="challenge-detail__join-btn">
+          <button class="challenge-detail__join-btn" @click="deleteChallengeParticipate">
             <i class="fas fa-sign-in-alt"></i>
-            참여중
+            참여 취소
           </button>
           <button class="challenge-detail__certify-btn">
             <router-link
@@ -101,7 +110,7 @@
           <span>댓글 {{ comments?.length || 0 }}개</span>
           <span class="challenge-detail__likes">
             <i class="fas fa-heart"></i>
-            {{ challenge.likeCount }}명
+            {{ likeCount }}명
           </span>
         </div>
       </div>
@@ -200,7 +209,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/api';
 import axios from 'axios';
@@ -215,9 +224,18 @@ const router = useRouter();
 const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
-const editChallengeCommentId = ref(-1);
-const editCommentContent = ref('');
-const comments = ref([]);
+
+onMounted(async () => {
+  try {
+    requestChallengeDetail();
+    requestChallengeLike();
+  } catch (e) {
+    console.error('영상 요청 실패', e);
+  }
+});
+watch(challenge, () => {
+  requestChallengeDetail();
+});
 
 // 챌린지글 조회
 async function requestChallengeDetail() {
@@ -232,8 +250,28 @@ async function requestChallengeDetail() {
   isViewCounted.value = 'false';
   comments.value = data.comments;
 }
-requestChallengeDetail();
 
+//챌린지 참여 등록.
+async function requestChallengeParticipate() {
+  const { status } = await api.post(`/challenge/${challengeBoardId.value}/participate`, {
+    challengeBoardId: challengeBoardId.value,
+    writer: nickName,
+  });
+  if (status === axios.HttpStatusCode.Ok) {
+    challenge.value.participated = true;
+    //실패시
+  } else {
+    //
+  }
+}
+//챌린지 참여 취소
+async function deleteChallengeParticipate() {
+  await api.delete(`/challenge/${challengeBoardId.value}/participate/${nickName}`);
+}
+
+const editChallengeCommentId = ref(-1);
+const editCommentContent = ref('');
+const comments = ref([]);
 const comment = ref('');
 
 //댓글등록.
@@ -280,19 +318,6 @@ const requestDeleteComment = async () => {
   closeCommentModal(false);
 };
 
-//챌린지 참여.
-async function requestChallengeParticipate() {
-  const { status } = await api.post(`/challenge/${challengeBoardId.value}/participate`, {
-    boardId: challengeBoardId.value,
-    writer: nickName,
-  });
-  if (status === axios.HttpStatusCode.Ok) {
-    challenge.value.participated = true;
-    //실패시
-  } else {
-    //
-  }
-}
 const props = defineProps({ challenge: Object });
 
 const showCommentModal = ref(false);
@@ -330,6 +355,29 @@ const deleteChallengeFit = async () => {
   await api.delete(`/challenge/${challengeBoardId.value}/${nickName}`);
   router.push({ name: 'ChallengeFit' });
 };
+
+//좋아요
+
+const likeCount = ref(0);
+const isLike = ref(0);
+//좋아요 조회
+async function requestChallengeLike() {
+  const { data } = await api.get(`/challenge/${challengeBoardId.value}/like/${nickName}`);
+  isLike.value = data.like;
+  likeCount.value = data.likeCount;
+}
+
+//좋아요 수정
+async function updateLike() {
+  isLike.value = isLike.value == 0 ? 1 : 0;
+
+  const { data } = await api.post(`/challenge/${challengeBoardId.value}/like`, {
+    boardId: challengeBoardId.value,
+    writer: nickName,
+    like: isLike.value,
+  });
+  requestChallengeLike();
+}
 </script>
 
 <style scoped>
@@ -426,13 +474,19 @@ const deleteChallengeFit = async () => {
   color: #555;
   margin-top: 6px;
 }
+/* 아바타-좋아요  */
+.avatars-like-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 /* 아바타 */
 .challenge-detail__avatars-section {
   display: flex;
   gap: 15px;
   align-items: center;
-  margin-top: 18px;
+  /* margin-top: 18px; */
 }
 
 .challenge-detail__host {
@@ -458,6 +512,10 @@ const deleteChallengeFit = async () => {
   font-weight: 600;
   padding: 3px 6px;
   border-radius: 12px;
+}
+.like-btn {
+  margin: 0px;
+  cursor: pointer;
 }
 
 .challenge-detail__avatar-stack {

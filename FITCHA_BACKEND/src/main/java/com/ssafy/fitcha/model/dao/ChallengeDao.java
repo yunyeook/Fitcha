@@ -1,7 +1,6 @@
 package com.ssafy.fitcha.model.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import com.ssafy.fitcha.model.dto.Challenge;
 import com.ssafy.fitcha.model.dto.Participate;
@@ -22,21 +21,26 @@ public interface ChallengeDao {
 
 	// 챌린지보드 등록
 	public int insertChallengeBoard(Challenge challenge);
-	//동시에 참여중 등록
-	public int insertParticipantChallenge(Challenge challenge);
 
+	// 챌린지 참여 등록
+	public int insertParticipantChallenge(Challenge challenge);
 
 	// 챌린지보드 조회수 증가
 	public int updateChallengeViewCount(int challengeBoardId);
 
-	//최근등록한| 참여자수 많은| 좋아요많은 | 조회수 많은 챌린지글 조회
+	// 최근등록한| 참여자수 많은| 좋아요많은 | 조회수 많은 챌린지글 조회
 	public List<Challenge> selectTop10Challenges(String orderBy);
 
-	//현재 유저의 챌린지 참여 여부.
+	// 현재 유저의 챌린지 참여 여부.
 	public int selectChallengeParticipated(Participate participate);
 
-	// 유저가 참여한 챌린지 조회 
+	// 유저가 참여한 챌린지 조회
 	public List<Challenge> selectChallengeByNickName(String userNickName);
 
+	// 현재 참여자 수 조회.
+	public int selectChallengeParticipantCount(int challengeBoardId);
+
+	// 챌린지 참여 취소
+	public int deleteChallengeParticipate(Participate participate);
 
 }

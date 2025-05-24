@@ -4,15 +4,18 @@ import com.ssafy.fitcha.model.dto.Like;
 
 public interface LikeDao {
 
-	// 로그인 유저의 챌린지글 좋아요 여부.
-	Like selectChallengeLike(Like like);
-
-	// 로그인 유저의 챌린지글 좋아요 등록
+	// 챌린지글 좋아요 등록
 	int insertChallengeLike(Like like);
 
-	// 로그인 유저의 챌린지 글 좋아요 취소
+	// 챌린지글 좋아요 취소
 	int deleteChallengeLike(Like like);
-	
+
+	// 챌린지 좋아요 수 조회
+	int selectChallengeLikeCount(int challengeBoardId);
+
+	// 챌린지글 좋아요 여부.
+	int selectUserChallengeLiked(Like like);
+
 	// --------------------------------------------------------------------------
 
 	// 로그인 유저의 인증글 좋아요 여부.
@@ -23,21 +26,21 @@ public interface LikeDao {
 
 	// 로그인 유저의 인증글 글 좋아요 취소
 	int deleteProofLike(Like like);
-	
-	
-	
+
 	// --------------------------------------------------------------------------
 
-	//영상 좋아요 등록
+	// --------------------------------------------------------------------------
+
+	// 영상 좋아요 등록
 	int insertVideoLike(Like like);
 
-	//영상 좋아요 취소 
+	// 영상 좋아요 취소
 	int deleteVideoLike(Like like);
 
-
-	//영상 좋아요 수 조회
+	// 영상 좋아요 수 조회
 	int selectVideoLikeCount(String videoId);
-	
-	//영상 좋아요 여부 조회
+
+	// 영상 좋아요 여부 조회
 	int selectUserVideoLiked(Like like);
+
 }
