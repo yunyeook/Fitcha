@@ -31,12 +31,24 @@
 
       <p class="challenge-detail__desc">{{ challenge.content }}</p>
 
+      <!-- 프로그레스 바  -->
       <div class="challenge-detail__progress">
         <div class="challenge-detail__progress-bar">
-          <div class="challenge-detail__progress-fill" style="width: 50%"></div>
+          <div
+            class="challenge-detail__progress-fill"
+            :style="{
+              width: progressWidth,
+              background: challenge.finish ? '#7e7e7e' : '#4caf50',
+            }"
+          >
+            <span class="challenge-detail__progress-text">
+              {{ challenge.finish ? '기간만료' : daysText }}
+            </span>
+          </div>
         </div>
+
         <p class="challenge-detail__participants">
-          참여:{{ challenge.participantCount }} / {{ challenge.totalParticipantCount }}명
+          참여 : {{ challenge.participantCount }} / {{ challenge.totalParticipantCount }}명
         </p>
       </div>
 
@@ -65,42 +77,56 @@
         </div>
       </div>
 
-      <!-- 현재 참여중인경우 -->
-      <template v-if="challenge.participated">
+      <!-- 종료된 경우  -->
+      <template v-if="challenge.finish">
         <div class="challenge-detail__actions">
-          <button class="challenge-detail__join-btn" @click="deleteChallengeParticipate">
-            <i class="fas fa-sign-in-alt"></i>
-            참여 취소
-          </button>
-          <button class="challenge-detail__certify-btn">
-            <router-link
-              :to="{
-                name: 'FitLogRegistView',
-                params: { challengeBoardId: challenge.challengeBoardId },
-              }"
-              style="text-decoration: none"
-            >
-              <i class="fas fa-pen"></i>
-              인증글 쓰기
-            </router-link>
-          </button>
+          <button class="challenge-detail__limit-over-btn">챌린지 종료</button>
         </div>
       </template>
 
-      <!-- 현재 참여중이 아닌경우 -->
+      <!-- 종료되지 않은 경우  -->
       <template v-else>
-        <template v-if="challenge.participantCount < challenge.totalParticipantCount">
+        <!-- 현재 참여중인경우 -->
+        <template v-if="challenge.participated">
           <div class="challenge-detail__actions">
-            <button class="challenge-detail__join-btn" @click="requestChallengeParticipate">
+            <button
+              class="challenge-detail__join-btn"
+              @click="deleteChallengeParticipate"
+              v-if="nickName != challenge.writer"
+            >
               <i class="fas fa-sign-in-alt"></i>
-              참여하기
+              참여 취소
+            </button>
+            <button class="challenge-detail__certify-btn">
+              <router-link
+                :to="{
+                  name: 'FitLogRegistView',
+                  params: { challengeBoardId: challenge.challengeBoardId },
+                }"
+                style="text-decoration: none"
+              >
+                <i class="fas fa-pen"></i>
+                인증글 쓰기
+              </router-link>
             </button>
           </div>
         </template>
+
+        <!-- 현재 참여중이 아닌경우 -->
         <template v-else>
-          <div class="challenge-detail__actions">
-            <button class="challenge-detail__limit-over-btn">정원초과</button>
-          </div>
+          <template v-if="challenge.participantCount < challenge.totalParticipantCount">
+            <div class="challenge-detail__actions">
+              <button class="challenge-detail__join-btn" @click="requestChallengeParticipate">
+                <i class="fas fa-sign-in-alt"></i>
+                참여하기
+              </button>
+            </div>
+          </template>
+          <template v-else>
+            <div class="challenge-detail__actions">
+              <button class="challenge-detail__limit-over-btn">정원초과</button>
+            </div>
+          </template>
         </template>
       </template>
 
@@ -180,10 +206,12 @@
         </div>
       </div>
 
-      <a href="#" class="challenge-detail__back">
-        <i class="fas fa-arrow-left"></i>
-        뒤로 가기
-      </a>
+      <router-link to="/challengefit">
+        <a class="challenge-detail__back">
+          <i class="fas fa-arrow-left"></i>
+          뒤로 가기
+        </a>
+      </router-link>
     </div>
   </div>
 
@@ -209,11 +237,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/api';
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
+import dayjs from 'dayjs';
 
 const { userId, nickName } = useUserStore();
 
@@ -225,16 +254,41 @@ const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
 
+// 1) 경과 일수 (0~duration)
+const daysElapsed = computed(() => {
+  if (!challenge.value.regDate || !challenge.value.duration) return 0;
+  const start = dayjs(challenge.value.regDate);
+  const diff = dayjs().diff(start, 'day');
+  if (diff < 0) return 0;
+  if (diff > challenge.value.duration) return challenge.value.duration;
+  return diff;
+});
+
+// 2) “몇 일차” 계산 (경과일 + 1, 최대 duration)
+const dayCount = computed(() => {
+  const cnt = daysElapsed.value + 1;
+  return cnt > challenge.value.duration ? challenge.value.duration : cnt;
+});
+
+// 3) 프로그레스바 너비 (dayCount / duration)
+const progressWidth = computed(() => {
+  if (!challenge.value.duration) return '0%';
+  const pct = Math.round((dayCount.value / challenge.value.duration) * 100);
+  return pct + '%';
+});
+
+// 4) 화면에 표시할 텍스트 (예: “1일차”, “2일차”)
+const daysText = computed(() => {
+  return dayCount.value + '일차';
+});
+
 onMounted(async () => {
   try {
-    requestChallengeDetail();
-    requestChallengeLike();
+    await requestChallengeDetail();
+    await requestChallengeLike();
   } catch (e) {
     console.error('영상 요청 실패', e);
   }
-});
-watch(challenge, () => {
-  requestChallengeDetail();
 });
 
 // 챌린지글 조회
@@ -249,6 +303,7 @@ async function requestChallengeDetail() {
   imgUrl.value = IMG_BASE_URL + data.challengeFiles[0].fileUploadName;
   isViewCounted.value = 'false';
   comments.value = data.comments;
+  // console.log(challenge.value);
 }
 
 //챌린지 참여 등록.
@@ -258,7 +313,7 @@ async function requestChallengeParticipate() {
     writer: nickName,
   });
   if (status === axios.HttpStatusCode.Ok) {
-    challenge.value.participated = true;
+    await requestChallengeDetail();
     //실패시
   } else {
     //
@@ -267,6 +322,7 @@ async function requestChallengeParticipate() {
 //챌린지 참여 취소
 async function deleteChallengeParticipate() {
   await api.delete(`/challenge/${challengeBoardId.value}/participate/${nickName}`);
+  await requestChallengeDetail();
 }
 
 const editChallengeCommentId = ref(-1);
@@ -454,19 +510,25 @@ async function updateLike() {
 }
 
 .challenge-detail__progress {
-  margin: 30px 0 16px;
+  margin: 16px 0px;
 }
 
 .challenge-detail__progress-bar {
   background: #e0e0e0;
-  height: 8px;
-  border-radius: 4px;
+  height: 15px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
 .challenge-detail__progress-fill {
   height: 100%;
   background: #4caf50;
+  display: flex; /* ★ 텍스트 중앙 정렬을 위해 flex 사용 */
+  align-items: center;
+  justify-content: center;
+  color: #fff; /* 텍스트 색 흰색 */
+  font-size: 0.75rem; /* 필요에 따라 조절 */
+  white-space: nowrap; /* “D-10” 같은 짧은 텍스트 용 */
 }
 
 .challenge-detail__participants {

@@ -43,4 +43,7 @@ public interface ChallengeDao {
 	// 챌린지 참여 취소
 	public int deleteChallengeParticipate(Participate participate);
 
+	// 챌린지 종료 저장
+	public int updateChallengeFinish(int challengeBoardId);
+
 }
