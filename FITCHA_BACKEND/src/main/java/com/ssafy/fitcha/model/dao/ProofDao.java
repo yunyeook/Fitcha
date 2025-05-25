@@ -43,5 +43,8 @@ public interface ProofDao {
 	
 	// 챌린지에 해당하는 게시글 조회 
 	List<Proof> selectProofListByChallenge(int challengeBoardId);
+	
+	// 인증글 이미지 전체 조회 
+	List<String> selectProofImages();
 
 }

@@ -34,5 +34,8 @@ public interface ProofService {
 	// 챌린지에 해당하는 게시글들 조회 
 	List<Proof> getSearchProofsByChallenge(int challengeBoardId);
 	
+	// 인증글 이미지 url 전체 조회 
+	List<String> getProofImages();
+	
 
 }

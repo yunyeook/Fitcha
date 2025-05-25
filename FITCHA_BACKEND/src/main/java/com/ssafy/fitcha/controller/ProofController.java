@@ -64,6 +64,22 @@ public class ProofController {
 
 	}
 	
+	@Operation(summary = "인증글 이미지들 불러오기 (홈 뷰에서 사용)")
+	@GetMapping("/images")
+	public ResponseEntity<List<String>> getProofImages() {
+		List<String> proofImageList = null; // 인증글 사진 전체 리스트
+		try {
+			proofImageList = proofService.getProofImages();
+			if (proofImageList == null || proofImageList.isEmpty()) {
+				return ResponseEntity.noContent().build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ResponseEntity.ok(proofImageList);
+
+	}
+	
 	@Operation(summary = "챌린지에 해당하는 인증글 게시글 조회")
 	@GetMapping("/byChallenge/{challengeBoardId}")
 	public ResponseEntity<List<Proof>> getSearchProofsByChallenge(@PathVariable("challengeBoardId") int challengeBoardId) {

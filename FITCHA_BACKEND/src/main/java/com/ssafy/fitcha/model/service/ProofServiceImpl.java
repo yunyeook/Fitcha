@@ -186,6 +186,13 @@ public class ProofServiceImpl implements ProofService {
 	public void increaseViewCount(int proofBoardId) {
 		proofDao.increaseViewCount(proofBoardId);
 	}
+	
+	// 인증글 이미지 조회 
+	@Override
+	public List<String> getProofImages() {
+		
+		return proofDao.selectProofImages();
+	}
 
 	
 
