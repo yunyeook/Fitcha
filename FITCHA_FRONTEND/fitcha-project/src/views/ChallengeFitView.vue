@@ -2,11 +2,17 @@
   <div class="page-wrapper">
     <MainHeader />
     <MainContentSearch />
-    <MainGridLayout>
-      <template v-for="challenge in challenges" :key="challenge">
-        <ChallengeFitCard :challenge="challenge" />
-      </template>
-    </MainGridLayout>
+    <template v-if="noContent">
+      <NoContent />
+    </template>
+
+    <template v-else>
+      <MainGridLayout>
+        <template v-for="challenge in challenges" :key="challenge">
+          <ChallengeFitCard :challenge="challenge" />
+        </template>
+      </MainGridLayout>
+    </template>
   </div>
 </template>
 
@@ -17,10 +23,13 @@ import MainHeader from '@/components/common/MainHeader.vue';
 import MainContentSearch from '@/components/common/MainContentSearch.vue';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import NoContent from '@/components/error/NoContent204.vue';
 import api from '@/api/api';
+import axios from 'axios';
 const route = useRoute();
 const router = useRouter();
 let challenges = ref({});
+const noContent = ref(false);
 
 async function requestChallengeSearch(searchKey, searchWord) {
   let response;
@@ -37,6 +46,12 @@ async function requestChallengeSearch(searchKey, searchWord) {
     });
   }
   challenges.value = response.data;
+  if (response.status === axios.HttpStatusCode.NoContent) {
+    noContent.value = true;
+  } else {
+    noContent.value = false;
+  }
+  console.log(response.status);
 }
 onMounted(() => {
   requestChallengeSearch(route.query.key, route.query.word);
