@@ -47,8 +47,9 @@
     </ul>
 
     <!-- 로그아웃 버튼 -->
-    <div class="logout-btn">
-      <button type="button" @click="logout">
+    <div class="logout-btn" v-if="nickName">
+      >
+      <button type="button" @click="handleLogout">
         <i class="fas fa-sign-out-alt"></i>
         logout
       </button>
@@ -57,14 +58,18 @@
 </template>
 
 <script setup>
-import { useUserStore } from "@/stores/user";
-import { useRouter } from "vue-router";
-import { logout } from "@/stores/logout";
+import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
+import { logout } from '@/stores/logout';
 
-const userStore = useUserStore();
+import { computed } from 'vue';
+
 const router = useRouter();
+const userStore = useUserStore();
+const nickName = computed(() => userStore.nickName);
+
 const handleLogout = () => {
-  logout();
+  logout(router); // router 전달
 };
 </script>
 

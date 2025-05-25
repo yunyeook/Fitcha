@@ -206,12 +206,10 @@
         </div>
       </div>
 
-      <router-link to="/challengefit">
-        <a class="challenge-detail__back">
-          <i class="fas fa-arrow-left"></i>
-          뒤로 가기
-        </a>
-      </router-link>
+      <a class="challenge-detail__back" @click="goBack">
+        <i class="fas fa-arrow-left"></i>
+        뒤로 가기
+      </a>
     </div>
   </div>
 
@@ -432,6 +430,10 @@ async function updateLike() {
     like: isLike.value,
   });
   requestChallengeLike();
+}
+
+function goBack() {
+  router.back(); // 이전 페이지로 이동
 }
 </script>
 
@@ -812,6 +814,7 @@ async function updateLike() {
   text-decoration: none;
   color: #444;
   gap: 6px;
+  cursor: pointer;
 }
 
 /* 모달 */
