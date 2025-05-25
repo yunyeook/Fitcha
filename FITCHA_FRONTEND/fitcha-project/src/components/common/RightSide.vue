@@ -1,29 +1,32 @@
 <template>
   <div class="right-sidebar">
     <!-- 로그인 유저 정보 섹션 -->
-    <div class="user-info-wrapper">
-      <!-- 닉네임이 있을 경우 유저 정보 표시 -->
-      <div class="user-info" v-if="nickName">
-        <!-- 프로필 이미지가 있을 경우, 캐시 무효화를 위해 타임스탬프 쿼리 스트링 포함 -->
-        <img
-          v-if="profileImgWithCache"
-          :src="profileImgWithCache"
-          alt="profile image"
-        />
-        <!-- 프로필 이미지 없으면 기본 이미지 출력 -->
-        <img v-else :src="defaultProfileImg" alt="default profile image" />
-        <span>{{ nickName }}</span>
-      </div>
 
-      <!-- 닉네임 없으면 로그인 버튼 표시 -->
-      <router-link style="text-decoration: none" to="/login">
-        <div v-if="!nickName" class="loginBtn">
-          <button type="button">
-            <i class="fas fa-user-circle"></i> Login
-          </button>
-        </div>
-      </router-link>
+    <div class="user-info" v-if="nickName">
+      <img
+        v-if="profileImgWithCache"
+        :src="profileImgWithCache"
+        alt="profile image"
+        class="profile-img"
+      />
+      <img
+        v-else
+        :src="defaultProfileImg"
+        alt="default profile image"
+        class="profile-img"
+      />
+      <div class="user-details">
+        <span class="nickname">{{ nickName }}</span>
+        <span class="status-indicator" title="온라인 상태"></span>
+      </div>
     </div>
+
+    <!-- 로그인 버튼 -->
+    <router-link style="text-decoration: none" to="/login">
+      <div v-if="!nickName" class="loginBtn">
+        <button type="button"><i class="fas fa-user-circle"></i> Login</button>
+      </div>
+    </router-link>
 
     <!-- 달력 영역 (현재 비어있음, 스타일만 지정됨) -->
     <div class="calendar-container">
@@ -201,45 +204,66 @@ const profileImgWithCache = computed(() => {
   width: 220px;
   padding: 40px 20px 30px;
 }
-
-/* 로그인 유저 정보 스타일 */
-.right-sidebar .user-info {
+/* 유저 정보 카드 스타일 */
+.user-info {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  font-size: 1.2rem;
-  font-weight: 600;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: default;
+  transition: box-shadow 0.2s ease;
 }
 
 /* 프로필 이미지 스타일 */
-.right-sidebar .user-info img {
-  width: 40px;
-  height: 40px;
+.profile-img {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background-color: #90e4c8;
+  object-fit: cover;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* 로그인 버튼 영역 */
+/* 닉네임과 상태 인디케이터 컨테이너 */
+.user-details {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 닉네임 텍스트 */
+.nickname {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #334155; /* slate-700 계열, 깔끔하고 차분 */
+  user-select: none;
+}
+
+/* 온라인 상태 점 (심플하게, 연한 초록색) */
+
+/* 로그인 버튼 심플 스타일 */
 .loginBtn {
   display: flex;
   justify-content: center;
 }
 .loginBtn button {
-  padding: 12px 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 28px;
   border-radius: 9999px;
   background-color: white;
-  border: 2px solid #a7f3d0;
-  color: #065f46;
-  font-size: 18px;
+  border: 1.5px solid #cbd5e1; /* 연한 회색 테두리 */
+  color: #475569; /* slate-600 */
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: none;
+  transition: all 0.25s ease;
 }
 .loginBtn button:hover {
-  background-color: #d1fae5;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #f1f5f9; /* 아주 연한 회색 */
 }
 .loginBtn i {
   font-size: 18px;

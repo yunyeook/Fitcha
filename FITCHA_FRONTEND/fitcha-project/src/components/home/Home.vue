@@ -14,8 +14,13 @@
         </div>
         <div class="cta-text-hero">
           <h1>운동 챌린지로 건강한 삶 시작하기! 💪</h1>
-          <p>매일 작은 실천이 모여 큰 변화를 만듭니다.<br />지금 인기 있는 챌린지에 참여해보세요!</p>
-          <button class="btn-primary btn-large">챌린지 둘러보기</button>
+          <p>
+            매일 작은 실천이 모여 큰 변화를 만듭니다.<br />지금 인기 있는
+            챌린지에 참여해보세요!
+          </p>
+          <router-link to="/challengefit">
+            <button class="btn-primary btn-large">챌린지 둘러보기</button>
+          </router-link>
         </div>
       </div>
     </section>
@@ -23,7 +28,11 @@
     <section class="popular-challenges">
       <h3>🔥 지금 인기 있는 챌린지</h3>
       <div class="challenge-cards">
-        <div class="challenge-card" v-for="challenge in challenges.participants" :key="challenge.challengeBoardId">
+        <div
+          class="challenge-card"
+          v-for="challenge in challenges.participants"
+          :key="challenge.challengeBoardId"
+        >
           <router-link
             class="router-link"
             :to="{
@@ -32,7 +41,10 @@
               query: { isViewCounted: 'true', writer: nickName },
             }"
           >
-            <img :src="`${BASE_URL}/${challenge.challengeFiles[0].fileUploadName}`" alt="요가챌린지" />
+            <img
+              :src="`${BASE_URL}/${challenge.challengeFiles[0].fileUploadName}`"
+              alt="요가챌린지"
+            />
             <h4>{{ challenge.title }}</h4>
             <p>{{ challenge.subhead }}</p>
           </router-link>
@@ -45,10 +57,15 @@
       <section class="ranking-section">
         <h3>🏆 챌린지 참여 랭킹 TOP 5</h3>
         <ol class="ranking-list">
-          <li v-for="(challenger, index) in top5Challengers" :key="challenger.participant">
+          <li
+            v-for="(challenger, index) in top5Challengers"
+            :key="challenger.participant"
+          >
             <span :class="`rank rank-${index + 1}`">{{ index + 1 }}위</span>
             {{ challenger.participant }}
-            <span class="score">{{ challenger.participationCount }}개 참여</span>
+            <span class="score"
+              >{{ challenger.participationCount }}개 참여</span
+            >
           </li>
         </ol>
       </section>
@@ -62,7 +79,7 @@
               frameborder="0"
               allowfullscreen
             ></iframe>
-            <p>건강한 루틴 만들기</p>
+            <p></p>
           </div>
         </div>
       </section>
@@ -72,34 +89,49 @@
     <section class="proof-gallery">
       <div class="slide-track">
         <!-- 무한 슬라이드를 위해 복제 -->
-        <img src="../../assets/images/run.jpg" alt="인증사진1" />
-        <img src="../../assets/images/run.jpg" alt="인증사진1" />
-        <img src="../../assets/images/run.jpg" alt="인증사진1" />
-        <img src="../../assets/images/run.jpg" alt="인증사진1" />
+        <img
+          v-for="proofImage in proofImages"
+          :key="proofImage"
+          :src="'http://localhost:8080/' + proofImage"
+          alt="인증사진"
+        />
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import api, { BASE_URL } from '@/api/api';
-import { useUserStore } from '@/stores/user';
+import { ref, onMounted, onUnmounted } from "vue";
+import api, { BASE_URL } from "@/api/api";
+import { useUserStore } from "@/stores/user";
 
-import img1 from '@/assets/images/run.jpg';
-import img2 from '@/assets/images/2.jpg';
-import img3 from '@/assets/images/3.jpg';
+import img1 from "@/assets/images/run.jpg";
+import img2 from "@/assets/images/2.jpg";
+import img3 from "@/assets/images/3.jpg";
+
+const proofImages = ref([]);
 
 const challenges = ref({});
 const top5Challengers = ref([]);
 const { userId, nickName } = useUserStore();
 
+async function fetchProofImages() {
+  try {
+    const { data } = await api.get("/proof/images"); // 예시 API 엔드포인트
+    // data가 이미지 URL 배열이라고 가정
+    proofImages.value = data;
+    console.log(data);
+  } catch (error) {
+    console.error("사진 슬라이더 이미지 불러오기 실패:", error);
+  }
+}
+
 async function requestChallengeHome() {
-  const { data } = await api.get('/home');
+  const { data } = await api.get("/home");
   challenges.value = data;
 }
 async function getTop5Challengers() {
-  const { data } = await api.get('/challenge/top5');
+  const { data } = await api.get("/challenge/top5");
   top5Challengers.value = data;
 }
 
@@ -113,6 +145,7 @@ onMounted(() => {
   }, 3000);
   requestChallengeHome();
   getTop5Challengers();
+  fetchProofImages();
 });
 
 onUnmounted(() => {
@@ -141,7 +174,7 @@ onUnmounted(() => {
   width: 100%;
   margin: 0 auto;
   padding: 30px 20px;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   color: #2e4d43;
 }
 
@@ -245,13 +278,17 @@ onUnmounted(() => {
 }
 
 .btn-primary.btn-large::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -75%;
   width: 150%;
   height: 100%;
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 100%
+  );
   transform: skewX(-20deg);
   transition: left 0.4s ease;
   z-index: 0;
@@ -299,7 +336,8 @@ onUnmounted(() => {
   color: #2e4d38;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 15px rgba(58, 107, 71, 0.15), 0 3px 10px rgba(58, 107, 71, 0.1);
+  box-shadow: 0 6px 15px rgba(58, 107, 71, 0.15),
+    0 3px 10px rgba(58, 107, 71, 0.1);
   animation: floatShakeSoft 4.5s ease-in-out infinite;
   transform-origin: center bottom;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -313,7 +351,8 @@ onUnmounted(() => {
 }
 .challenge-card:hover {
   transform: translateY(-15px) scale(1.08) rotate(-1.5deg);
-  box-shadow: 0 15px 30px rgba(46, 139, 87, 0.3), 0 10px 20px rgba(46, 139, 87, 0.25);
+  box-shadow: 0 15px 30px rgba(46, 139, 87, 0.3),
+    0 10px 20px rgba(46, 139, 87, 0.25);
 }
 .challenge-card img {
   width: 100%;
@@ -442,7 +481,7 @@ onUnmounted(() => {
 }
 .proof-gallery::before,
 .proof-gallery::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   width: 80px;
