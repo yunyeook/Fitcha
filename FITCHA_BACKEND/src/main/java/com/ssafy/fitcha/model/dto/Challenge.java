@@ -28,6 +28,16 @@ public class Challenge {
 
 	private boolean finish; // 챌린지 종료
 
+	private String subhead;
+
+	public String getSubhead() {
+		return subhead;
+	}
+
+	public void setSubhead(String subhead) {
+		this.subhead = subhead;
+	}
+
 	public boolean isFinish() {
 		return finish;
 	}

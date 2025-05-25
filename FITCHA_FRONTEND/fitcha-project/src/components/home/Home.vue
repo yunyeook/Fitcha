@@ -14,10 +14,7 @@
         </div>
         <div class="cta-text-hero">
           <h1>운동 챌린지로 건강한 삶 시작하기! 💪</h1>
-          <p>
-            매일 작은 실천이 모여 큰 변화를 만듭니다.<br />지금 인기 있는
-            챌린지에 참여해보세요!
-          </p>
+          <p>매일 작은 실천이 모여 큰 변화를 만듭니다.<br />지금 인기 있는 챌린지에 참여해보세요!</p>
           <button class="btn-primary btn-large">챌린지 둘러보기</button>
         </div>
       </div>
@@ -26,30 +23,19 @@
     <section class="popular-challenges">
       <h3>🔥 지금 인기 있는 챌린지</h3>
       <div class="challenge-cards">
-        <div class="challenge-card">
-          <img src="../../assets/images/run.jpg" alt="요가챌린지" />
-          <h4>하루 10분 요가</h4>
-          <p>몸과 마음의 균형을 위한 짧은 요가 챌린지</p>
-        </div>
-        <div class="challenge-card">
-          <img src="../../assets/images/run.jpg" alt="플랭크챌린지" />
-          <h4>30일 플랭크 도전</h4>
-          <p>복근과 체력 향상을 위한 꾸준한 챌린지</p>
-        </div>
-        <div class="challenge-card">
-          <img src="../../assets/images/run.jpg" alt="걷기챌린지" />
-          <h4>하루 만보 걷기</h4>
-          <p>매일 만보! 함께 걸어보는 건강한 습관</p>
-        </div>
-        <div class="challenge-card">
-          <img src="../../assets/images/run.jpg" alt="달리기챌린지" />
-          <h4>매일 3km 달리기</h4>
-          <p>지속 가능한 러닝 습관 만들기</p>
-        </div>
-        <div class="challenge-card">
-          <img src="../../assets/images/run.jpg" alt="스트레칭챌린지" />
-          <h4>출근 전 5분 스트레칭</h4>
-          <p>아침을 깨우는 간단 스트레칭 루틴</p>
+        <div class="challenge-card" v-for="challenge in challenges.participants" :key="challenge.challengeBoardId">
+          <router-link
+            class="router-link"
+            :to="{
+              name: 'ChallengeFitDetail',
+              params: { id: challenge.challengeBoardId },
+              query: { isViewCounted: 'true', writer: nickName },
+            }"
+          >
+            <img :src="`${BASE_URL}/${challenge.challengeFiles[0].fileUploadName}`" alt="요가챌린지" />
+            <h4>{{ challenge.title }}</h4>
+            <p>{{ challenge.subhead }}</p>
+          </router-link>
         </div>
       </div>
     </section>
@@ -59,25 +45,10 @@
       <section class="ranking-section">
         <h3>🏆 챌린지 참여 랭킹 TOP 5</h3>
         <ol class="ranking-list">
-          <li>
-            <span class="rank rank-1">1위</span> @fitmaster –
-            <span class="score">27개 참여</span>
-          </li>
-          <li>
-            <span class="rank rank-2">2위</span> @runnerkim –
-            <span class="score">24개 참여</span>
-          </li>
-          <li>
-            <span class="rank rank-3">3위</span> @yogaboy –
-            <span class="score">20개 참여</span>
-          </li>
-          <li>
-            <span class="rank rank-4">4위</span> @plankqueen –
-            <span class="score">18개 참여</span>
-          </li>
-          <li>
-            <span class="rank rank-5">5위</span> @homefit123 –
-            <span class="score">16개 참여</span>
+          <li v-for="(challenger, index) in top5Challengers" :key="challenger.participant">
+            <span :class="`rank rank-${index + 1}`">{{ index + 1 }}위</span>
+            {{ challenger.participant }}
+            <span class="score">{{ challenger.participationCount }}개 참여</span>
           </li>
         </ol>
       </section>
@@ -111,10 +82,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import img1 from "@/assets/images/run.jpg";
-import img2 from "@/assets/images/2.jpg";
-import img3 from "@/assets/images/3.jpg";
+import { ref, onMounted, onUnmounted } from 'vue';
+import api, { BASE_URL } from '@/api/api';
+import { useUserStore } from '@/stores/user';
+
+import img1 from '@/assets/images/run.jpg';
+import img2 from '@/assets/images/2.jpg';
+import img3 from '@/assets/images/3.jpg';
+
+const challenges = ref({});
+const top5Challengers = ref([]);
+const { userId, nickName } = useUserStore();
+
+async function requestChallengeHome() {
+  const { data } = await api.get('/home');
+  challenges.value = data;
+}
+async function getTop5Challengers() {
+  const { data } = await api.get('/challenge/top5');
+  top5Challengers.value = data;
+}
 
 const images = [img1, img2, img3];
 const currentIndex = ref(0);
@@ -124,6 +111,8 @@ onMounted(() => {
   intervalId = setInterval(() => {
     currentIndex.value = (currentIndex.value + 1) % images.length;
   }, 3000);
+  requestChallengeHome();
+  getTop5Challengers();
 });
 
 onUnmounted(() => {
@@ -132,6 +121,10 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.router-link {
+  text-decoration: none;
+  margin: 0 auto;
+}
 /* 기본 레이아웃 */
 /* .main-area {
   max-width: 800px;
@@ -148,7 +141,7 @@ onUnmounted(() => {
   width: 100%;
   margin: 0 auto;
   padding: 30px 20px;
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   color: #2e4d43;
 }
 
@@ -252,17 +245,13 @@ onUnmounted(() => {
 }
 
 .btn-primary.btn-large::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: -75%;
   width: 150%;
   height: 100%;
-  background: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0.3) 0%,
-    transparent 100%
-  );
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
   transform: skewX(-20deg);
   transition: left 0.4s ease;
   z-index: 0;
@@ -310,8 +299,7 @@ onUnmounted(() => {
   color: #2e4d38;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 15px rgba(58, 107, 71, 0.15),
-    0 3px 10px rgba(58, 107, 71, 0.1);
+  box-shadow: 0 6px 15px rgba(58, 107, 71, 0.15), 0 3px 10px rgba(58, 107, 71, 0.1);
   animation: floatShakeSoft 4.5s ease-in-out infinite;
   transform-origin: center bottom;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -325,8 +313,7 @@ onUnmounted(() => {
 }
 .challenge-card:hover {
   transform: translateY(-15px) scale(1.08) rotate(-1.5deg);
-  box-shadow: 0 15px 30px rgba(46, 139, 87, 0.3),
-    0 10px 20px rgba(46, 139, 87, 0.25);
+  box-shadow: 0 15px 30px rgba(46, 139, 87, 0.3), 0 10px 20px rgba(46, 139, 87, 0.25);
 }
 .challenge-card img {
   width: 100%;
@@ -455,7 +442,7 @@ onUnmounted(() => {
 }
 .proof-gallery::before,
 .proof-gallery::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   width: 80px;

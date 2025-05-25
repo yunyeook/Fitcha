@@ -2,6 +2,7 @@ package com.ssafy.fitcha.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,8 +80,6 @@ public class ChallengeController {
 
 	// 파일
 	) throws Exception {
-		System.out.println("수정기간 : " + challenge.getDuration());
-		System.out.println("수정 모집인원 : " + challenge.getTotalParticipantCount());
 		if (challengeService.updateChallenge(challenge, files, deleteChallengeFileIds))
 			return ResponseEntity.ok(challenge.getChallengeBoardId());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -210,6 +209,15 @@ public class ChallengeController {
 		Like like = likeService.getChallengeLike(challengeBoardId, writer);
 
 		return ResponseEntity.ok(like);
+
+	}
+
+	@Operation(summary = "챌린지 참여율 높은 top5 유저 조회")
+	@GetMapping("/top5")
+	public ResponseEntity<List<Map<String, Object>>> getTop5Challengers() {
+		List<Map<String, Object>> challengers = challengeService.getTop5Challengers();
+
+		return ResponseEntity.ok(challengers);
 
 	}
 

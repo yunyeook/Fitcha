@@ -1,6 +1,7 @@
 package com.ssafy.fitcha.model.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,5 +37,8 @@ public interface ChallengeService {
 
 	// 유저가 참여한 챌린지 조회 (마이핏 페이지)
 	List<Challenge> getChallengeByNickName(String userNickName);
+
+	// 챌린지 참여율 높은 top5 유저 조회
+	List<Map<String, Object>> getTop5Challengers();
 
 }

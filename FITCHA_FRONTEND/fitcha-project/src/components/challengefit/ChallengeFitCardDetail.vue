@@ -239,14 +239,13 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import api from '@/api/api';
+import api, { BASE_URL } from '@/api/api';
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
 import dayjs from 'dayjs';
 
 const { userId, nickName } = useUserStore();
 
-const IMG_BASE_URL = 'http://localhost:8080/';
 const imgUrl = ref('');
 const route = useRoute();
 const router = useRouter();
@@ -300,7 +299,7 @@ async function requestChallengeDetail() {
     },
   });
   challenge.value = data;
-  imgUrl.value = IMG_BASE_URL + data.challengeFiles[0].fileUploadName;
+  imgUrl.value = `${BASE_URL}/${data.challengeFiles[0].fileUploadName}`;
   isViewCounted.value = 'false';
   comments.value = data.comments;
   // console.log(challenge.value);
