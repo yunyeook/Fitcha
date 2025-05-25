@@ -1,21 +1,14 @@
 package com.ssafy.fitcha.config;
 
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ssafy.fitcha.model.dto.User;
@@ -23,8 +16,6 @@ import com.ssafy.fitcha.security.oauth.CustomOAuth2UserService;
 import com.ssafy.fitcha.security.oauth.CustomOidcUserService;
 import com.ssafy.fitcha.util.JwtUtil;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
@@ -43,10 +34,10 @@ public class SecurityConfig {
 				.and()
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/**/*.html", "/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg",
-								"/**/*.svg", "/favicon.ico")
+								"/**/*.svg", "/favicon.ico", "/api/nickname/**")
 						.permitAll()
 						// REST로그인, 회원가입,oauth2엔드포인트 허용
-						.requestMatchers("/user/login", "/user/signup", "/oauth2/**", "/upload/**").permitAll()
+						.requestMatchers("/user/login", "/user/signup", "/oauth2/**", "/uploads/**").permitAll()
 						.anyRequest().authenticated())
 				.oauth2Login(oauth2 -> oauth2
 						// 인가 요청 시작( ex. GET /oauth2/authorization/kakao )

@@ -3,10 +3,11 @@ package com.ssafy.fitcha.model.service;
 import com.ssafy.fitcha.model.dto.Like;
 
 public interface LikeService {
+	// 챌린지 좋아요 수정
+	boolean updateChallengeLike(Like like);
 
-	boolean getChallengeLike(int challengeBoardId, String nickName);
-
-	boolean updateChallengeLike(boolean isLiked, int challengeBoardId, String nickName);
+	// 챌린지 좋아요 여부 및 좋아요 수 조회
+	Like getChallengeLike(int challengeBoardId, String nickName);
 
 	// --------------------------------- 인증글 좋아요 ------------------------
 
@@ -18,10 +19,10 @@ public interface LikeService {
 
 	// 인증글 좋아요 취소
 	public boolean removeLike(int boardId, String nickName);
-	
-	// 유저가 인증글 좋아요 눌렀는지 체크 
+
+	// 유저가 인증글 좋아요 눌렀는지 체크
 	boolean checkLikeByWriter(int proofBoardId, String writer);
-	
+
 	// --------------------------------- 영상 좋아요 ------------------------
 
 	// 영상 좋아요 수정
@@ -29,6 +30,5 @@ public interface LikeService {
 
 	// 영상 좋아요 여부 및 좋아요 수 조회
 	Like getVideoLike(String videoId, String writer);
-
 
 }

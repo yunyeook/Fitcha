@@ -15,22 +15,30 @@
           :style="{ backgroundColor: isPossible ? '' : '#e0e0e0' }"
         />
       </div>
+
       <div class="form-group">
         <label for="password">패스워드</label>
         <input type="password" id="password" placeholder="비밀번호를 입력하세요" v-model="form.password" required />
       </div>
+
       <div class="form-group">
         <label for="name">이름</label>
         <input type="text" id="name" placeholder="이름을 입력하세요" required v-model="form.name" />
       </div>
+
       <div class="form-group">
         <label for="nickname">닉네임</label>
         <input type="text" id="nickname" placeholder="닉네임을 입력하세요" v-model="form.nickName" required />
+        <p :style="{ color: isNicknameValid ? 'green' : 'red', fontSize: '0.85rem', marginTop: '5px' }">
+          {{ nicknameMessage }}
+        </p>
       </div>
+
       <div class="form-group">
         <label for="age">나이</label>
         <input type="number" id="age" placeholder="나이를 입력하세요" required v-model="form.age" min="0" />
       </div>
+
       <div class="form-group">
         <label for="gender">성별</label>
         <select id="gender" required v-model="form.gender">
@@ -40,6 +48,7 @@
           <option>기타</option>
         </select>
       </div>
+
       <button type="submit" class="signup-btn"><i class="fas fa-dumbbell"></i> 회원가입 완료</button>
     </form>
   </div>
@@ -47,12 +56,12 @@
 
 <script setup>
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import api, { BASE_URL } from '@/api/api';
 
 const route = useRoute();
 const router = useRouter();
-const BASE_URL = 'http://localhost:8080';
 
 const form = ref({
   userId: '',
@@ -63,18 +72,82 @@ const form = ref({
   age: '',
   gender: '',
 });
+
 const isPossible = ref(true);
+const nicknameMessage = ref('');
+const isNicknameValid = ref(true);
+
+// 닉네임 자동 생성
+async function getRandomNickname() {
+  try {
+    const { data } = await axios.get(`${BASE_URL}/api/nickname/generate`);
+    form.value.nickName = data;
+    nicknameMessage.value = '자동으로 생성된 닉네임입니다.';
+    isNicknameValid.value = true;
+  } catch {
+    nicknameMessage.value = '닉네임 생성 실패';
+    isNicknameValid.value = false;
+  }
+}
+
+// 닉네임 중복 검사
+async function checkNickname() {
+  const trimmed = form.value.nickName.trim();
+
+  if (!trimmed) {
+    nicknameMessage.value = '닉네임을 입력해주세요.';
+    isNicknameValid.value = false;
+    return;
+  }
+
+  try {
+    const { data: exists } = await axios.get(`${BASE_URL}/api/nickname/check`, {
+      params: { nickname: trimmed },
+    });
+
+    if (exists) {
+      nicknameMessage.value = '이미 사용 중인 닉네임입니다.';
+      isNicknameValid.value = false;
+    } else {
+      nicknameMessage.value = '사용 가능한 닉네임입니다.';
+      isNicknameValid.value = true;
+    }
+  } catch {
+    nicknameMessage.value = '닉네임 확인 실패';
+    isNicknameValid.value = false;
+  }
+}
+
+// 최초 진입 시 자동 닉네임 생성
 onMounted(() => {
+  getRandomNickname();
+
   if (route.query.userId != null) {
     form.value.userId = route.query.userId;
     isPossible.value = false;
   }
 });
 
+// 닉네임 감지하여 자동 검사
+watch(
+  () => form.value.nickName,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) checkNickname();
+  }
+);
+
+// 회원가입 요청
 const signup = async e => {
   e.preventDefault();
+
+  if (!isNicknameValid.value) {
+    alert('닉네임이 중복되었습니다. 다른 닉네임을 사용해주세요.');
+    return;
+  }
+
   try {
-    const response = await axios.post(`${BASE_URL}/user/signup`, form.value);
+    form.value.nickName = form.value.nickName.trim(); // 백엔드로 전송 전 trim 처리
+    await axios.post(`${BASE_URL}/user/signup`, form.value);
     alert('회원가입에 성공했습니다. 로그인해주세요');
     router.push(`/login`);
   } catch (err) {
@@ -84,7 +157,6 @@ const signup = async e => {
 </script>
 
 <style scoped>
-/* 회원가입 폼 스타일 */
 .signup-wrapper {
   max-width: 400px;
   margin: 50px auto;

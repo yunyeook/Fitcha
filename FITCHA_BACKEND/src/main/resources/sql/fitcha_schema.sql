@@ -44,10 +44,11 @@ total_participant_count INT DEFAULT 1 CHECK (total_participant_count >= 1 AND to
 view_count INT DEFAULT 0 CHECK(view_count >= 0) ,
 like_count INT DEFAULT 0 CHECK(like_count >= 0),
 reg_date TIMESTAMP DEFAULT NOW(),
+finish BOOLEAN NOT NULL DEFAULT FALSE,
+subhead TEXT DEFAULT "",
 CONSTRAINT challenge_board_user_pk FOREIGN KEY (user_id) REFERENCES user_board(user_id)
 ON DELETE CASCADE
 );
-
 CREATE TABLE challenge_file(
 challenge_file_id INT PRIMARY KEY AUTO_INCREMENT,
 challenge_board_id INT,
@@ -131,14 +132,21 @@ CONSTRAINT proof_comment_user_pk FOREIGN KEY (user_id) REFERENCES user_board(use
 ON DELETE CASCADE 
 );
 
-USE fitcha;
+CREATE TABLE fittube_comment(
+comment_id INT PRIMARY KEY AUTO_INCREMENT,
+video_id VARCHAR(300),
+user_id VARCHAR(300) ,
+content VARCHAR(300) NOT NULL,
+writer VARCHAR(300) NOT NULL,
+reg_date TIMESTAMP DEFAULT NOW()
+);
 
 -- 좋아요 -------------------------------------------------
 
 CREATE TABLE challenge_like(
-challenge_board_id INT,
+board_id INT,
 writer varchar(300),
-CONSTRAINT challenge_like_pk FOREIGN KEY (challenge_board_id) REFERENCES challenge_board (challenge_board_id)
+CONSTRAINT challenge_like_pk FOREIGN KEY (board_id) REFERENCES challenge_board (challenge_board_id)
 ON DELETE CASCADE 
 );
 
@@ -147,6 +155,11 @@ proof_board_id int,
 writer varchar(300),
 CONSTRAINT proof_like_pk FOREIGN KEY (proof_board_id) REFERENCES proof_board (proof_board_id) 
 ON DELETE CASCADE 
+);
+
+CREATE TABLE fittube_like(
+video_id varchar(300),
+writer varchar(300)
 );
 
 -- 팔로우 ------------------
@@ -393,6 +406,11 @@ END $$
 DELIMITER ;
 select * from participant_challenge;
 
-
 select * from challenge_board;
+select * from user_board;
+select * from fittube_comment;
+select * from challenge_like;
 
+	SELECT *
+	 	 FROM fittube_like
+	    WHERE video_id = '4kZHHPH6heY';

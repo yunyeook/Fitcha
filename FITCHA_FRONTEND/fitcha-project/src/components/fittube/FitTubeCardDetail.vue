@@ -17,7 +17,6 @@
           <!-- <img class="user-profile-image" src="../assets/images/user1.jpg" alt="작성자 프로필" /> -->
           <div class="user-info">
             <span class="title">{{ videoInfo.snippet.title }} </span>
-            <!-- <span class="user-name">{{ videoInfo.snippet.channelTitle }}</span> -->
           </div>
         </div>
       </div>
@@ -77,21 +76,21 @@
             <div class="comment-header">
               <span class="comment-author">{{ comment.writer }}</span>
 
-              <template v-if="editVideoCommentId != comment.commentId">
-                <div class="comment-text">{{ comment.content }}</div>
-              </template>
-              <template v-else>
-                <div class="challenge-detail__comment-form">
-                  <input type="text" v-model="editCommentContent" />
-                  <button @click="requestVideoCommentUpdate()">수정완료</button>
-                </div>
-              </template>
               <template v-if="comment.writer === nickName">
                 <div class="challenge-detail__options" @click="openCommentModal(comment.commentId, comment.content)">
                   <i class="fas fa-ellipsis-v"></i>
                 </div>
               </template>
             </div>
+            <template v-if="editVideoCommentId != comment.commentId">
+              <div class="comment-text">{{ comment.content }}</div>
+            </template>
+            <template v-else>
+              <div class="challenge-detail__comment-form">
+                <input type="text" v-model="editCommentContent" />
+                <button @click="requestVideoCommentUpdate()">수정완료</button>
+              </div>
+            </template>
 
             <div class="comment-date">{{ comment.regDate }}</div>
           </div>
@@ -218,10 +217,6 @@ async function requestVideoLike() {
   isLike.value = data.like;
   likeCount.value = data.likeCount;
 }
-// watch(isLike, (newValue, oldValue) => {
-//   likeCount.value = newValue;
-// });
-
 //좋아요 수정
 async function updateLike() {
   isLike.value = isLike.value == 0 ? 1 : 0;
@@ -463,6 +458,7 @@ iframe {
   background-color: #f9f9f9;
   padding: 12px 16px;
   border-radius: 12px;
+  gap: 10px;
   align-items: flex-start;
   position: relative;
 }

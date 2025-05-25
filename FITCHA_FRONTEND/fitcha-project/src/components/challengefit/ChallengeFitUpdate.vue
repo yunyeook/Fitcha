@@ -70,7 +70,7 @@
           type="number"
           id="totalParticipantCount"
           placeholder="예: 10"
-          min="1"
+          :min="challenge.participantCount"
           max="100"
           v-model="totalParticipantCount"
         />
@@ -78,7 +78,7 @@
 
       <div class="form-group">
         <label for="duration">챌린지 기간</label>
-        <input type="number" id="duration" placeholder="예: 10" min="1" max="100" v-model="duration" />
+        <input type="number" id="duration" placeholder="예: 10" :min="dayCount" max="100" v-model="duration" />
       </div>
       <!-- 제출 버튼 -->
       <div class="challenge-regist">
@@ -89,10 +89,12 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import api from '@/api/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
+import dayjs from 'dayjs';
+
 const route = useRoute();
 const router = useRouter();
 const IMG_BASE_URL = 'http://localhost:8080/';
@@ -101,6 +103,22 @@ const challenge = ref({});
 const challengeBoardId = ref(route.params.id);
 
 const { userId, nickName } = useUserStore();
+
+// 1) 경과 일수 (0~duration)
+const daysElapsed = computed(() => {
+  if (!challenge.value.regDate || !challenge.value.duration) return 0;
+  const start = dayjs(challenge.value.regDate);
+  const diff = dayjs().diff(start, 'day');
+  if (diff < 0) return 0;
+  if (diff > challenge.value.duration) return challenge.value.duration;
+  return diff;
+});
+
+// 2) “몇 일차” 계산 (경과일 + 1, 최대 duration)
+const dayCount = computed(() => {
+  const cnt = daysElapsed.value + 1;
+  return cnt > challenge.value.duration ? challenge.value.duration : cnt;
+});
 
 // 폼 데이터 상태
 const title = ref('');
@@ -120,12 +138,19 @@ async function requestChallengeDetail() {
       writer: nickName,
     },
   });
+  console.log(data);
   challenge.value = data;
   if (data.challengeFiles.length > 0) {
     imgUrl.value = IMG_BASE_URL + data.challengeFiles[0].fileUploadName;
   }
 }
-requestChallengeDetail();
+onMounted(async () => {
+  try {
+    await requestChallengeDetail();
+  } catch (e) {
+    console.error(' 요청 실패', e);
+  }
+});
 
 watch(challenge, (newValue, oldValue) => {
   title.value = newValue.title;

@@ -3,30 +3,39 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.fitcha.model.dao.LikeDao">
-	<!-- 챌린지 좋아요 -->
-	<!-- 챌린지 좋아요 여부 조회 -->
-	<select id="selectChallengeLike" parameterType="like" resultType="like">
-		SELECT * 
-	 	 FROM challenge_like
-	    WHERE challenge_board_id = #{boardId}
-		  AND writer = #{writer}
-	</select>
+	<!-- ======== 챌린지 좋아요 ======== -->
 
 	<!-- 좋아요 등록 -->
 	<insert id="insertChallengeLike" parameterType="like">
-		INSERT INTO challenge_like(challenge_board_id, writer)
+		INSERT INTO challenge_like(board_id, writer)
 		     VALUES (#{boardId},#{writer})
 	</insert>
 	
 	<!-- 좋아요 취소 -->
 	<delete id="deleteChallengeLike" parameterType="like">
 		DELETE FROM challenge_like
-	     WHERE challenge_board_id = #{boardId}
+	     WHERE board_id = #{boardId}
 		   AND writer = #{writer}
 	</delete>
 	
+	<!-- 좋아요 수  조회 -->
+	<select id="selectChallengeLikeCount" parameterType="int" resultType="int">
+		SELECT count(*)
+	 	 FROM challenge_like
+	    WHERE board_id = #{boardId}
+	</select>
 	
-	<!-- 인증글 좋아요 -->
+		<!-- 좋아요 여부  조회 -->
+	<select id="selectUserChallengeLiked" parameterType="like" resultType="int">
+		SELECT count(*)
+		  FROM challenge_like
+	     WHERE board_id = #{boardId}
+		   AND writer = #{writer}  
+	</select>
+	
+	
+	
+	<!-- ===========인증글 좋아요 ==================-->
 	<!-- 인증글 좋아요 여부 조회 -->
 	<select id="selecCheckProofLike" parameterType="like" resultType="int">
 		SELECT Count(*) 
