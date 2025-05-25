@@ -1,7 +1,9 @@
 package com.ssafy.fitcha.controller;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.fitcha.model.dto.CommentProof;
 import com.ssafy.fitcha.model.dto.Proof;
 import com.ssafy.fitcha.model.dto.SearchProof;
-import com.ssafy.fitcha.model.dto.User;
 import com.ssafy.fitcha.model.service.CommentService;
 import com.ssafy.fitcha.model.service.LikeService;
 import com.ssafy.fitcha.model.service.ProofService;
@@ -30,7 +31,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/proof")
@@ -197,19 +197,30 @@ public class ProofController {
 	@Operation(summary = "인증 게시글 좋아요 추가")
 	// 좋아요 추가
 	@PostMapping("/{proofBoardId}/like")
-	public ResponseEntity<Void> addLike(@PathVariable int proofBoardId, HttpSession session) {
-		User user = (User) session.getAttribute("loginUser");
-		boolean success = likeService.addLike(proofBoardId, user.getNickName());
+	public ResponseEntity<Void> addLike(@PathVariable int proofBoardId, @RequestBody Map<String, String> body) {
+		String nickName = body.get("nickName");
+		boolean success = likeService.addLike(proofBoardId, nickName);
 		return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
 
 	@Operation(summary = "인증 게시글 좋아요 취소")
 	// 좋아요 취소
 	@DeleteMapping("/{proofBoardId}/like")
-	public ResponseEntity<Void> removeLike(@PathVariable int proofBoardId, HttpSession session) {
-		User user = (User) session.getAttribute("loginUser");
-		boolean success = likeService.removeLike(proofBoardId, user.getNickName());
+	public ResponseEntity<Void> removeLike(@PathVariable int proofBoardId, @RequestBody Map<String, String> body) {
+		String nickName = body.get("nickName");
+		boolean success = likeService.removeLike(proofBoardId, nickName);
 		return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	}
+
+	@Operation(summary = "인증 게시글 좋아요 눌렀는지 체크 ")
+	@GetMapping("/{proofBoardId}/like/check")
+	public ResponseEntity<Map<String, Boolean>> checkLiked(@PathVariable int proofBoardId,
+			@RequestParam String writer) {
+		System.out.println(proofBoardId);
+		System.out.println(writer);
+		boolean liked = likeService.checkLikeByWriter(proofBoardId, writer);
+		System.out.println(liked);
+		return ResponseEntity.ok(Collections.singletonMap("liked", liked));
 	}
 
 }

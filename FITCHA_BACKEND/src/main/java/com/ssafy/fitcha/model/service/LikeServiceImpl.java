@@ -66,6 +66,15 @@ public class LikeServiceImpl implements LikeService {
 		like.setWriter(nickName);
 		return likeDao.deleteProofLike(like) == 1;
 	}
+
+	@Override
+	public boolean checkLikeByWriter(int proofBoardId, String writer) {
+		Like like = new Like();
+		like.setBoardId(proofBoardId);
+		like.setWriter(writer);
+		return likeDao.selecCheckProofLike(like) > 0;
+	}
+
 	// -------------------- 영상 좋아요-------------------------------------------------
 
 	@Override
