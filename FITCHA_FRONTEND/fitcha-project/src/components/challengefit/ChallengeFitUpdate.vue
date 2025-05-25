@@ -90,14 +90,13 @@
 
 <script setup>
 import { ref, watch, computed, onMounted } from 'vue';
-import api from '@/api/api';
+import api, { BASE_URL } from '@/api/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import dayjs from 'dayjs';
 
 const route = useRoute();
 const router = useRouter();
-const IMG_BASE_URL = 'http://localhost:8080/';
 const imgUrl = ref('');
 const challenge = ref({});
 const challengeBoardId = ref(route.params.id);
@@ -141,7 +140,7 @@ async function requestChallengeDetail() {
   console.log(data);
   challenge.value = data;
   if (data.challengeFiles.length > 0) {
-    imgUrl.value = IMG_BASE_URL + data.challengeFiles[0].fileUploadName;
+    imgUrl.value = `${BASE_URL}/${data.challengeFiles[0].fileUploadName}`;
   }
 }
 onMounted(async () => {
