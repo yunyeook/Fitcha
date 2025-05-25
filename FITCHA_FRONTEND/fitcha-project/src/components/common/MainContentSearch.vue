@@ -9,13 +9,22 @@
         <option value="content">내용</option>
         <option value="both">제목+내용</option>
         <option value="writer">작성자</option>
-        <option value="exerciseType" v-if="menu === 'challengefit'">운동타입</option>
-        <option value="bodyPart" v-if="menu === 'challengefit'">운동부위</option>
+        <option value="exerciseType" v-if="menu === 'challengefit'">
+          운동타입
+        </option>
+        <option value="bodyPart" v-if="menu === 'challengefit'">
+          운동부위
+        </option>
         <option value="level" v-if="menu === 'challengefit'">난이도</option>
       </select>
 
       <!-- 검색어 입력 -->
-      <input type="text" placeholder="검색어를 입력하세요" v-model="searchWord" @keyup.enter="search" />
+      <input
+        type="text"
+        placeholder="검색어를 입력하세요"
+        v-model="searchWord"
+        @keyup.enter="search"
+      />
 
       <!-- 검색 버튼 -->
       <button @click="search"><i class="fas fa-search"></i></button>
@@ -24,13 +33,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
-const searchWord = ref('');
-const searchKey = ref('title');
-const menu = ref(window.location.pathname.split('/')[1]);
+const searchWord = ref("");
+const searchKey = ref("title");
+const menu = ref(window.location.pathname.split("/")[1]);
 
 function search() {
   router.push({
@@ -45,7 +54,7 @@ function search() {
 
 <style scoped>
 .main-content-search {
-  margin: 20px 0;
+  margin: 10px 0 0 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -74,7 +83,7 @@ function search() {
   border: none;
   background: transparent;
   color: #333;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin-right: 10px;
   padding: 6px 8px;
   border-radius: 8px;

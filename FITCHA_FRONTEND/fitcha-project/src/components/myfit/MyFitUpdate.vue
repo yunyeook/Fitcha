@@ -32,6 +32,7 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 const userStore = useUserStore();
 const { userBoardId } = storeToRefs(userStore);
+const { updateProfileImgUrl } = userStore;
 
 // 부모로부터 전달받는 props
 const props = defineProps({
@@ -40,6 +41,7 @@ const props = defineProps({
   name: String,
 });
 
+// ✅ computed로 미리보기 반영
 const fullProfileImgUrl = computed(() => {
   if (previewUrl.value) return previewUrl.value;
   if (profileImgUrl.value)
@@ -62,15 +64,14 @@ const selectedFile = ref(null); // 실제 업로드할 파일 참조
 const onFileChange = (event) => {
   const file = event.target.files[0];
   if (!file) return;
-
-  previewUrl.value = URL.createObjectURL(file); // 브라우저에서만 미리보기 처리
-  selectedFile.value = file; // 저장 시 업로드용으로 파일 보관
+  previewUrl.value = URL.createObjectURL(file);
+  selectedFile.value = file;
 };
 
 // 저장 버튼 클릭 시 서버에 업로드 요청
 const onSave = async () => {
   if (!selectedFile.value) {
-    emit("close"); // 파일이 없으면 그냥 닫기
+    emit("close");
     return;
   }
 
@@ -80,17 +81,21 @@ const onSave = async () => {
 
   try {
     const res = await api.put(`/user/update/${userBoardId.value}`, formData);
-    // 서버에서 업데이트된 사용자 정보 반환을 가정
     const updatedProfile = res.data;
-    console.log(updatedProfile);
-    // 업데이트된 데이터와 함께 닫기 이벤트 emit
+
+    console.log("업데이트 성공:", updatedProfile);
+
+    // ✅ Pinia 상태도 함께 업데이트
+    updateProfileImgUrl(updatedProfile.profileImgUrl);
+
+    // 부모 컴포넌트에도 변경된 정보 전달
     emit("close", updatedProfile);
   } catch (err) {
     console.error("이미지 업로드 실패:", err);
     alert("이미지 업로드에 실패했습니다.");
   }
 
-  emit("close"); // 완료 후 닫기
+  emit("close");
 };
 
 // 닫기 버튼 (뒤로가기) 처리

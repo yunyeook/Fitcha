@@ -56,19 +56,19 @@
       <div class="avatars-like-container">
         <div class="challenge-detail__avatars-section">
           <div class="challenge-detail__host">
-            <img src="https://via.placeholder.com/32" alt="Host" />
+            <img :src="writerProfileImgUrl" alt="Host" />
             <span class="challenge-detail__host-badge">{{
               challenge.writer
             }}</span>
           </div>
-          <div class="challenge-detail__avatar-stack">
+          <!-- <div class="challenge-detail__avatar-stack">
             <img src="https://via.placeholder.com/32/FF5733" />
             <img src="https://via.placeholder.com/32/33C3FF" />
             <img src="https://via.placeholder.com/32/85FF33" />
             <img src="https://via.placeholder.com/32/FF33A6" />
             <img src="https://via.placeholder.com/32/FFD433" />
             <span class="challenge-detail__more-count">+5</span>
-          </div>
+          </div> -->
         </div>
         <div class="like-btn">
           <i
@@ -155,14 +155,27 @@
       <!-- 탭 섹션 시작 -->
       <div class="challenge-detail__tab-section">
         <div class="challenge-detail__tabs">
-          <div class="challenge-detail__tab active" data-tab="comments">
+          <div
+            class="challenge-detail__tab"
+            :class="{ active: activeTab === 'comments' }"
+            @click="activeTab = 'comments'"
+          >
             댓글 보기
           </div>
-          <div class="challenge-detail__tab" data-tab="certs">인증글 보기</div>
+          <div
+            class="challenge-detail__tab"
+            :class="{ active: activeTab === 'certs' }"
+            @click="activeTab = 'certs'"
+          >
+            인증글 보기
+          </div>
         </div>
 
         <!-- 댓글 탭 -->
-        <div class="challenge-detail__tab-content active" id="comments">
+        <div
+          class="challenge-detail__tab-content"
+          :class="{ active: activeTab === 'comments' }"
+        >
           <div class="challenge-detail__comment-form">
             <input
               type="text"
@@ -176,7 +189,7 @@
             v-for="comment in comments"
             :key="comment.challengeCommentId"
           >
-            <img src="https://via.placeholder.com/36/FF5733" />
+            <img :src="defaultProfileImg" />
             <div class="challenge-detail__comment-body">
               <div>
                 <div class="challenge-detail__comment-author">
@@ -226,18 +239,26 @@
         </div>
 
         <!-- 인증글 탭 -->
-        <div class="challenge-detail__tab-content" id="certs">
-          <div class="challenge-detail__certification-item">
-            <div class="challenge-detail__cert-header">
-              <div class="challenge-detail__cert-author">
-                <img src="https://via.placeholder.com/32/FF5733" />
-                <span class="author">러너1</span>
+        <div
+          class="challenge-detail__tab-content"
+          :class="{ active: activeTab === 'certs' }"
+        >
+          <div
+            v-for="fitlog in fitlogs"
+            :key="fitlog.proofBoardId"
+            class="challenge-detail__certification-item"
+          >
+            <router-link :to="`/fitlog/${fitlog.proofBoardId}`">
+              <div class="challenge-detail__cert-header">
+                <div class="challenge-detail__cert-author">
+                  <span class="author">{{ fitlog.writer }}</span>
+                </div>
+                <span class="date">{{ fitlog.regDate }}</span>
               </div>
-              <span class="date">5월 10일</span>
-            </div>
-            <div class="challenge-detail__cert-body">
-              오늘도 5km 완주했어요! 상쾌한 하루 시작 💪
-            </div>
+              <div class="challenge-detail__cert-body">
+                {{ fitlog.title }}
+              </div>
+            </router-link>
           </div>
         </div>
       </div>
@@ -289,12 +310,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api, { BASE_URL } from "@/api/api";
 import axios from "axios";
 import { useUserStore } from "@/stores/user";
 import dayjs from "dayjs";
+import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 
 const { userId, nickName } = useUserStore();
 
@@ -304,6 +326,7 @@ const router = useRouter();
 const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
+const activeTab = ref("comments"); // 기본은 댓글 보기
 
 // 1) 경과 일수 (0~duration)
 const daysElapsed = computed(() => {
@@ -337,10 +360,23 @@ onMounted(async () => {
   try {
     await requestChallengeDetail();
     await requestChallengeLike();
+    await requestProof();
   } catch (e) {
     console.error("영상 요청 실패", e);
   }
 });
+
+// 작성자 프사 이미지
+const writerProfileImgUrl = ref(""); // 반응형으로 선언
+
+const fitlogs = ref([]);
+// 인증글 조회
+async function requestProof() {
+  const { data } = await api.get(
+    `/proof/byChallenge/${challengeBoardId.value}`
+  );
+  fitlogs.value = data;
+}
 
 // 챌린지글 조회
 async function requestChallengeDetail() {
@@ -354,7 +390,12 @@ async function requestChallengeDetail() {
   imgUrl.value = `${BASE_URL}/${data.challengeFiles[0].fileUploadName}`;
   isViewCounted.value = "false";
   comments.value = data.comments;
-  // console.log(challenge.value);
+
+  console.log(challenge.value);
+  // 작성자 프로필 이미지가 서버 응답에 포함되어 있다고 가정
+  writerProfileImgUrl.value = challenge.value.userProfileImgUrl
+    ? `http://localhost:8080/${challenge.value.userProfileImgUrl}`
+    : defaultProfileImg;
 }
 
 //챌린지 참여 등록.
@@ -976,5 +1017,47 @@ function goBack() {
     opacity: 1;
     transform: translateY(0);
   }
+}
+.challenge-detail__certification-item {
+  border: 1px solid #dee2e6; /* 기존 회색 테두리 유지 */
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+.challenge-detail__certification-item:hover {
+  background-color: #e7f1ff; /* 기존 파란 계열 연한 배경 */
+  box-shadow: 0 6px 12px rgba(51, 154, 240, 0.25); /* #339af0 계열 그림자 */
+}
+
+.challenge-detail__certification-item a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+.challenge-detail__cert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #6c757d; /* 기존 회색 계열 텍스트 */
+}
+
+.challenge-detail__cert-author .author {
+  font-weight: 600;
+  color: #339af0; /* 기존 파란 계열 */
+}
+
+.challenge-detail__cert-body {
+  font-size: 16px;
+  font-weight: 700;
+  color: #212529; /* 기존 다크 그레이 (진한 글자색) */
+  line-height: 1.4;
 }
 </style>

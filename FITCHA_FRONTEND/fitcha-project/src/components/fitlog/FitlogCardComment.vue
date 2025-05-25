@@ -1,10 +1,12 @@
 <template>
   <div class="comment-card">
     <img
+      v-if="commentProfileImgUrl"
       class="comment-profile"
-      src="../assets/images/user1.jpg"
+      :src="commentProfileImgUrl"
       alt="프로필"
     />
+    <img v-else class="comment-profile" :src="defaultProfileImg" alt="프로필" />
     <div class="comment-body">
       <div class="comment-header">
         <span class="comment-author">{{ comment.writer }}</span>
@@ -35,7 +37,9 @@
 <script setup>
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
+import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
+import api from "@/api/api";
 
 const userStore = useUserStore();
 const { nickName, userId } = storeToRefs(userStore);
@@ -53,6 +57,28 @@ const props = defineProps({
     default: "",
   },
 });
+
+// 댓글 작성자 프사
+const commentProfileImgUrl = ref(""); // 반응형으로 선언
+watch(
+  () => props.comment?.writer,
+  async (writer) => {
+    if (writer) {
+      try {
+        const { data } = await api.get(`/user/${writer}`);
+        commentProfileImgUrl.value = data.profileImgUrl
+          ? `http://localhost:8080/${data.profileImgUrl}`
+          : defaultProfileImg;
+      } catch (error) {
+        console.error("작성자 프로필 이미지 가져오기 실패:", error);
+        commentProfileImgUrl.value = defaultProfileImg;
+      }
+    } else {
+      commentProfileImgUrl.value = defaultProfileImg;
+    }
+  },
+  { immediate: true }
+);
 
 const isMyComment = computed(() => {
   return props.comment?.writer === nickName.value;

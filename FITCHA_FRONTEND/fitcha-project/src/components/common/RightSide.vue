@@ -6,7 +6,8 @@
     <div class="user-info-wrapper">
       <!-- 로그인 유저가 있으면 -->
       <div class="user-info" v-if="nickName">
-        <img src="" alt="" />
+        <img v-if="profileImgWithCache" :src="profileImgWithCache" alt="" />
+        <img v-else :src="defaultProfileImg" alt="" />
         <span>{{ nickName }}</span>
       </div>
       <!-- 로그인 안했을시에는 로그인 버튼 -->
@@ -41,12 +42,21 @@
 <script setup>
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import { ref, computed } from "vue";
+import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 
-// Pinia store 인스턴스 가져오기
 const userStore = useUserStore();
+const { nickName, profileImgUrl } = storeToRefs(userStore); // ✅ store에서 직접 바인딩
 
-// state 값은 storeToRefs()를 사용해서 반응형으로 꺼내기
-const { nickName } = storeToRefs(userStore);
+const cacheBuster = ref(Date.now());
+
+// 캐시 무효화를 위한 쿼리스트링 추가
+const profileImgWithCache = computed(() => {
+  if (profileImgUrl.value) {
+    return `http://localhost:8080/${profileImgUrl.value}?t=${cacheBuster.value}`;
+  }
+  return "";
+});
 </script>
 
 <style scoped>

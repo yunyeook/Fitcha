@@ -5,8 +5,15 @@
       <div class="header">
         <div class="userAndTitle">
           <img
+            v-if="writerProfileImgUrl"
             class="user-profile-image"
-            src="../assets/images/user1.jpg"
+            :src="writerProfileImgUrl"
+            alt="작성자 프로필"
+          />
+          <img
+            v-else
+            :src="defaultProfileImg"
+            class="user-profile-image"
             alt="작성자 프로필"
           />
           <div class="user-info">
@@ -77,7 +84,11 @@
       <div class="comment-list">
         <!-- 댓글 입력 폼 -->
         <div class="comment-form">
-          <img class="comment-profile" src="" alt="내 프로필" />
+          <img
+            class="comment-profile"
+            :src="profileImgWithCache || defaultProfileImg"
+            alt="내 프로필"
+          />
           <input
             type="text"
             placeholder="댓글을 입력하세요..."
@@ -148,6 +159,7 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import FitlogCardComment from "./FitlogCardComment.vue";
+import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 
 // props로 fitlog 객체 받음
 const props = defineProps({
@@ -165,7 +177,17 @@ const proofBoardId = computed(() => fitlog.value?.proofBoardId || null);
 
 // 유저 정보(store) 가져오기
 const userStore = useUserStore();
-const { nickName, userId } = storeToRefs(userStore);
+const { nickName, userId, profileImgUrl } = storeToRefs(userStore);
+
+const cacheBuster = ref(Date.now());
+
+// 캐시 무효화를 위한 쿼리스트링 추가
+const profileImgWithCache = computed(() => {
+  if (profileImgUrl.value) {
+    return `http://localhost:8080/${profileImgUrl.value}?t=${cacheBuster.value}`;
+  }
+  return "";
+});
 
 // 내 글인지 확인 (작성자 닉네임과 현재 닉네임 비교)
 const isMyFitLog = computed(() => fitlog.value?.writer === nickName.value);
@@ -418,6 +440,28 @@ onMounted(async () => {
   await fetchComments();
 });
 
+// 작성자 프사 이미지
+const writerProfileImgUrl = ref(""); // 반응형으로 선언
+watch(
+  () => fitlog.value?.writer,
+  async (writer) => {
+    if (writer) {
+      try {
+        const { data } = await api.get(`/user/${writer}`);
+        writerProfileImgUrl.value = data.profileImgUrl
+          ? `http://localhost:8080/${data.profileImgUrl}`
+          : defaultProfileImg;
+      } catch (error) {
+        console.error("작성자 프로필 이미지 가져오기 실패:", error);
+        writerProfileImgUrl.value = defaultProfileImg;
+      }
+    } else {
+      writerProfileImgUrl.value = defaultProfileImg;
+    }
+  },
+  { immediate: true }
+);
+
 // proofBoardId 또는 닉네임이 변경될 때도 다시 동기화
 watch([proofBoardId, nickName], async ([newProofId, newNick]) => {
   if (newProofId && newNick) {
@@ -455,8 +499,8 @@ watch([proofBoardId, nickName], async ([newProofId, newNick]) => {
 }
 
 .user-profile-image {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   object-fit: cover;
 }
