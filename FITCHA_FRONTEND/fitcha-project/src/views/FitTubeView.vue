@@ -29,8 +29,23 @@ import MainHeader from '@/components/common/MainHeader.vue';
 import MainContentSearch from '@/components/common/MainContentSearch.vue';
 import MainGridLayout from '@/components/common/MainGridLayout.vue';
 import FitTubeCard from '@/components/fittube/FitTubeCard.vue';
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import api from '@/api/api';
+import { useRoute } from 'vue-router';
+
+const route = useRoute(); // 현재 라우터 객체
+const query = ref(route.query.q || '');
+watch(
+  () => route.query.q,
+  (newQ, oldQ) => {
+    if (newQ !== oldQ) {
+      query.value = newQ;
+      videos.value = []; // 초기화
+      nextPageToken.value = '';
+      requestYoutubeVideos(); // 재요청
+    }
+  }
+);
 
 const videos = ref([]);
 
@@ -45,7 +60,7 @@ async function requestYoutubeVideos() {
 
   try {
     const { data } = await api.get(`/youtube/search`, {
-      params: { pageToken: nextPageToken.value },
+      params: { query: query.value, pageToken: nextPageToken.value },
     });
     videos.value.push(...data.items);
     nextPageToken.value = data.nextPageToken || '';

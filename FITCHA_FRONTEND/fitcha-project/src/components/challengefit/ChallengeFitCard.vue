@@ -89,12 +89,13 @@ import dayjs from 'dayjs';
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 
 
-const BASE_URL = "http://localhost:8080/";
+import api, { BASE_URL } from '@/api/api';
+
 const props = defineProps({ challenge: { type: Object } });
 const { userId, nickName } = useUserStore();
 const imgUrl = computed(() => {
   return props.challenge?.challengeFiles?.[0]?.fileUploadName
-    ? BASE_URL + props.challenge.challengeFiles[0].fileUploadName
+    ? `${BASE_URL}/${props.challenge.challengeFiles[0].fileUploadName}`
     : '';
 });
 

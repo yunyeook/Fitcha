@@ -4,18 +4,23 @@
 
     <div class="search-bar">
       <!-- 검색 기준 선택 -->
-      <select v-model="searchKey">
+      <!-- 🔻 드롭다운: challengefit 일 때만 표시 -->
+      <select v-model="searchKey" v-if="menu === 'challengefit'">
         <option value="title">제목</option>
         <option value="content">내용</option>
         <option value="both">제목+내용</option>
         <option value="writer">작성자</option>
-        <option value="exerciseType" v-if="menu === 'challengefit'">
-          운동타입
-        </option>
-        <option value="bodyPart" v-if="menu === 'challengefit'">
-          운동부위
-        </option>
-        <option value="level" v-if="menu === 'challengefit'">난이도</option>
+        <option value="exerciseType">운동타입</option>
+        <option value="bodyPart">운동부위</option>
+        <option value="level">난이도</option>
+      </select>
+
+      <!-- 🔻 fitlog일 경우에만 드롭다운을 따로 보여주고 싶다면 추가 -->
+      <select v-model="searchKey" v-else-if="menu === 'fitlog'">
+        <option value="title">제목</option>
+        <option value="content">내용</option>
+        <option value="both">제목+내용</option>
+        <option value="writer">작성자</option>
       </select>
 
       <!-- 검색어 입력 -->
@@ -33,23 +38,47 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+const route = useRoute();
 const router = useRouter();
 const searchWord = ref("");
 const searchKey = ref("title");
 const menu = ref(window.location.pathname.split("/")[1]);
 
 function search() {
-  router.push({
-    path: window.location.pathname,
-    query: {
-      key: searchKey.value,
-      word: searchWord.value,
-    },
-  });
+  const currentMenu = menu.value;
+  const path = window.location.pathname;
+
+  // fittube는 'q'만 넘김
+  if (currentMenu === "fittube") {
+    router.push({
+      path,
+      query: {
+        q: searchWord.value,
+      },
+    });
+  }
+  // 그 외는 key + word 방식 유지
+  else {
+    router.push({
+      path,
+      query: {
+        key: searchKey.value,
+        word: searchWord.value,
+      },
+    });
+  }
 }
+onMounted(() => {
+  const currentMenu = menu.value;
+  if (currentMenu === "fittube") {
+    searchWord.value = route.query.q || "";
+  } else {
+    searchKey.value = route.query.key || "title";
+    searchWord.value = route.query.word || "";
+  }
+});
 </script>
 
 <style scoped>
@@ -61,44 +90,49 @@ function search() {
 }
 
 .main-content-search h3 {
-  margin-bottom: 12px;
   font-size: 1.4rem;
   color: #333;
+  margin: 0;
 }
 
-/* 통합 검색 바 스타일 */
+/* 공통 검색바 */
 .search-bar {
   display: flex;
   align-items: center;
   background-color: #f1f3f4;
   border-radius: 30px;
-  padding: 0px 12px 0px 0px;
+  padding: 0px 12px 0px 12px;
   width: 100%;
   max-width: 550px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  gap: 8px;
 }
 
-/* select */
+/* 드롭다운 없을 때 정렬 보정 */
+.search-bar.only-input {
+  justify-content: space-between;
+}
+
+/* 드롭다운 */
 .search-bar select {
   border: none;
   background: transparent;
   color: #333;
-  font-size: 0.85rem;
-  margin-right: 10px;
+  font-size: 0.9rem;
   padding: 6px 8px;
   border-radius: 8px;
-  /* background-color: #e0e0e0; */
   cursor: pointer;
+  min-width: 80px;
 }
 
-/* input */
+/* 입력창 */
 .search-bar input {
   flex: 1;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: none;
   outline: none;
   font-size: 1rem;
-  margin-right: 8px;
+  background-color: white;
 }
 
 /* 버튼 */
@@ -109,9 +143,6 @@ function search() {
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background-color: #f1f3f4;
 }
 </style>

@@ -414,8 +414,3 @@ END $$
 DELIMITER ;
 
 
-
-
-select * from user_board;
-select * from proof_file;
-select * from proof_board;
