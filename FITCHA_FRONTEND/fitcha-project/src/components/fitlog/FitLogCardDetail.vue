@@ -391,7 +391,7 @@ const closeProofModal = () => {
  */
 const editProof = () => {
   router.push({
-    name: "ProofEdit",
+    name: "FitLogUpdateView",
     params: { proofBoardId: proofBoardId.value },
   });
   closeProofModal();

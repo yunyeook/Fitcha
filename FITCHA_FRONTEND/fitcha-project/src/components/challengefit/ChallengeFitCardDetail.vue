@@ -104,7 +104,10 @@
               <router-link
                 :to="{
                   name: 'FitLogRegistView',
-                  params: { challengeBoardId: challenge.challengeBoardId },
+                  params: {
+                    challengeBoardId: challenge.challengeBoardId,
+                    writer: challenge.writer,
+                  },
                 }"
                 style="text-decoration: none"
               >
