@@ -44,6 +44,12 @@ public class Weather {
 		this.sky = sky;
 	}
 
+	@Override
+	public String toString() {
+		return "Weather [temperature=" + temperature + ", humidity=" + humidity + ", rain=" + rain + ", sky=" + sky
+				+ "]";
+	}
+
 
 	
 	

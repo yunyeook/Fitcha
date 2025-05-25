@@ -27,6 +27,7 @@ public class WeatherController {
 	@GetMapping
 	public ResponseEntity<Weather> getWeather(@RequestParam double lat, @RequestParam double lon) {
 		Weather currentWeather = weatherService.getCurrentWeather(lat, lon);
+		System.out.println(currentWeather);
 		return ResponseEntity.ok(currentWeather);
 	}
 
