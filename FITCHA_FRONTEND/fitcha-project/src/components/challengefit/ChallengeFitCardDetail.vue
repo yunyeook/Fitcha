@@ -56,7 +56,6 @@
           <img src="https://via.placeholder.com/32/FFD433" />
           <span class="challenge-detail__more-count">+5</span>
         </div>
-        <div>dd</div>
       </div>
 
       <!-- 현재 참여중인경우 -->
@@ -270,7 +269,7 @@ const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
 const editChallengeCommentId = ref(-1);
-const editCommentContent = ref('');
+const editCommentContent = ref("");
 const comments = ref([]);
 
 // 챌린지글 조회
