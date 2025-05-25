@@ -216,10 +216,7 @@ public class ProofController {
 	@GetMapping("/{proofBoardId}/like/check")
 	public ResponseEntity<Map<String, Boolean>> checkLiked(@PathVariable int proofBoardId,
 			@RequestParam String writer) {
-		System.out.println(proofBoardId);
-		System.out.println(writer);
 		boolean liked = likeService.checkLikeByWriter(proofBoardId, writer);
-		System.out.println(liked);
 		return ResponseEntity.ok(Collections.singletonMap("liked", liked));
 	}
 

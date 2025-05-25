@@ -34,6 +34,9 @@ public interface UserService {
 	
 	// 유저 정보 조회 
 	User getUserInfo(String userNickName);
+	
+	// 유저 정보 수정
+	boolean updateUserInfo(User user);
 
 
 }

@@ -33,5 +33,8 @@ public interface FileService {
 	// 인증글 파일 수정 
 	void updateProofFile(List<MultipartFile> files, int proofBoardId, String writer) throws IllegalStateException, IOException;
 	
+	// 유저 파일 수
+	String updateUserFile(MultipartFile profileImgUrl) throws IOException;
+	
 
 }

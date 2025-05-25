@@ -41,5 +41,8 @@ public interface UserDao {
 
 	// 유저 정보 조회
 	User selectUser(String userNickName);
+	
+	// 유저 정보 수정 
+	boolean updateUser(User user);
 
 }

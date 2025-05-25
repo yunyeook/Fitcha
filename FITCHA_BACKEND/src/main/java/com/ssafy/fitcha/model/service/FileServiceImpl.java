@@ -23,6 +23,9 @@ public class FileServiceImpl implements FileService {
 	private String uploadDirPath;
 	@Value("${proof.file.upload-dir}")
 	private String uploadDirPathProof;
+	@Value("${user.file.upload-dir}")
+	private String uploadDirPathUser;
+	
 	private FileDao fileDao;
 	private ResourceLoader resourceLoader;
 
@@ -152,6 +155,34 @@ public class FileServiceImpl implements FileService {
 			}
 		}
 	}
+	
+	// 유저 이미지 파일 수정
+	@Override
+	public String updateUserFile(MultipartFile profileImgUrl) throws IOException {
+	    if (profileImgUrl == null || profileImgUrl.isEmpty()) {
+	        return null;
+	    }
+
+	    File uploadDir = new File(uploadDirPathUser);
+	    if (!uploadDir.exists()) {
+	        uploadDir.mkdirs();
+	    }
+
+	    String originalFileName = profileImgUrl.getOriginalFilename();
+	    String uploadFileName = generateUniqueName(originalFileName);
+	    File destFile = new File(uploadDir, uploadFileName);
+
+	    profileImgUrl.transferTo(destFile);
+
+	    // 반환하는 URL은 클라이언트가 접근 가능한 경로를 기준으로 설정
+	    // 예: "/upload/user/" + uploadFileName 또는 uploadDirPathUser + uploadFileName
+	    // uploadDirPathUser가 절대경로면 상대경로로 바꿔야 할 수도 있음
+
+	    String fileUrl = "upload/" + uploadFileName;
+
+	    return fileUrl;
+	}
+	
 
 	// 유니크 네임 생성 함수
 	private String generateUniqueName(String originalName) {
@@ -166,5 +197,7 @@ public class FileServiceImpl implements FileService {
 
 		return timeStr + "_" + uuid + ext;
 	}
+
+	
 
 }

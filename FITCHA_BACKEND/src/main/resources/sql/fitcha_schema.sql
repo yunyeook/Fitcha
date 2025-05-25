@@ -45,7 +45,7 @@ view_count INT DEFAULT 0 CHECK(view_count >= 0) ,
 like_count INT DEFAULT 0 CHECK(like_count >= 0),
 reg_date TIMESTAMP DEFAULT NOW(),
 finish BOOLEAN NOT NULL DEFAULT FALSE,
-subhead TEXT DEFAULT "",
+subhead VARCHAR(1000) DEFAULT "",
 CONSTRAINT challenge_board_user_pk FOREIGN KEY (user_id) REFERENCES user_board(user_id)
 ON DELETE CASCADE
 );
@@ -336,24 +336,31 @@ INSERT INTO participant_challenge (challenge_board_id, participant) VALUES
 DROP TRIGGER IF EXISTS trg_increase_like_count;
 
 DELIMITER $$
+DROP TRIGGER IF EXISTS trg_increase_challenge_like_count;
+DELIMITER $$
 CREATE TRIGGER trg_increase_challenge_like_count
 AFTER INSERT ON challenge_like
 FOR EACH ROW
-BEGIN UPDATE challenge_board
-		   SET like_count = like_count+1
-		WHERE challenge_board_id = New.challenge_board_id;
+BEGIN
+  UPDATE challenge_board
+  SET like_count = like_count + 1
+  WHERE challenge_board_id = NEW.board_id;
 END $$
 DELIMITER ;
 
+
+DROP TRIGGER IF EXISTS trg_decrease_challenge_like_count;
 DELIMITER $$
 CREATE TRIGGER trg_decrease_challenge_like_count
 AFTER DELETE ON challenge_like
 FOR EACH ROW
-BEGIN UPDATE challenge_board
-		   SET like_count = like_count-1
-		WHERE challenge_board_id = OLD.challenge_board_id;
+BEGIN
+  UPDATE challenge_board
+  SET like_count = like_count - 1
+  WHERE challenge_board_id = OLD.board_id;
 END $$
 DELIMITER ;
+
 
 DELIMITER $$
 CREATE TRIGGER trg_increase_proof_like_count
@@ -404,13 +411,3 @@ BEGIN
     WHERE nick_name = OLD.following_nick_name;
 END $$
 DELIMITER ;
-select * from participant_challenge;
-
-select * from challenge_board;
-select * from user_board;
-select * from fittube_comment;
-select * from challenge_like;
-
-	SELECT *
-	 	 FROM fittube_like
-	    WHERE video_id = '4kZHHPH6heY';
