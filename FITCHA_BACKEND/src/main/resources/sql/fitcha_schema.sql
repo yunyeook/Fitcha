@@ -414,4 +414,3 @@ select * from challenge_like;
 	SELECT *
 	 	 FROM fittube_like
 	    WHERE video_id = '4kZHHPH6heY';
-        ALTER TABLE challenge_board ADD subhead VARCHAR(100);
