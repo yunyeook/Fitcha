@@ -37,6 +37,13 @@
 		</if>
 		ORDER BY reg_date DESC
 	</select>
+	
+	<!-- 챌린지에 해당하는 인증글 조회 -->
+	<select id="selectProofListByChallenge" parameterType="int" resultType="Proof">
+		SELECT *
+		FROM proof_board
+		WHERE challenge_board_id = #{challengeBoardId}
+	</select>
 
 	<!-- 인증글 상세 조회 -->
 	<select id="selectProofBoard" parameterType="int"

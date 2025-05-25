@@ -12,7 +12,8 @@ nick_name VARCHAR(300) NOT NULL UNIQUE,
 age INT CHECK (age >= 0),
 gender VARCHAR(300),
 follower_count INT DEFAULT 0 CHECK (follower_count >= 0), -- 팔로우 하는 사람 (나) 
-following_count INT DEFAULT 0 CHECK (following_count >= 0) -- 팔로우 당하는 사람 (상대방)
+following_count INT DEFAULT 0 CHECK (following_count >= 0), -- 팔로우 당하는 사람 (상대방)
+profile_img_url VARCHAR(500) -- 프로필 이미지 경로 저장
 );
 
 select * from user_board;
@@ -411,3 +412,10 @@ BEGIN
     WHERE nick_name = OLD.following_nick_name;
 END $$
 DELIMITER ;
+
+
+
+
+select * from user_board;
+select * from proof_file;
+select * from proof_board;

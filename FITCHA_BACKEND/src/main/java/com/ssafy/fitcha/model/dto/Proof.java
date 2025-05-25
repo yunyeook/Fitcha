@@ -27,10 +27,19 @@ public class Proof {
 	private String exerciseType;
 	private String bodyPart;
 	private String level;
+	private String userProfileImgUrl; // 유저 프로필 이미지 
 	private List<String> hashTags; // 해쉬태그
 
 	
 	
+	public String getUserProfileImgUrl() {
+		return userProfileImgUrl;
+	}
+
+	public void setUserProfileImgUrl(String userProfileImgUrl) {
+		this.userProfileImgUrl = userProfileImgUrl;
+	}
+
 	public List<ProofFile> getProofFiles() {
 		return proofFiles;
 	}

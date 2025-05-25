@@ -63,6 +63,22 @@ public class ProofController {
 		return ResponseEntity.ok(proofList);
 
 	}
+	
+	@Operation(summary = "챌린지에 해당하는 인증글 게시글 조회")
+	@GetMapping("/byChallenge/{challengeBoardId}")
+	public ResponseEntity<List<Proof>> getSearchProofsByChallenge(@PathVariable("challengeBoardId") int challengeBoardId) {
+		List<Proof> proofList = null; // 인증글 전체 리스트
+		try {
+			proofList = proofService.getSearchProofsByChallenge(challengeBoardId);
+			if (proofList == null || proofList.isEmpty()) {
+				return ResponseEntity.noContent().build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ResponseEntity.ok(proofList);
+
+	}
 
 	@Operation(summary = "인증글 게시글 상세 조회")
 	@GetMapping("/{proofBoardId}")

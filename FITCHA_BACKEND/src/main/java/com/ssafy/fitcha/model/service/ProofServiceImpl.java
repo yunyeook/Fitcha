@@ -13,6 +13,7 @@ import com.ssafy.fitcha.model.dao.ProofDao;
 import com.ssafy.fitcha.model.dto.Proof;
 import com.ssafy.fitcha.model.dto.ProofFile;
 import com.ssafy.fitcha.model.dto.SearchProof;
+import com.ssafy.fitcha.model.dto.User;
 
 @Service
 public class ProofServiceImpl implements ProofService {
@@ -20,10 +21,12 @@ public class ProofServiceImpl implements ProofService {
 	// 생성자 의존성 주입
 	private ProofDao proofDao;
 	private FileService fileService;
+	private UserService userService;
 
-	public ProofServiceImpl(ProofDao proofDao, FileService fileService) {
+	public ProofServiceImpl(ProofDao proofDao, FileService fileService, UserService userService) {
 		this.proofDao = proofDao;
 		this.fileService = fileService;
+		this.userService = userService;
 	}
 
 	// 인증글 검색 조회 ( 검색 없으실 전체 조회 )
@@ -56,9 +59,59 @@ public class ProofServiceImpl implements ProofService {
 			List<String> tags = hashtagMap.getOrDefault(proof.getProofBoardId(), new ArrayList<>());
 			proof.setHashTags(tags);
 
-			// 파일 정보
+			// 인증글 이미지 파일 정보
 			List<ProofFile> proofFiles = fileService.getProofFileList(boardId);
 			proof.setProofFiles(proofFiles); // 이미지 URL 포함
+
+			// 유저 프로필 이미지
+			String nickName = proof.getWriter();
+			User user = userService.getUserInfo(nickName);
+			proof.setUserProfileImgUrl(user.getProfileImgUrl());
+
+		}
+
+		return proofList;
+	}
+	
+	// 챌린지에 해당하는 게시글 조회 
+	@Override
+	public List<Proof> getSearchProofsByChallenge(int challengeBoardId) {
+		List<Proof> proofList = proofDao.selectProofListByChallenge(challengeBoardId);
+
+		// 1. 인증글 ID만 추출
+		List<Integer> proofBoardIds = proofList.stream().map(Proof::getProofBoardId).collect(Collectors.toList());
+
+		if (proofBoardIds.isEmpty()) {
+			return proofList; // 게시글 없음
+		}
+
+		// 2. 해시태그 목록 가져오기
+		List<Map<String, Object>> rawHashtags = proofDao.selectHashTagsByProofBoardIds(proofBoardIds);
+
+		// 3. Map<proofBoardId, List<hashtag>> 형태로 정리
+		Map<Integer, List<String>> hashtagMap = new HashMap<>();
+		for (Map<String, Object> row : rawHashtags) {
+			Integer boardId = (Integer) row.get("proof_board_id");
+			String tag = (String) row.get("hashtag");
+			hashtagMap.computeIfAbsent(boardId, k -> new ArrayList<>()).add(tag);
+		}
+
+		// 4. 인증글에 해시태그 세팅 및 파일정보 세팅
+		for (Proof proof : proofList) {
+			int boardId = proof.getProofBoardId();
+
+			List<String> tags = hashtagMap.getOrDefault(proof.getProofBoardId(), new ArrayList<>());
+			proof.setHashTags(tags);
+
+			// 인증글 이미지 파일 정보
+			List<ProofFile> proofFiles = fileService.getProofFileList(boardId);
+			proof.setProofFiles(proofFiles); // 이미지 URL 포함
+
+			// 유저 프로필 이미지
+			String nickName = proof.getWriter();
+			User user = userService.getUserInfo(nickName);
+			proof.setUserProfileImgUrl(user.getProfileImgUrl());
+			
 		}
 
 		return proofList;
@@ -133,5 +186,7 @@ public class ProofServiceImpl implements ProofService {
 	public void increaseViewCount(int proofBoardId) {
 		proofDao.increaseViewCount(proofBoardId);
 	}
+
+	
 
 }

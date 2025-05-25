@@ -31,5 +31,8 @@ public interface ProofService {
 	// 인증글 조회수 증가 
 	void increaseViewCount(int proofBoardId);
 	
+	// 챌린지에 해당하는 게시글들 조회 
+	List<Proof> getSearchProofsByChallenge(int challengeBoardId);
+	
 
 }

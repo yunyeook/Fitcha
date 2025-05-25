@@ -40,5 +40,8 @@ public interface ProofDao {
 	
 	// 인증글 조회수 증가 
 	void increaseViewCount(int proofBoardId);
+	
+	// 챌린지에 해당하는 게시글 조회 
+	List<Proof> selectProofListByChallenge(int challengeBoardId);
 
 }

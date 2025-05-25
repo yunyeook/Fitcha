@@ -72,6 +72,7 @@ public class UserController {
 		responseBody.put("userId", registedUser.getUserId());
 		responseBody.put("nickName", registedUser.getNickName());
 		responseBody.put("userBoardId", registedUser.getUserBoardId());
+		responseBody.put("profileImgUrl", registedUser.getProfileImgUrl());
 
 		return ResponseEntity.ok().header("Authorization", "Bearer " + token).body(responseBody);
 	}
@@ -190,9 +191,6 @@ public class UserController {
 	public ResponseEntity<User> updateUserInfo(@PathVariable int userBoardId,@RequestParam("nickName") String nickName,
 	        @RequestParam(value = "profileImgUrl", required = false) MultipartFile profileImgUrl) {
 		
-		System.out.println(userBoardId);
-		System.out.println(nickName);
-		System.out.println(profileImgUrl);
 		
 		User user = new User();
 		user.setUserBoardId(userBoardId);
