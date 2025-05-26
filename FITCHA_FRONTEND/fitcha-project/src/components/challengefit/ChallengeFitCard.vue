@@ -83,11 +83,14 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useUserStore } from '@/stores/user';
 import dayjs from 'dayjs';
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 
+onMounted(() => {
+  console.log(imgUrl.value)
+})
 
 import api, { BASE_URL } from '@/api/api';
 
@@ -95,7 +98,7 @@ const props = defineProps({ challenge: { type: Object } });
 const { userId, nickName } = useUserStore();
 const imgUrl = computed(() => {
   return props.challenge?.challengeFiles?.[0]?.fileUploadName
-    ? `${BASE_URL}/${props.challenge.challengeFiles[0].fileUploadName}`
+    ? `${BASE_URL}/${props.challenge.challengeFiles[0].fileUrl}`
     : '';
 });
 
