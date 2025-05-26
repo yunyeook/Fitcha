@@ -412,5 +412,28 @@ BEGIN
     WHERE nick_name = OLD.following_nick_name;
 END $$
 DELIMITER ;
+select * from participant_challenge;
+
+select * from challenge_board;
+select * from user_board;
+select * from fittube_comment;
+select * from challenge_like;
 
 
+CREATE TABLE chat_room (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE chat_message (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    room_id BIGINT NOT NULL,
+    sender VARCHAR(255),
+    message TEXT,
+    timestamp DATETIME,
+    FOREIGN KEY (room_id) REFERENCES chat_room(id)
+);
+SELECT * FROM chat_room;
+select * from chat_message;
+
+select * from user_board;

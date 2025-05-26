@@ -6,18 +6,8 @@
       <h2><span>🏃‍♀️</span> 운동하러 왔나요?</h2>
 
       <form class="login-form" @submit="login">
-        <input
-          type="text"
-          placeholder="아이디"
-          required
-          v-model="form.userId"
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          required
-          v-model="form.password"
-        />
+        <input type="text" placeholder="아이디" required v-model="form.userId" />
+        <input type="password" placeholder="비밀번호" required v-model="form.password" />
         <button type="submit">로그인</button>
       </form>
 
@@ -60,31 +50,30 @@ const userStore = useUserStore();
 const router = useRouter();
 
 const form = ref({
-  userId: "",
-  password: "",
+  userId: '',
+  password: '',
 });
 
-const login = async (e) => {
+const login = async e => {
   e.preventDefault(); // 폼 기본 기능 막기(새로고침)
   try {
     const response = await axios.post(`${BASE_URL}/user/login`, form.value);
-    const { token, userId, nickName, userBoardId, profileImgUrl } =
-      response.data;
+    const { token, userId, nickName, userBoardId, profileImgUrl } = response.data;
 
     // 토큰 저장
-    localStorage.setItem("access-token", token);
+    localStorage.setItem('access-token', token);
 
     // Pinia 상태 저장
     userStore.setUser({ userId, nickName, userBoardId, profileImgUrl });
 
     router.push(`/home`);
   } catch (err) {
-    console.error("로그인 실패: ", err);
-    alert("로그인에 실패했습니다.");
+    console.error('로그인 실패: ', err);
+    alert('로그인에 실패했습니다.');
   }
 };
 
-const oauthLogin = (provider) => {
+const oauthLogin = provider => {
   window.location.href = `${BASE_URL}/oauth2/authorization/${provider}`;
 };
 </script>
@@ -239,7 +228,7 @@ const oauthLogin = (provider) => {
 }
 .login-component .divider::before,
 .login-component .divider::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 50%;
   width: 40%;

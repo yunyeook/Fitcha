@@ -15,21 +15,21 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
 
 import com.ssafy.fitcha.model.dto.User;
 import com.ssafy.fitcha.model.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.client.RestOperations;
-import org.springframework.web.client.RestTemplate;
 
 //회원가입으로 갈지 메인으로 갈지 정해야하 하므로 추가 
 
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
-	
+
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -79,7 +79,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 				userInfo = new KakaoOAuth2UserInfoImpl(attributes);
 			} else if ("google".equals(registrationId)) {
 				userInfo = new GoogleOAuth2UserInfoImpl(attributes);
-				System.out.println(registrationId);
 			} else {
 				throw new OAuth2AuthenticationException("지원하지 않는 소셜 로그인: " + registrationId);
 			}
@@ -88,10 +87,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		// ── 기존 DB 로그인/가입 분기 ──
 		User user = new User();
 		user.setUserId(userInfo.getEmail());
-		user.setNickName(userInfo.getNickname());
 		User DBuser = userService.login(user);
 		request.getSession().setAttribute("signupStatus", DBuser == null ? "true" : "false");
-		request.getSession().setAttribute("user", user);
+
+		if (DBuser != null) {
+			request.getSession().setAttribute("user", DBuser);
+
+		} else
+			request.getSession().setAttribute("user", user);
 
 		// ── 최종 사용자 객체 생성 ──
 		return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")), attributes,

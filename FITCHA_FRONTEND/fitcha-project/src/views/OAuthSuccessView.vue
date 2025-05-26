@@ -9,12 +9,14 @@ import { onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import Signup from '@/components/login/Signup.vue';
+import api, { BASE_URL } from '@/api/api';
+import axios from 'axios';
 
 const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
 
-onMounted(() => {
+onMounted(async () => {
   const { token, userId, nickName, signup } = route.query;
 
   if (!token) {
@@ -22,7 +24,7 @@ onMounted(() => {
     return router.replace('/login');
   }
 
-  if (signup === 'true') {
+  if (signup == 'true') {
     router.replace({
       name: 'Signup',
       query: {
@@ -31,11 +33,15 @@ onMounted(() => {
       },
     });
   } else {
-    // 토큰 저장
     localStorage.setItem('access-token', token);
 
-    // Pinia 상태 저장
-    userStore.setUser({ userId, nickName });
+    const response = await api.get(`${BASE_URL}/user/${nickName}`);
+    userStore.setUser({
+      userId: response.data.userId,
+      nickName: response.data.nickName,
+      userBoardId: response.data.userBoardId,
+      profileImgUrl: response.data.profileImgUrl,
+    });
     router.replace('/home');
   }
 });

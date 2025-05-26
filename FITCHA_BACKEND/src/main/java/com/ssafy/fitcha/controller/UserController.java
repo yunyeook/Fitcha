@@ -88,6 +88,8 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity<Void> registUser(@RequestBody User user) {
 
+		System.out.println(user.getNickName());
+
 		if (userService.registUser(user)) {
 
 			return ResponseEntity.ok().build();
@@ -197,7 +199,7 @@ public class UserController {
 			@RequestParam(value = "profileImgUrl", required = false) MultipartFile profileImgUrl) {
 
 		User user = new User();
-		user.setUserBoardId(userBoardId);
+		user.setUserBoardId(Integer.valueOf(userBoardId));
 		user.setNickName(nickName);
 
 		try {
