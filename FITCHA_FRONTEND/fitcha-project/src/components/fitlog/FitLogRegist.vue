@@ -111,6 +111,7 @@ import { storeToRefs } from "pinia";
 const route = useRoute();
 const router = useRouter();
 const challengeBoardId = ref(route.params.challengeBoardId);
+const writer = ref(route.params.writer);
 
 const exerciseType = ref("");
 const bodyPart = ref("");
@@ -186,8 +187,10 @@ onMounted(async () => {
   const { data } = await api.get(`/challenge/${challengeBoardId.value}`, {
     params: {
       isViewCounted: false,
+      writer: writer.value,
     },
   });
+  console.dir(data);
   exerciseType.value = data.exerciseType;
   bodyPart.value = data.bodyPart;
   level.value = data.level;

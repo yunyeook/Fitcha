@@ -1,6 +1,7 @@
 package com.ssafy.fitcha.model.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,9 @@ public class FileServiceImpl implements FileService {
 	private String uploadDirPath;
 	@Value("${proof.file.upload-dir}")
 	private String uploadDirPathProof;
+	@Value("${user.file.upload-dir}")
+	private String uploadDirPathUser;
+	
 	private FileDao fileDao;
 	private ResourceLoader resourceLoader;
 
@@ -95,7 +99,6 @@ public class FileServiceImpl implements FileService {
 	// 인증글 파일 등록
 	@Override
 	public void insertProofFile(List<MultipartFile> files, int proofBoardId, String writer) throws Exception {
-		
 		if (files == null || files.isEmpty()) {
 			return;
 		}
@@ -115,13 +118,71 @@ public class FileServiceImpl implements FileService {
 				proofFile.setProofBoardId(proofBoardId);
 				proofFile.setFileOriginalName(originalFileName);
 				proofFile.setFileUploadName(uploadFileName);
-				proofFile.setFileUrl("uploads/" + uploadFileName); // 경로 저장
+				proofFile.setFileUrl("upload/" + uploadFileName); // 경로 저장
 				proofFile.setWriter(writer);
 
 				fileDao.insertProofFile(proofFile);
 			}
 		}
 	}
+
+	// 인증글 파일 수정
+	@Override
+	public void updateProofFile(List<MultipartFile> files, int proofBoardId, String writer) throws IllegalStateException, IOException {
+		if (files == null || files.isEmpty()) {
+			return;
+		}
+
+		File uploadDir = new File(uploadDirPathProof);
+		if (!uploadDir.exists()) {
+			uploadDir.mkdirs();
+		}
+		for (MultipartFile file : files) {
+			if (!file.isEmpty()) {
+				String originalFileName = file.getOriginalFilename();
+				String uploadFileName = generateUniqueName(originalFileName);
+				file.transferTo(new File(uploadDir, uploadFileName));
+				
+				
+				ProofFile proofFile = new ProofFile();
+				proofFile.setProofBoardId(proofBoardId);
+				proofFile.setFileOriginalName(originalFileName);
+				proofFile.setFileUploadName(uploadFileName);
+				proofFile.setFileUrl("upload/" + uploadFileName); // 경로 저장
+				proofFile.setWriter(writer);
+
+				fileDao.updateProofFile(proofFile);
+			}
+		}
+	}
+	
+	// 유저 이미지 파일 수정
+	@Override
+	public String updateUserFile(MultipartFile profileImgUrl) throws IOException {
+	    if (profileImgUrl == null || profileImgUrl.isEmpty()) {
+	        return null;
+	    }
+
+	    File uploadDir = new File(uploadDirPathUser);
+	    if (!uploadDir.exists()) {
+	        uploadDir.mkdirs();
+	    }
+
+	    String originalFileName = profileImgUrl.getOriginalFilename();
+	    String uploadFileName = generateUniqueName(originalFileName);
+	    File destFile = new File(uploadDir, uploadFileName);
+
+	    profileImgUrl.transferTo(destFile);
+
+	    // 반환하는 URL은 클라이언트가 접근 가능한 경로를 기준으로 설정
+	    // 예: "/upload/user/" + uploadFileName 또는 uploadDirPathUser + uploadFileName
+	    // uploadDirPathUser가 절대경로면 상대경로로 바꿔야 할 수도 있음
+
+	    String fileUrl = "upload/" + uploadFileName;
+
+	    return fileUrl;
+	}
+	
 
 	// 유니크 네임 생성 함수
 	private String generateUniqueName(String originalName) {
@@ -136,5 +197,7 @@ public class FileServiceImpl implements FileService {
 
 		return timeStr + "_" + uuid + ext;
 	}
+
+	
 
 }

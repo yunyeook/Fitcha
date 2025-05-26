@@ -57,7 +57,8 @@
         </p>
         <div class="card-footer">
           <div class="writer-info">
-            <img src="../../assets/images/run.jpg" alt="" />
+            <img v-if="profileImgUrl" :src="profileImgUrl" alt="" />
+            <img v-else :src="defaultProfileImg" alt="" />
             <span>{{ challenge.writer }}</span>
           </div>
           <div class="stats">
@@ -85,6 +86,9 @@
 import { computed } from 'vue';
 import { useUserStore } from '@/stores/user';
 import dayjs from 'dayjs';
+import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
+
+
 import api, { BASE_URL } from '@/api/api';
 
 const props = defineProps({ challenge: { type: Object } });
@@ -93,6 +97,14 @@ const imgUrl = computed(() => {
   return props.challenge?.challengeFiles?.[0]?.fileUploadName
     ? `${BASE_URL}/${props.challenge.challengeFiles[0].fileUploadName}`
     : '';
+});
+
+// 챌린지 작성자 프사 
+const profileImgUrl = computed(() => {
+  if (props.challenge?.userProfileImgUrl) {
+    return "http://localhost:8080/" + props.challenge.userProfileImgUrl;
+  }
+  return "";
 });
 
 // 1) 경과 일수 (0 ~ duration 사이)
@@ -284,8 +296,8 @@ const isComplete = computed(() => {
 }
 
 .card-footer .writer-info img {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
 }
 

@@ -14,8 +14,14 @@ public interface LikeService {
 	// 인증글 좋아요 조회
 	boolean getProofLike(int proofBoardId, String nickName);
 
-	// 인증글 좋아요 수정
-	boolean updateProofLike(boolean isLiked, int proofBoardId, String nickName);
+	// 인증글 좋아요
+	public boolean addLike(int boardId, String nickName);
+
+	// 인증글 좋아요 취소
+	public boolean removeLike(int boardId, String nickName);
+
+	// 유저가 인증글 좋아요 눌렀는지 체크
+	boolean checkLikeByWriter(int proofBoardId, String writer);
 
 	// --------------------------------- 영상 좋아요 ------------------------
 

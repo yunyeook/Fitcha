@@ -26,6 +26,10 @@ public interface LikeDao {
 
 	// 로그인 유저의 인증글 글 좋아요 취소
 	int deleteProofLike(Like like);
+	
+	// 로그인 유저의 인증글 좋아요 체크 
+	int selecCheckProofLike(Like like);
+	
 
 	// --------------------------------------------------------------------------
 
@@ -42,5 +46,9 @@ public interface LikeDao {
 
 	// 영상 좋아요 여부 조회
 	int selectUserVideoLiked(Like like);
+	
+
+
+	
 
 }

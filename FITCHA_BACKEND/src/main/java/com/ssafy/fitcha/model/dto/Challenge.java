@@ -25,10 +25,22 @@ public class Challenge {
 	private List<Comment> comments;
 	private boolean isLiked; // 로그인 유저의 좋아요여부.
 	private boolean isParticipated; // 로그인 유저의 참여 여부.
+	private String userProfileImgUrl; // 유저 프로필 이미지 
+
 
 	private boolean finish; // 챌린지 종료
 
 	private String subhead;
+
+	
+	
+	public String getUserProfileImgUrl() {
+		return userProfileImgUrl;
+	}
+
+	public void setUserProfileImgUrl(String userProfileImgUrl) {
+		this.userProfileImgUrl = userProfileImgUrl;
+	}
 
 	public String getSubhead() {
 		return subhead;

@@ -2,6 +2,7 @@ package com.ssafy.fitcha.model.service;
 
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.fitcha.model.dao.UserDao;
@@ -13,6 +14,11 @@ import lombok.RequiredArgsConstructor;
 public class NicknameService {
 
 	private final UserDao userDao;
+
+	public NicknameService(UserDao userDao) {
+		this.userDao = userDao;
+	}
+
 	private final Random random = new Random();
 
 	private static final String[] ADJECTIVES = { "행복한", "슬기로운", "용감한", "빠른", "귀여운", "똑똑한", "재치있는", "친절한", "멋진", "따뜻한",

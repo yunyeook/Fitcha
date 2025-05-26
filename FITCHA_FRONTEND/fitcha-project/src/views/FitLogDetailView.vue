@@ -21,7 +21,9 @@ const proofBoardId = route.params.id;
 const fitlog = ref({});
 
 const requestFitLogDetail = async () => {
-  const { data } = await api.get(`/proof/${proofBoardId}`);
+  const { data } = await api.get(`/proof/${proofBoardId}`, {
+    withCredentials: true,
+  });
   fitlog.value = data;
 };
 onMounted(() => {

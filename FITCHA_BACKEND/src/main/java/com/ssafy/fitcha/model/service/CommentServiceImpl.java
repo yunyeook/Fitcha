@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.fitcha.model.dao.CommentDao;
 import com.ssafy.fitcha.model.dto.Comment;
+import com.ssafy.fitcha.model.dto.CommentProof;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -52,31 +53,31 @@ public class CommentServiceImpl implements CommentService {
 	
 	// 인증글 댓글 목록 조회 
 	@Override
-	public List<Comment> getProofCommentList(int proofBoardId) {
+	public List<CommentProof> getProofCommentList(int proofBoardId) {
 		return commentDao.selectProofCommentList(proofBoardId);
 	}
 	
 	// 인증글 댓글 등록
 	@Override
-	public boolean registProofComment(int proofBoardId, Comment comment) {
-		comment.setBoardId(proofBoardId);
+	public boolean registProofComment(int proofBoardId, CommentProof comment) {
+		comment.setProofBoardId(proofBoardId);
 		return 1 == commentDao.insertProofComment(comment);
 	}
 	
 	// 인증글 댓글 삭제 
 	@Override
 	public boolean deleteProofComment(int proofBoardId, int proofCommentId) {
-		Comment comment = new Comment();
-		comment.setBoardId(proofBoardId);
-		comment.setCommentId(proofCommentId);
+		CommentProof comment = new CommentProof();
+		comment.setProofBoardId(proofBoardId);
+		comment.setProofCommentId(proofCommentId);
 		return 1 == commentDao.deleteProofComment(comment);
 	}
 	
 	// 인증글 댓글 수정 
 	@Override
-	public boolean updateProofComment(int proofBoardId, int proofCommentId, Comment comment) {
-		comment.setBoardId(proofBoardId);
-		comment.setCommentId(proofCommentId);
+	public boolean updateProofComment(int proofBoardId, int proofCommentId, CommentProof comment) {
+		comment.setProofBoardId(proofBoardId);
+		comment.setProofCommentId(proofCommentId);
 		return 1 == commentDao.updateProofComment(comment);
 	}
 	

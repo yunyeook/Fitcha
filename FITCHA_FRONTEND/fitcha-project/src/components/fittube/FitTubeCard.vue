@@ -2,7 +2,10 @@
   <div class="ytc-card">
     <div class="ytc-thumbnail">
       <!-- 유튜브 썸네일 -->
-      <img :src="video.snippet.thumbnails.high.url" :alt="video.snippet.title" />
+      <img
+        :src="video.snippet.thumbnails.high.url"
+        :alt="video.snippet.title"
+      />
       <span class="ytc-duration">LIVE</span>
       <!-- duration은 Search API에 없음 -->
     </div>
@@ -22,7 +25,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const props = defineProps({
   video: Object,
@@ -30,11 +33,11 @@ const props = defineProps({
 
 const formattedDate = computed(() => {
   const raw = props.video?.snippet?.publishedAt;
-  if (!raw) return '';
-  return new Date(raw).toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+  if (!raw) return "";
+  return new Date(raw).toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 });
 </script>

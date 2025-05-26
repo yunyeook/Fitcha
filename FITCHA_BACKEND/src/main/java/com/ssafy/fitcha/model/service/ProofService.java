@@ -20,13 +20,22 @@ public interface ProofService {
 	boolean registProof(Proof proof, List<MultipartFile> file) throws Exception;
 	
 	// 인증글 수정
-	boolean updateProof(Proof proof, List<MultipartFile> files, List<Integer> deleteProofFileIds) throws Exception;
+	boolean updateProof(Proof proof, List<MultipartFile> files) throws Exception;
 	
 	// 인증글 삭제
 	boolean deleteProofBoard(int challengeFileId);
 
 	//챌린지글 삭제시 내 인증글 삭제
 	boolean deleteMyProofBoard(Proof proof);
+	
+	// 인증글 조회수 증가 
+	void increaseViewCount(int proofBoardId);
+	
+	// 챌린지에 해당하는 게시글들 조회 
+	List<Proof> getSearchProofsByChallenge(int challengeBoardId);
+	
+	// 인증글 이미지 url 전체 조회 
+	List<String> getProofImages();
 	
 
 }

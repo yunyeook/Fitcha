@@ -4,9 +4,24 @@
     <MainContentSearch />
     <!-- 종료된 챌린지 포함여부 버튼 -->
     <div class="view-mode-toggle">
-      <button :class="{ active: viewMode === 'ongoing' }" @click="changeViewMode('ongoing')">진행중</button>
-      <button :class="{ active: viewMode === 'all' }" @click="changeViewMode('all')">전체</button>
-      <button :class="{ active: viewMode === 'finished' }" @click="changeViewMode('finished')">종료된 챌린지</button>
+      <button
+        :class="{ active: viewMode === 'ongoing' }"
+        @click="changeViewMode('ongoing')"
+      >
+        진행중
+      </button>
+      <button
+        :class="{ active: viewMode === 'all' }"
+        @click="changeViewMode('all')"
+      >
+        전체
+      </button>
+      <button
+        :class="{ active: viewMode === 'finished' }"
+        @click="changeViewMode('finished')"
+      >
+        종료된 챌린지
+      </button>
     </div>
     <template v-if="noContent">
       <NoContent />
@@ -23,21 +38,21 @@
 </template>
 
 <script setup>
-import MainGridLayout from '@/components/common/MainGridLayout.vue';
-import ChallengeFitCard from '@/components/challengefit/ChallengeFitCard.vue';
-import MainHeader from '@/components/common/MainHeader.vue';
-import MainContentSearch from '@/components/common/MainContentSearch.vue';
-import { onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import NoContent from '@/components/error/NoContent204.vue';
-import api from '@/api/api';
-import axios from 'axios';
+import MainGridLayout from "@/components/common/MainGridLayout.vue";
+import ChallengeFitCard from "@/components/challengefit/ChallengeFitCard.vue";
+import MainHeader from "@/components/common/MainHeader.vue";
+import MainContentSearch from "@/components/common/MainContentSearch.vue";
+import { onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import NoContent from "@/components/error/NoContent204.vue";
+import api from "@/api/api";
+import axios from "axios";
 const route = useRoute();
 const router = useRouter();
 let challenges = ref({});
 const noContent = ref(false);
 
-const viewMode = ref('ongoing'); // 기본은 진행 중 보기
+const viewMode = ref("ongoing"); // 기본은 진행 중 보기
 
 const showFinished = ref(false); // 종료 챌린지 포함 여부
 
@@ -53,9 +68,9 @@ function changeViewMode(mode) {
 async function requestChallengeSearch(searchKey, searchWord) {
   let response;
   if (!searchKey || !searchWord) {
-    response = await api.get('/challenge');
+    response = await api.get("/challenge");
   } else {
-    response = await api.get('/challenge', {
+    response = await api.get("/challenge", {
       params: {
         key: searchKey,
         word: searchWord,
@@ -65,13 +80,13 @@ async function requestChallengeSearch(searchKey, searchWord) {
 
   const allChallenges = response.data;
 
-  if (viewMode.value === 'all') {
+  if (viewMode.value === "all") {
     challenges.value = allChallenges;
-  } else if (viewMode.value === 'finished') {
-    challenges.value = allChallenges.filter(c => c.finish);
+  } else if (viewMode.value === "finished") {
+    challenges.value = allChallenges.filter((c) => c.finish);
   } else {
     // ongoing
-    challenges.value = allChallenges.filter(c => !c.finish);
+    challenges.value = allChallenges.filter((c) => !c.finish);
   }
   noContent.value = challenges.value.length === 0;
 }

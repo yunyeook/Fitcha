@@ -1,5 +1,6 @@
 package com.ssafy.fitcha.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,11 +13,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.fitcha.model.dto.User;
+import com.ssafy.fitcha.model.service.FileService;
 import com.ssafy.fitcha.model.service.UserService;
 import com.ssafy.fitcha.util.JwtUtil;
 
@@ -34,9 +39,11 @@ public class UserController {
 
 	// 생성자 의존성 주입
 	private final UserService userService;
+	private final FileService fileService;
 
-	public UserController(UserService userService) {
+	public UserController(UserService userService, FileService fileService) {
 		this.userService = userService;
+		this.fileService = fileService;
 	}
 
 	@Operation(summary = "로그인/로그아웃 상태 변경", description = "서버의 세션 상태를 바꿈. 이런 상태 변화가 있는 작업은 POST 또는 DELETE로 처리하는 것이 REST 관점")
@@ -64,6 +71,8 @@ public class UserController {
 		responseBody.put("token", token);
 		responseBody.put("userId", registedUser.getUserId());
 		responseBody.put("nickName", registedUser.getNickName());
+		responseBody.put("userBoardId", registedUser.getUserBoardId());
+		responseBody.put("profileImgUrl", registedUser.getProfileImgUrl());
 
 		return ResponseEntity.ok().header("Authorization", "Bearer " + token).body(responseBody);
 	}
@@ -165,17 +174,45 @@ public class UserController {
 		return ResponseEntity.badRequest().build();
 
 	}
-	
+
 	@Operation(summary = "유저 정보 조회")
 	@GetMapping("/{userNickName}")
-	public ResponseEntity<User> getUserInfo(@PathVariable("userNickName") String userNickName){
+	public ResponseEntity<User> getUserInfo(@PathVariable("userNickName") String userNickName) {
 		User selectedUser = userService.getUserInfo(userNickName);
-		
-		if(selectedUser != null) {
+
+		if (selectedUser != null) {
 			return ResponseEntity.ok(selectedUser);
 		}
 		return ResponseEntity.badRequest().build();
 	}
-	
+
+	@Operation(summary = "프로필 이미지 수정")
+	@PutMapping("/update/{userBoardId}")
+	public ResponseEntity<User> updateUserInfo(@PathVariable int userBoardId,@RequestParam("nickName") String nickName,
+	        @RequestParam(value = "profileImgUrl", required = false) MultipartFile profileImgUrl) {
+		
+		
+		User user = new User();
+		user.setUserBoardId(userBoardId);
+		user.setNickName(nickName);
+		
+	    try {
+	        if (profileImgUrl != null && !profileImgUrl.isEmpty()) {
+	            String imageUrl = fileService.updateUserFile(profileImgUrl);
+	            user.setProfileImgUrl(imageUrl);
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+
+	    if (userService.updateUserInfo(user)) {
+	    	User updatedUser = userService.getUserInfo(nickName);
+	        return ResponseEntity.ok(updatedUser);
+	    }
+
+	    return ResponseEntity.badRequest().build();
+
+	}
 
 }

@@ -24,7 +24,12 @@
       </select>
 
       <!-- 검색어 입력 -->
-      <input type="text" placeholder="검색어를 입력하세요" v-model="searchWord" @keyup.enter="search" />
+      <input
+        type="text"
+        placeholder="검색어를 입력하세요"
+        v-model="searchWord"
+        @keyup.enter="search"
+      />
 
       <!-- 검색 버튼 -->
       <button @click="search"><i class="fas fa-search"></i></button>
@@ -33,20 +38,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
 const router = useRouter();
-const searchWord = ref('');
-const searchKey = ref('title');
-const menu = ref(window.location.pathname.split('/')[1]);
+const searchWord = ref("");
+const searchKey = ref("title");
+const menu = ref(window.location.pathname.split("/")[1]);
 
 function search() {
   const currentMenu = menu.value;
   const path = window.location.pathname;
 
   // fittube는 'q'만 넘김
-  if (currentMenu === 'fittube') {
+  if (currentMenu === "fittube") {
     router.push({
       path,
       query: {
@@ -67,18 +72,18 @@ function search() {
 }
 onMounted(() => {
   const currentMenu = menu.value;
-  if (currentMenu === 'fittube') {
-    searchWord.value = route.query.q || '';
+  if (currentMenu === "fittube") {
+    searchWord.value = route.query.q || "";
   } else {
-    searchKey.value = route.query.key || 'title';
-    searchWord.value = route.query.word || '';
+    searchKey.value = route.query.key || "title";
+    searchWord.value = route.query.word || "";
   }
 });
 </script>
 
 <style scoped>
 .main-content-search {
-  margin: 20px 0;
+  margin: 10px 0 0 0;
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -42,28 +42,29 @@
 		SELECT *
 		  FROM proof_comment
 		 WHERE proof_board_id = #{id}
+		 ORDER BY reg_date DESC
 	</select>
 	
 	<!-- 인증글 댓글 등록 -->
-	<insert id="insertProofComment" parameterType="comment">
+	<insert id="insertProofComment" parameterType="CommentProof">
 		INSERT INTO proof_comment (proof_board_id, user_id, content, writer)
-             VALUES (#{boardId},#{userId},#{content},#{writer})
+             VALUES (#{proofBoardId},#{userId},#{content},#{writer})
 	</insert>
 	
 	<!-- 인증글 댓글 삭제 -->
-	<delete id="deleteProofComment" parameterType="comment">
+	<delete id="deleteProofComment" parameterType="CommentProof">
 		DELETE 
 		  FROM proof_comment
-		 WHERE proof_board_id = #{boardId}
-		   AND proof_comment_id = #{commentId}
+		 WHERE proof_board_id = #{proofBoardId}
+		   AND proof_comment_id = #{proofCommentId}
 	</delete>
 	
 	<!-- 인증글 댓글 수정 -->
-	<update id="updateProofComment" parameterType="comment">
+	<update id="updateProofComment" parameterType="CommentProof">
 		UPDATE proof_comment
 		   SET content = #{content}
-		 WHERE proof_comment_id = #{commentId}
-		   AND proof_board_id = #{boardId}
+		 WHERE proof_comment_id = #{proofCommentId}
+		   AND proof_board_id = #{proofBoardId}
 	</update>
 	
 	<!-- 영상 댓글 -->

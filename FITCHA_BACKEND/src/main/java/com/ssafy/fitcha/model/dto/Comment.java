@@ -2,7 +2,7 @@ package com.ssafy.fitcha.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description="댓글 DTO")
+@Schema(description="챌린지 댓글 DTO")
 public class Comment {
 	private int commentId;
 	private int boardId ;

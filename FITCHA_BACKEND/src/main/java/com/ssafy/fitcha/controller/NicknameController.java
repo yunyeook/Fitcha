@@ -1,5 +1,6 @@
 package com.ssafy.fitcha.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,10 @@ import lombok.RequiredArgsConstructor;
 public class NicknameController {
 
 	private final NicknameService nicknameService;
+
+	public NicknameController(NicknameService nicknameService) {
+		this.nicknameService = nicknameService;
+	}
 
 	@GetMapping("/generate")
 	public ResponseEntity<String> generateNickname() {

@@ -42,30 +42,33 @@
             }"
           >
             <span class="challenge-detail__progress-text">
-              {{ challenge.finish ? '기간만료' : daysText }}
+              {{ challenge.finish ? "기간만료" : daysText }}
             </span>
           </div>
         </div>
 
         <p class="challenge-detail__participants">
-          참여 : {{ challenge.participantCount }} / {{ challenge.totalParticipantCount }}명
+          참여 : {{ challenge.participantCount }} /
+          {{ challenge.totalParticipantCount }}명
         </p>
       </div>
 
       <div class="avatars-like-container">
         <div class="challenge-detail__avatars-section">
           <div class="challenge-detail__host">
-            <img src="https://via.placeholder.com/32" alt="Host" />
-            <span class="challenge-detail__host-badge">{{ challenge.writer }}</span>
+            <img :src="writerProfileImgUrl" alt="Host" />
+            <span class="challenge-detail__host-badge">{{
+              challenge.writer
+            }}</span>
           </div>
-          <div class="challenge-detail__avatar-stack">
+          <!-- <div class="challenge-detail__avatar-stack">
             <img src="https://via.placeholder.com/32/FF5733" />
             <img src="https://via.placeholder.com/32/33C3FF" />
             <img src="https://via.placeholder.com/32/85FF33" />
             <img src="https://via.placeholder.com/32/FF33A6" />
             <img src="https://via.placeholder.com/32/FFD433" />
             <span class="challenge-detail__more-count">+5</span>
-          </div>
+          </div> -->
         </div>
         <div class="like-btn">
           <i
@@ -101,7 +104,10 @@
               <router-link
                 :to="{
                   name: 'FitLogRegistView',
-                  params: { challengeBoardId: challenge.challengeBoardId },
+                  params: {
+                    challengeBoardId: challenge.challengeBoardId,
+                    writer: challenge.writer,
+                  },
                 }"
                 style="text-decoration: none"
               >
@@ -114,9 +120,14 @@
 
         <!-- 현재 참여중이 아닌경우 -->
         <template v-else>
-          <template v-if="challenge.participantCount < challenge.totalParticipantCount">
+          <template
+            v-if="challenge.participantCount < challenge.totalParticipantCount"
+          >
             <div class="challenge-detail__actions">
-              <button class="challenge-detail__join-btn" @click="requestChallengeParticipate">
+              <button
+                class="challenge-detail__join-btn"
+                @click="requestChallengeParticipate"
+              >
                 <i class="fas fa-sign-in-alt"></i>
                 참여하기
               </button>
@@ -144,25 +155,50 @@
       <!-- 탭 섹션 시작 -->
       <div class="challenge-detail__tab-section">
         <div class="challenge-detail__tabs">
-          <div class="challenge-detail__tab active" data-tab="comments">댓글 보기</div>
-          <div class="challenge-detail__tab" data-tab="certs">인증글 보기</div>
+          <div
+            class="challenge-detail__tab"
+            :class="{ active: activeTab === 'comments' }"
+            @click="activeTab = 'comments'"
+          >
+            댓글 보기
+          </div>
+          <div
+            class="challenge-detail__tab"
+            :class="{ active: activeTab === 'certs' }"
+            @click="activeTab = 'certs'"
+          >
+            인증글 보기
+          </div>
         </div>
 
         <!-- 댓글 탭 -->
-        <div class="challenge-detail__tab-content active" id="comments">
+        <div
+          class="challenge-detail__tab-content"
+          :class="{ active: activeTab === 'comments' }"
+        >
           <div class="challenge-detail__comment-form">
-            <input type="text" placeholder="댓글을 남기세요..." v-model="comment" />
+            <input
+              type="text"
+              placeholder="댓글을 남기세요..."
+              v-model="comment"
+            />
             <button @click="requestChallengeCommentRegist">작성</button>
           </div>
-          <div class="challenge-detail__comment" v-for="comment in comments" :key="comment.challengeCommentId">
-            <img src="https://via.placeholder.com/36/FF5733" />
+          <div
+            class="challenge-detail__comment"
+            v-for="comment in comments"
+            :key="comment.challengeCommentId"
+          >
+            <img :src="defaultProfileImg" />
             <div class="challenge-detail__comment-body">
               <div>
                 <div class="challenge-detail__comment-author">
                   {{ comment.writer }}
                 </div>
 
-                <template v-if="editChallengeCommentId !== comment.challengeCommentId">
+                <template
+                  v-if="editChallengeCommentId !== comment.challengeCommentId"
+                >
                   <div class="challenge-detail__comment-text">
                     {{ comment.content }}
                   </div>
@@ -170,7 +206,13 @@
                 <template v-else>
                   <div class="challenge-detail__comment-form">
                     <input type="text" v-model="editCommentContent" />
-                    <button @click="requestChallengeCommentUpdate(editChallengeCommentId)">수정완료</button>
+                    <button
+                      @click="
+                        requestChallengeCommentUpdate(editChallengeCommentId)
+                      "
+                    >
+                      수정완료
+                    </button>
                   </div>
                 </template>
 
@@ -182,7 +224,12 @@
               <template v-if="comment.writer === nickName">
                 <div
                   class="challenge-detail__options"
-                  @click="openCommentModal(comment.challengeCommentId, comment.content)"
+                  @click="
+                    openCommentModal(
+                      comment.challengeCommentId,
+                      comment.content
+                    )
+                  "
                 >
                   <i class="fas fa-ellipsis-v"></i>
                 </div>
@@ -192,16 +239,26 @@
         </div>
 
         <!-- 인증글 탭 -->
-        <div class="challenge-detail__tab-content" id="certs">
-          <div class="challenge-detail__certification-item">
-            <div class="challenge-detail__cert-header">
-              <div class="challenge-detail__cert-author">
-                <img src="https://via.placeholder.com/32/FF5733" />
-                <span class="author">러너1</span>
+        <div
+          class="challenge-detail__tab-content"
+          :class="{ active: activeTab === 'certs' }"
+        >
+          <div
+            v-for="fitlog in fitlogs"
+            :key="fitlog.proofBoardId"
+            class="challenge-detail__certification-item"
+          >
+            <router-link :to="`/fitlog/${fitlog.proofBoardId}`">
+              <div class="challenge-detail__cert-header">
+                <div class="challenge-detail__cert-author">
+                  <span class="author">{{ fitlog.writer }}</span>
+                </div>
+                <span class="date">{{ fitlog.regDate }}</span>
               </div>
-              <span class="date">5월 10일</span>
-            </div>
-            <div class="challenge-detail__cert-body">오늘도 5km 완주했어요! 상쾌한 하루 시작 💪</div>
+              <div class="challenge-detail__cert-body">
+                {{ fitlog.title }}
+              </div>
+            </router-link>
           </div>
         </div>
       </div>
@@ -214,48 +271,68 @@
   </div>
 
   <!-- 댓글 수정/삭제 모달 -->
-  <div v-if="showCommentModal" class="modal-overlay" @click.self="closeCommentModal(false)">
+  <div
+    v-if="showCommentModal"
+    class="modal-overlay"
+    @click.self="closeCommentModal(false)"
+  >
     <div class="modal-box">
-      <button class="modal-close-button" @click="closeCommentModal(false)">×</button>
+      <button class="modal-close-button" @click="closeCommentModal(false)">
+        ×
+      </button>
       <div class="modal-title">댓글 관리</div>
-      <button class="modal-button" @click="closeCommentModal(true)">수정하기</button>
-      <button class="modal-button delete" @click="requestDeleteComment">삭제하기</button>
+      <button class="modal-button" @click="closeCommentModal(true)">
+        수정하기
+      </button>
+      <button class="modal-button delete" @click="requestDeleteComment">
+        삭제하기
+      </button>
     </div>
   </div>
 
   <!-- 챌린지 수정/삭제 모달 -->
-  <div v-if="showChallengeFitModal" class="modal-overlay" @click.self="closeChallengeFitModal">
+  <div
+    v-if="showChallengeFitModal"
+    class="modal-overlay"
+    @click.self="closeChallengeFitModal"
+  >
     <div class="modal-box">
-      <button class="modal-close-button" @click="closeChallengeFitModal">×</button>
+      <button class="modal-close-button" @click="closeChallengeFitModal">
+        ×
+      </button>
       <div class="modal-title">첼린지 관리</div>
       <button class="modal-button" @click="editChallengeFit">수정하기</button>
-      <button class="modal-button delete" @click="deleteChallengeFit">삭제하기</button>
+      <button class="modal-button delete" @click="deleteChallengeFit">
+        삭제하기
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import api, { BASE_URL } from '@/api/api';
-import axios from 'axios';
-import { useUserStore } from '@/stores/user';
-import dayjs from 'dayjs';
+import { ref, onMounted, computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import api, { BASE_URL } from "@/api/api";
+import axios from "axios";
+import { useUserStore } from "@/stores/user";
+import dayjs from "dayjs";
+import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 
 const { userId, nickName } = useUserStore();
 
-const imgUrl = ref('');
+const imgUrl = ref("");
 const route = useRoute();
 const router = useRouter();
 const isViewCounted = ref(route.query.isViewCounted);
 const challengeBoardId = ref(route.params.id);
 const challenge = ref({});
+const activeTab = ref("comments"); // 기본은 댓글 보기
 
 // 1) 경과 일수 (0~duration)
 const daysElapsed = computed(() => {
   if (!challenge.value.regDate || !challenge.value.duration) return 0;
   const start = dayjs(challenge.value.regDate);
-  const diff = dayjs().diff(start, 'day');
+  const diff = dayjs().diff(start, "day");
   if (diff < 0) return 0;
   if (diff > challenge.value.duration) return challenge.value.duration;
   return diff;
@@ -269,24 +346,37 @@ const dayCount = computed(() => {
 
 // 3) 프로그레스바 너비 (dayCount / duration)
 const progressWidth = computed(() => {
-  if (!challenge.value.duration) return '0%';
+  if (!challenge.value.duration) return "0%";
   const pct = Math.round((dayCount.value / challenge.value.duration) * 100);
-  return pct + '%';
+  return pct + "%";
 });
 
 // 4) 화면에 표시할 텍스트 (예: “1일차”, “2일차”)
 const daysText = computed(() => {
-  return dayCount.value + '일차';
+  return dayCount.value + "일차";
 });
 
 onMounted(async () => {
   try {
     await requestChallengeDetail();
     await requestChallengeLike();
+    await requestProof();
   } catch (e) {
-    console.error('영상 요청 실패', e);
+    console.error("영상 요청 실패", e);
   }
 });
+
+// 작성자 프사 이미지
+const writerProfileImgUrl = ref(""); // 반응형으로 선언
+
+const fitlogs = ref([]);
+// 인증글 조회
+async function requestProof() {
+  const { data } = await api.get(
+    `/proof/byChallenge/${challengeBoardId.value}`
+  );
+  fitlogs.value = data;
+}
 
 // 챌린지글 조회
 async function requestChallengeDetail() {
@@ -298,17 +388,25 @@ async function requestChallengeDetail() {
   });
   challenge.value = data;
   imgUrl.value = `${BASE_URL}/${data.challengeFiles[0].fileUploadName}`;
-  isViewCounted.value = 'false';
+  isViewCounted.value = "false";
   comments.value = data.comments;
-  // console.log(challenge.value);
+
+  console.log(challenge.value);
+  // 작성자 프로필 이미지가 서버 응답에 포함되어 있다고 가정
+  writerProfileImgUrl.value = challenge.value.userProfileImgUrl
+    ? `http://localhost:8080/${challenge.value.userProfileImgUrl}`
+    : defaultProfileImg;
 }
 
 //챌린지 참여 등록.
 async function requestChallengeParticipate() {
-  const { status } = await api.post(`/challenge/${challengeBoardId.value}/participate`, {
-    challengeBoardId: challengeBoardId.value,
-    writer: nickName,
-  });
+  const { status } = await api.post(
+    `/challenge/${challengeBoardId.value}/participate`,
+    {
+      challengeBoardId: challengeBoardId.value,
+      writer: nickName,
+    }
+  );
   if (status === axios.HttpStatusCode.Ok) {
     await requestChallengeDetail();
     //실패시
@@ -318,27 +416,34 @@ async function requestChallengeParticipate() {
 }
 //챌린지 참여 취소
 async function deleteChallengeParticipate() {
-  await api.delete(`/challenge/${challengeBoardId.value}/participate/${nickName}`);
+  await api.delete(
+    `/challenge/${challengeBoardId.value}/participate/${nickName}`
+  );
   await requestChallengeDetail();
 }
 
 const editChallengeCommentId = ref(-1);
-const editCommentContent = ref('');
+const editCommentContent = ref("");
 const comments = ref([]);
-const comment = ref('');
+const comment = ref("");
 
 //댓글등록.
 async function requestChallengeCommentRegist() {
-  const { status } = await api.post(`/challenge/${challengeBoardId.value}/comment`, {
-    challengeBoardId: challengeBoardId.value,
-    userId: userId,
-    content: comment.value,
-    writer: nickName,
-  });
-  comment.value = '';
+  const { status } = await api.post(
+    `/challenge/${challengeBoardId.value}/comment`,
+    {
+      challengeBoardId: challengeBoardId.value,
+      userId: userId,
+      content: comment.value,
+      writer: nickName,
+    }
+  );
+  comment.value = "";
   //성공시 다시 전체 댓글 목록 불러오기
   if (status === axios.HttpStatusCode.Created) {
-    const { data } = await api.get(`/challenge/${challengeBoardId.value}/comment`);
+    const { data } = await api.get(
+      `/challenge/${challengeBoardId.value}/comment`
+    );
     comments.value = data;
     //실패시
   } else {
@@ -354,19 +459,23 @@ async function requestChallengeCommentUpdate(id) {
   });
 
   editChallengeCommentId.value = -1;
-  editCommentContent.value = '';
+  editCommentContent.value = "";
   requestChallengeComments();
 }
 
 //댓글들 조회.
 async function requestChallengeComments() {
-  const { data } = await api.get(`/challenge/${challengeBoardId.value}/comment`);
+  const { data } = await api.get(
+    `/challenge/${challengeBoardId.value}/comment`
+  );
   comments.value = data;
 }
 
 //댓글 삭제.
 const requestDeleteComment = async () => {
-  await api.delete(`/challenge/${challengeBoardId.value}/comment/${editChallengeCommentId.value}`);
+  await api.delete(
+    `/challenge/${challengeBoardId.value}/comment/${editChallengeCommentId.value}`
+  );
   requestChallengeComments();
   closeCommentModal(false);
 };
@@ -390,7 +499,7 @@ const openCommentModal = (challengeCommentId, content) => {
   editCommentContent.value = content;
 };
 
-const closeCommentModal = isContinue => {
+const closeCommentModal = (isContinue) => {
   showCommentModal.value = false;
   if (!isContinue) {
     editChallengeCommentId.value = -1;
@@ -399,14 +508,17 @@ const closeCommentModal = isContinue => {
 
 const editChallengeFit = () => {
   closeChallengeFitModal();
-  router.push({ name: 'ChallengeFitUpdate', params: { id: challengeBoardId.value } });
+  router.push({
+    name: "ChallengeFitUpdate",
+    params: { id: challengeBoardId.value },
+  });
 };
 
 const deleteChallengeFit = async () => {
   closeChallengeFitModal();
 
   await api.delete(`/challenge/${challengeBoardId.value}/${nickName}`);
-  router.push({ name: 'ChallengeFit' });
+  router.push({ name: "ChallengeFit" });
 };
 
 //좋아요
@@ -415,7 +527,9 @@ const likeCount = ref(0);
 const isLike = ref(0);
 //좋아요 조회
 async function requestChallengeLike() {
-  const { data } = await api.get(`/challenge/${challengeBoardId.value}/like/${nickName}`);
+  const { data } = await api.get(
+    `/challenge/${challengeBoardId.value}/like/${nickName}`
+  );
   isLike.value = data.like;
   likeCount.value = data.likeCount;
 }
@@ -903,5 +1017,47 @@ function goBack() {
     opacity: 1;
     transform: translateY(0);
   }
+}
+.challenge-detail__certification-item {
+  border: 1px solid #dee2e6; /* 기존 회색 테두리 유지 */
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+.challenge-detail__certification-item:hover {
+  background-color: #e7f1ff; /* 기존 파란 계열 연한 배경 */
+  box-shadow: 0 6px 12px rgba(51, 154, 240, 0.25); /* #339af0 계열 그림자 */
+}
+
+.challenge-detail__certification-item a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+.challenge-detail__cert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #6c757d; /* 기존 회색 계열 텍스트 */
+}
+
+.challenge-detail__cert-author .author {
+  font-weight: 600;
+  color: #339af0; /* 기존 파란 계열 */
+}
+
+.challenge-detail__cert-body {
+  font-size: 16px;
+  font-weight: 700;
+  color: #212529; /* 기존 다크 그레이 (진한 글자색) */
+  line-height: 1.4;
 }
 </style>

@@ -81,6 +81,13 @@ public class UserServiceImpl implements UserService {
 		return userDao.selectUser(userNickName);
 	}
 	
+	// 유저 정보 수정
+	@Override
+	public boolean updateUserInfo(User user) {
+		
+		return userDao.updateUser(user);
+	}
+	
 	
 	
 	

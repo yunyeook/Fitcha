@@ -5,7 +5,18 @@
       <a style="text-decoration: none" href="../views/fitLogDetail.html">
         <!-- 헤더 작성자 정보 -->
         <div class="header">
-          <img class="user-profile-image" src="" alt="작성자 프로필" />
+          <img
+            v-if="profileImgUrl"
+            :src="profileImgUrl"
+            alt="작성자 프로필 사진"
+            class="user-profile-image"
+          />
+          <img
+            v-else
+            :src="defaultProfileImg"
+            alt="기본 프로필 사진"
+            class="user-profile-image"
+          />
           <div class="user-info">
             <span class="title">{{ fitlog.title }}</span>
             <span class="user-name">{{ fitlog.writer }}</span>
@@ -51,11 +62,19 @@
 
 <script setup>
 import { computed } from "vue";
+import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 
 const props = defineProps({
   fitlog: {
     type: Object,
   },
+});
+
+const profileImgUrl = computed(() => {
+  if (props.fitlog?.userProfileImgUrl) {
+    return "http://localhost:8080/" + props.fitlog.userProfileImgUrl;
+  }
+  return "";
 });
 
 const imgUrl = computed(() => {

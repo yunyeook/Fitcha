@@ -15,6 +15,7 @@ import com.ssafy.fitcha.model.dto.Comment;
 import com.ssafy.fitcha.model.dto.Participate;
 import com.ssafy.fitcha.model.dto.Proof;
 import com.ssafy.fitcha.model.dto.SearchChallenge;
+import com.ssafy.fitcha.model.dto.User;
 
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
@@ -24,15 +25,18 @@ public class ChallengeServiceImpl implements ChallengeService {
 	private CommentService commentService;
 	private LikeService likeService;
 	private OpenaiService openaiService;
+	private UserService userService;
 
 	public ChallengeServiceImpl(ChallengeDao challengeDao, FileService fileService, ProofService proofService,
-			CommentService commentService, LikeService likeService, OpenaiService openaiService) {
+			CommentService commentService, LikeService likeService, OpenaiService openaiService,
+			UserService userService) {
 		this.challengeDao = challengeDao;
 		this.fileService = fileService;
 		this.proofService = proofService;
 		this.commentService = commentService;
 		this.likeService = likeService;
 		this.openaiService = openaiService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -48,6 +52,11 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 			// 종료되었는지 확인후 저장
 			checkAndUpdateFinish(challenge);
+
+			// 유저 프로필 이미지
+			String nickName = challenge.getWriter();
+			User user = userService.getUserInfo(nickName);
+			challenge.setUserProfileImgUrl(user.getProfileImgUrl());
 
 		}
 		return challengeBoardList;
@@ -83,6 +92,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 		// 챌린지 종료되었는지 확인 후 저장
 		checkAndUpdateFinish(challenge);
+
+		// 유저 프로필 이미지
+		String writer = challenge.getWriter();
+		User user = userService.getUserInfo(writer);
+		challenge.setUserProfileImgUrl(user.getProfileImgUrl());
+		System.out.println(user);
 
 		return challenge;
 	}

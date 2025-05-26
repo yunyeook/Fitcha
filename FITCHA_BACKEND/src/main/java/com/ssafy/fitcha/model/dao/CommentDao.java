@@ -3,6 +3,7 @@ package com.ssafy.fitcha.model.dao;
 import java.util.List;
 
 import com.ssafy.fitcha.model.dto.Comment;
+import com.ssafy.fitcha.model.dto.CommentProof;
 
 public interface CommentDao {
 
@@ -21,16 +22,16 @@ public interface CommentDao {
 	// ---------------------------------인증글 댓글----------------------------------------------------------
 	
 	// 인증글 댓글 목록 조회 
-	List<Comment> selectProofCommentList(int proofBoardId);
+	List<CommentProof> selectProofCommentList(int proofBoardId);
 	
 	// 인증글 댓글 등록
-	int insertProofComment(Comment comment);
+	int insertProofComment(CommentProof comment);
 	
 	// 인증글 댓글 삭제
-	int deleteProofComment(Comment comment);
+	int deleteProofComment(CommentProof comment);
 
 	// 인증글 댓글 수정 
-	int updateProofComment(Comment comment);
+	int updateProofComment(CommentProof comment);
 	
 	
 	// --------------------------------- 영상 댓글----------------------------------------------------------

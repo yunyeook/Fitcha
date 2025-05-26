@@ -32,4 +32,7 @@ public interface FileDao {
 
 	// 인증글 파일 등록
 	public void insertProofFile(ProofFile proofFile);
+	
+	// 인증글 파일 수정
+	public void updateProofFile(ProofFile proofFile);
 }

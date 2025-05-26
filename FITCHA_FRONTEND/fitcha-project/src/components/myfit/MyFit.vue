@@ -3,8 +3,15 @@
     <!-- 프로필 헤더 -->
     <div v-if="!isEditing" class="profile-info-wrapper">
       <img
-        src="../../assets/images/run.jpg"
+        v-if="profileImgUrl"
+        :src="profileImgUrl"
         alt="프로필 사진"
+        class="profile-img"
+      />
+      <img
+        v-else
+        :src="defaultProfileImg"
+        alt="기본 프로필 사진"
         class="profile-img"
       />
       <div class="user-info">
@@ -17,8 +24,10 @@
     </div>
     <MyFitUpdate
       v-if="isEditing"
+      :name="userInfo.name"
       :nickName="userInfo.nickName"
-      @close="isEditing = false"
+      :profileImgUrl="userInfo.profileImgUrl"
+      @close="handleClose"
     />
 
     <!-- 탭 메뉴 -->
@@ -65,17 +74,25 @@
 import api from "@/api/api";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import FitLogCard from "../fitlog/FitLogCard.vue";
 import ChallengeFitCard from "../challengefit/ChallengeFitCard.vue";
 import MyFitUpdate from "./MyFitUpdate.vue";
+import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 
 const isEditing = ref(false);
 const userStore = useUserStore();
-const { nickName } = storeToRefs(userStore);
+const { nickName, userBoardId } = storeToRefs(userStore);
 const userInfo = ref({});
 const fitlogs = ref([]);
 const challenges = ref([]);
+
+const profileImgUrl = computed(() => {
+  if (userInfo.value?.profileImgUrl) {
+    return "http://localhost:8080/" + userInfo.value?.profileImgUrl;
+  }
+  return "";
+});
 
 // 탭 상태
 const activeTab = ref("challenge"); // 초기값은 'challenge'
@@ -83,6 +100,22 @@ const activeTab = ref("challenge"); // 초기값은 'challenge'
 const changeTab = (tab) => {
   activeTab.value = tab;
 };
+
+const handleClose = (updatedProfile) => {
+  if (updatedProfile) {
+    userInfo.value = { ...userInfo.value, ...updatedProfile };
+
+    // 캐시 방지용으로 profileImgUrl 갱신 (이미지가 바로 안 바뀌는 경우)
+    if (updatedProfile.profileImgUrl) {
+      userInfo.value.profileImgUrl = `${
+        updatedProfile.profileImgUrl
+      }?t=${Date.now()}`;
+    }
+  }
+
+  isEditing.value = false;
+};
+
 onMounted(async () => {
   if (!nickName.value) return; // 값이 없으면 요청 안 보냄
 
@@ -98,8 +131,6 @@ onMounted(async () => {
     userInfo.value = userInfoList.data;
     challenges.value = challengeList.data;
     fitlogs.value = fitlogList.data;
-
-    console.dir(challenges.value);
   } catch (error) {
     console.error(
       "병렬 처리(유저 정보, 챌린지글, 인증글) 불러오기 실패:",

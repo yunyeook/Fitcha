@@ -38,17 +38,16 @@
           MyFit
         </router-link>
       </li>
-      <li>
+      <!-- <li>
         <a href="#">
           <i class="fas fa-comments"></i>
           FitTalk
         </a>
-      </li>
+      </li> -->
     </ul>
 
     <!-- 로그아웃 버튼 -->
     <div class="logout-btn" v-if="nickName">
-      >
       <button type="button" @click="handleLogout">
         <i class="fas fa-sign-out-alt"></i>
         logout
@@ -58,11 +57,11 @@
 </template>
 
 <script setup>
-import { useUserStore } from '@/stores/user';
-import { useRouter } from 'vue-router';
-import { logout } from '@/stores/logout';
+import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
+import { logout } from "@/stores/logout";
 
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -130,7 +129,7 @@ const handleLogout = () => {
   border: none;
   color: #9fa3a6;
   font-size: 1rem;
-  margin-top: 150px;
+  margin-top: 200px;
   cursor: pointer;
 }
 </style>

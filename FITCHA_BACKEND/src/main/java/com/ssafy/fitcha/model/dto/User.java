@@ -2,7 +2,7 @@ package com.ssafy.fitcha.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description="사용자 정보 DTO")
+@Schema(description = "사용자 정보 DTO")
 public class User {
 	private int userBoardId; // DB user 테이블에서 user들을 식별하는 고유 id (auto_increment로 생김)
 	private String userId;
@@ -12,6 +12,20 @@ public class User {
 	private String nickName;
 	private int age;
 	private String gender;
+	private String profileImgUrl; // 유저 프사 이미지 경로
+	
+	
+
+	public User() {
+	}
+
+	public String getProfileImgUrl() {
+		return profileImgUrl;
+	}
+
+	public void setProfileImgUrl(String profileImgUrl) {
+		this.profileImgUrl = profileImgUrl;
+	}
 
 	public int getUserBoardId() {
 		return userBoardId;
@@ -82,8 +96,5 @@ public class User {
 		return "User [userBoardId=" + userBoardId + ", userId=" + userId + ", password=" + password + ", email=" + email
 				+ ", name=" + name + ", nickName=" + nickName + ", age=" + age + ", gender=" + gender + "]";
 	}
-	
-	
-	
-	
+
 }

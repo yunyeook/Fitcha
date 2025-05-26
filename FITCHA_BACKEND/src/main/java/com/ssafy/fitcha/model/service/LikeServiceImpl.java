@@ -53,18 +53,29 @@ public class LikeServiceImpl implements LikeService {
 	}
 
 	@Override
-	public boolean updateProofLike(boolean isLiked, int proofBoardId, String nickName) {
+	public boolean addLike(int proofBoardId, String nickName) {
 		Like like = new Like();
 		like.setBoardId(proofBoardId);
 		like.setWriter(nickName);
-
-		// 좋아요버튼눌렀다면
-		if (isLiked)
-			return 1 == likeDao.insertProofLike(like);
-		else
-			return 1 == likeDao.deleteProofLike(like);
-
+		return likeDao.insertProofLike(like) == 1;
 	}
+
+	@Override
+	public boolean removeLike(int proofBoardId, String nickName) {
+		Like like = new Like();
+		like.setBoardId(proofBoardId);
+		like.setWriter(nickName);
+		return likeDao.deleteProofLike(like) == 1;
+	}
+
+	@Override
+	public boolean checkLikeByWriter(int proofBoardId, String writer) {
+		Like like = new Like();
+		like.setBoardId(proofBoardId);
+		like.setWriter(writer);
+		return likeDao.selecCheckProofLike(like) > 0;
+	}
+
 	// -------------------- 영상 좋아요-------------------------------------------------
 
 	@Override

@@ -5,8 +5,15 @@
       <div class="header">
         <div class="userAndTitle">
           <img
+            v-if="writerProfileImgUrl"
             class="user-profile-image"
-            src="../assets/images/user1.jpg"
+            :src="writerProfileImgUrl"
+            alt="작성자 프로필"
+          />
+          <img
+            v-else
+            :src="defaultProfileImg"
+            class="user-profile-image"
             alt="작성자 프로필"
           />
           <div class="user-info">
@@ -14,6 +21,7 @@
             <span class="user-name">{{ fitlog.writer }}</span>
           </div>
         </div>
+        <!-- 내 글이면 메뉴 보임 -->
         <div v-if="isMyFitLog" class="proof-menu" @click="openProofModal">
           <i class="fas fa-ellipsis-v"></i>
         </div>
@@ -33,16 +41,19 @@
 
       <!-- 인증글 내용 -->
       <div class="proof-content">
-        <p>
-          {{ fitlog.content }}
-        </p>
+        <p>{{ fitlog.content }}</p>
 
         <div class="content-bottom">
-          <div class="hashtags">#5일차성공 #아침러닝 #챌린지인증</div>
+          <div class="hashtags">
+            <span v-for="hashtag in fitlog.hashTags" :key="hashtag">
+              {{ hashtag }}
+            </span>
+          </div>
           <router-link
             class="go-challenge"
             :to="`/challengefit/${fitlog.challengeBoardId}`"
-            >참여한 챌린지 보기 &rarr;
+          >
+            참여한 챌린지 보기 &rarr;
           </router-link>
         </div>
       </div>
@@ -55,40 +66,56 @@
             <i class="fas fa-eye"></i>
             <span>{{ fitlog.viewCount }}</span>
           </div>
-          <div class="like">
-            <i class="fas fa-heart"></i>
-            <span>{{ fitlog.likeCount }}</span>
+          <div
+            class="like"
+            @click="toggleLike"
+            @animationend="likeAnimation = false"
+          >
+            <i
+              :class="['fas', 'fa-heart', likeAnimation ? 'pop' : '']"
+              :style="{ color: isLiked ? '#ff6b6b' : '#ccc' }"
+            ></i>
+            <span>{{ likeCount || 0 }}</span>
           </div>
         </div>
       </div>
 
       <!-- 댓글 영역 -->
       <div class="comment-list">
-        <div class="comment-card">
+        <!-- 댓글 입력 폼 -->
+        <div class="comment-form">
           <img
             class="comment-profile"
-            src="../assets/images/user1.jpg"
-            alt="프로필"
+            :src="profileImgWithCache || defaultProfileImg"
+            alt="내 프로필"
           />
-          <div class="comment-body">
-            <div class="comment-header">
-              <span class="comment-author">사용자1</span>
-              <div class="comment-menu" @click="openCommentModal">
-                <i class="fas fa-ellipsis-v"></i>
-              </div>
-            </div>
-            <div class="comment-text">
-              저도 참가할게요! 매일 아침 달리기 기대돼요.
-            </div>
-            <div class="comment-date">2025년 5월 5일</div>
-          </div>
+          <input
+            type="text"
+            placeholder="댓글을 입력하세요..."
+            v-model="commentContent"
+            @keyup.enter="submitComment"
+          />
+          <button @click="submitComment">등록</button>
         </div>
+
+        <!-- 댓글 리스트 -->
+        <FitlogCardComment
+          v-for="comment in comments"
+          :key="comment.proofCommentId"
+          :comment="comment"
+          :isEditing="editingCommentId === comment.proofCommentId"
+          :editingContent="editingCommentContent"
+          @updateEditingContent="updateCommentContent"
+          @submitEdit="updateComment"
+          @open-comment-modal="openCommentModal"
+        />
       </div>
+
       <!-- 댓글 수정/삭제 모달 -->
       <div
         v-if="showCommentModal"
         class="modal-overlay"
-        @click.self="openCommentModal"
+        @click.self="closeCommentModal"
       >
         <div class="modal-box">
           <button class="modal-close-button" @click="closeCommentModal">
@@ -101,6 +128,7 @@
           </button>
         </div>
       </div>
+
       <!-- 인증글 수정/삭제 모달 -->
       <div
         v-if="showProofModal"
@@ -125,41 +153,253 @@
 </template>
 
 <script setup>
+import api from "@/api/api";
+import { ref, computed, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import FitlogCardComment from "./FitlogCardComment.vue";
+import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
+
+// props로 fitlog 객체 받음
 const props = defineProps({
   fitlog: {
     type: Object,
+    required: true,
   },
 });
 
-import api from "@/api/api";
-import { useUserStore } from "@/stores/user";
-import { ref, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
+// 반응성 유지 위해 computed로 래핑
+const fitlog = computed(() => props.fitlog);
 
+// proofBoardId 추출 (댓글, 좋아요 API에 사용)
+const proofBoardId = computed(() => fitlog.value?.proofBoardId || null);
+
+// 유저 정보(store) 가져오기
 const userStore = useUserStore();
-const { nickName } = storeToRefs(userStore);
+const { nickName, userId, profileImgUrl } = storeToRefs(userStore);
 
-const isMyFitLog = computed(() => {
-  return props.fitlog?.writer === nickName.value;
+const cacheBuster = ref(Date.now());
+
+// 캐시 무효화를 위한 쿼리스트링 추가
+const profileImgWithCache = computed(() => {
+  if (profileImgUrl.value) {
+    return `http://localhost:8080/${profileImgUrl.value}?t=${cacheBuster.value}`;
+  }
+  return "";
 });
 
+// 내 글인지 확인 (작성자 닉네임과 현재 닉네임 비교)
+const isMyFitLog = computed(() => fitlog.value?.writer === nickName.value);
+
+// 라우터 인스턴스
 const router = useRouter();
+
+// 댓글 및 인증글 모달 상태
 const showCommentModal = ref(false);
 const showProofModal = ref(false);
+
+// 인증 이미지 URL (첫번째 proofFile이 있으면 주소 붙여서 반환)
 const imgUrl = computed(() => {
-  return props.fitlog?.proofFiles?.length > 0
-    ? "http://localhost:8080/" + props.fitlog.proofFiles[0].fileUrl
-    : "";
+  if (fitlog.value?.proofFiles?.length > 0) {
+    return "http://localhost:8080/" + fitlog.value.proofFiles[0].fileUrl;
+  }
+  return "";
 });
-// 댓글 수정 삭제 모달
-const openCommentModal = () => {
+
+// 좋아요 상태 관리
+const isLiked = ref(false);
+// 초기 좋아요 개수는 fitlog의 값을 넣되, 서버에서 새로고침 시 최신화 필요
+const likeCount = ref(fitlog.value.likeCount || 0);
+const likeAnimation = ref(false);
+
+// 댓글 리스트 관리
+const comments = ref([]);
+
+// 댓글 작성 입력 상태
+const commentContent = ref("");
+
+// 댓글 수정 상태
+const editingCommentId = ref(null);
+const editingCommentContent = ref("");
+
+// 선택된 댓글 (댓글 모달에서 관리 대상)
+const selectedComment = ref(null);
+
+/**
+ * 좋아요 상태와 좋아요 개수를 서버에서 동기화하여 불러오는 함수
+ * 컴포넌트 마운트 시, proofBoardId 혹은 닉네임 변경 시 호출하여 UI와 서버 상태 일치
+ */
+async function fetchLikeStatusAndCount() {
+  if (!proofBoardId.value || !nickName.value) return;
+
+  try {
+    // 1) 좋아요 여부 조회 API 호출
+    const resLikeStatus = await api.get(
+      `/proof/${proofBoardId.value}/like/check`,
+      {
+        params: { writer: nickName.value },
+      }
+    );
+    isLiked.value = resLikeStatus.data.liked;
+
+    // 2) 인증글 상세 조회 API 호출하여 최신 좋아요 개수 받아오기
+    const resProof = await api.get(`/proof/${proofBoardId.value}`);
+    likeCount.value = resProof.data.likeCount ?? 0;
+  } catch (error) {
+    console.error("좋아요 상태 및 개수 불러오기 실패:", error);
+  }
+}
+
+/**
+ * 댓글 리스트 조회 API 호출
+ */
+async function fetchComments() {
+  if (!proofBoardId.value) return;
+  try {
+    const res = await api.get(`/proof/${proofBoardId.value}/comment`);
+    comments.value = res.data;
+  } catch (error) {
+    console.error("댓글 로딩 실패:", error);
+  }
+}
+
+/**
+ * 좋아요 토글 함수
+ * UI는 즉시 반영(좋아요 수 1 증가/감소) - Optimistic UI
+ * 실패 시 이전 상태로 롤백
+ * 성공 시 서버 최신 데이터로 좋아요 수 재동기화
+ */
+const toggleLike = async () => {
+  if (!proofBoardId.value || !nickName.value) return;
+
+  likeAnimation.value = true;
+
+  // 이전 좋아요 상태와 좋아요 수 저장 (롤백용)
+  const prevLiked = isLiked.value;
+  const prevCount = likeCount.value;
+
+  // Optimistic UI 업데이트
+  isLiked.value = !prevLiked;
+  likeCount.value += isLiked.value ? 1 : -1;
+
+  try {
+    if (prevLiked) {
+      // 이전에 좋아요 누른 상태였다면 좋아요 취소 API 호출
+      await api.delete(`/proof/${proofBoardId.value}/like`, {
+        data: { nickName: nickName.value },
+      });
+    } else {
+      // 이전에 좋아요 안 누른 상태였다면 좋아요 추가 API 호출
+      await api.post(`/proof/${proofBoardId.value}/like`, {
+        nickName: nickName.value,
+      });
+    }
+
+    // 좋아요 처리 후, 서버에서 최신 좋아요 개수 다시 받아와서 동기화
+    const res = await api.get(`/proof/${proofBoardId.value}`);
+    likeCount.value = res.data.likeCount ?? 0;
+  } catch (error) {
+    // 에러 발생 시 UI 롤백
+    isLiked.value = prevLiked;
+    likeCount.value = prevCount;
+    console.error("좋아요 처리 실패:", error);
+  }
+};
+
+/**
+ * 댓글 등록 함수
+ */
+const submitComment = async () => {
+  if (!commentContent.value.trim()) return; // 빈 댓글 무시
+
+  if (!proofBoardId.value || !nickName.value || !userId.value) return;
+
+  try {
+    await api.post(`/proof/${proofBoardId.value}/comment`, {
+      content: commentContent.value,
+      writer: nickName.value,
+      userId: userId.value,
+      proofBoardId: proofBoardId.value,
+    });
+    commentContent.value = "";
+    await fetchComments(); // 댓글 리스트 업데이트
+  } catch (error) {
+    console.error("댓글 등록 실패:", error);
+  }
+};
+
+/**
+ * 댓글 수정 내용 업데이트 (자식 컴포넌트에서 호출)
+ */
+const updateCommentContent = (val) => {
+  editingCommentContent.value = val;
+};
+
+/**
+ * 댓글 수정 함수
+ */
+const updateComment = async (proofCommentId) => {
+  if (!proofBoardId.value) return;
+
+  try {
+    await api.put(`/proof/${proofBoardId.value}/comment/${proofCommentId}`, {
+      content: editingCommentContent.value,
+    });
+    await fetchComments();
+    editingCommentId.value = null;
+    editingCommentContent.value = "";
+  } catch (error) {
+    console.error("댓글 수정 실패:", error);
+  }
+};
+
+/**
+ * 댓글 모달 열기
+ */
+const openCommentModal = (comment) => {
+  selectedComment.value = comment;
   showCommentModal.value = true;
 };
 
+/**
+ * 댓글 모달 닫기
+ */
 const closeCommentModal = () => {
   showCommentModal.value = false;
+  selectedComment.value = null;
 };
+
+/**
+ * 댓글 수정 버튼 클릭 시 호출
+ */
+const editComment = () => {
+  if (!selectedComment.value) return;
+  editingCommentId.value = selectedComment.value.proofCommentId;
+  editingCommentContent.value = selectedComment.value.content;
+  showCommentModal.value = false;
+};
+
+/**
+ * 댓글 삭제 함수
+ */
+const deleteComment = async () => {
+  if (!selectedComment.value || !proofBoardId.value) return;
+
+  try {
+    await api.delete(
+      `/proof/${proofBoardId.value}/comment/${selectedComment.value.proofCommentId}`
+    );
+    showCommentModal.value = false;
+    await fetchComments();
+  } catch (error) {
+    console.error("댓글 삭제 실패:", error);
+  }
+};
+
+/**
+ * 인증글 모달 상태 관리
+ */
 const openProofModal = () => {
   showProofModal.value = true;
 };
@@ -168,28 +408,67 @@ const closeProofModal = () => {
   showProofModal.value = false;
 };
 
-const editComment = () => {
-  alert("수정 기능은 여기에 구현하면 됨.");
-  closeCommentModal();
-};
-
-const deleteComment = async () => {
-  closeCommentModal();
-};
+/**
+ * 인증글 수정 (이동)
+ */
 const editProof = () => {
-  alert("수정 기능은 여기에 구현하면 됨.");
+  router.push({
+    name: "FitLogUpdateView",
+    params: { proofBoardId: proofBoardId.value },
+  });
   closeProofModal();
 };
 
+/**
+ * 인증글 삭제
+ */
 const deleteProof = async () => {
+  if (!proofBoardId.value) return;
+
   try {
-    await api.delete(`proof/${props.fitlog.proofBoardId}`);
+    await api.delete(`/proof/${proofBoardId.value}`);
     closeProofModal();
-    router.push(`/fitlog`);
+    router.push({ name: "ProofList" });
   } catch (error) {
-    console.error("인증글 삭제 중 오류 발생:", error);
+    console.error("인증글 삭제 실패:", error);
   }
 };
+
+// --- 컴포넌트 마운트 시, 좋아요 상태 및 댓글 목록 동기화 ---
+onMounted(async () => {
+  await fetchLikeStatusAndCount(); // 좋아요 상태와 개수 함께 받아옴
+  await fetchComments();
+});
+
+// 작성자 프사 이미지
+const writerProfileImgUrl = ref(""); // 반응형으로 선언
+watch(
+  () => fitlog.value?.writer,
+  async (writer) => {
+    if (writer) {
+      try {
+        const { data } = await api.get(`/user/${writer}`);
+        writerProfileImgUrl.value = data.profileImgUrl
+          ? `http://localhost:8080/${data.profileImgUrl}`
+          : defaultProfileImg;
+      } catch (error) {
+        console.error("작성자 프로필 이미지 가져오기 실패:", error);
+        writerProfileImgUrl.value = defaultProfileImg;
+      }
+    } else {
+      writerProfileImgUrl.value = defaultProfileImg;
+    }
+  },
+  { immediate: true }
+);
+
+// proofBoardId 또는 닉네임이 변경될 때도 다시 동기화
+watch([proofBoardId, nickName], async ([newProofId, newNick]) => {
+  if (newProofId && newNick) {
+    await fetchLikeStatusAndCount();
+    await fetchComments();
+  }
+});
 </script>
 
 <style scoped>
@@ -220,8 +499,8 @@ const deleteProof = async () => {
 }
 
 .user-profile-image {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -233,12 +512,12 @@ const deleteProof = async () => {
 
 .user-info .title {
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   color: #222;
 }
 
 .user-info .user-name {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #777;
   margin-top: 7px;
 }
@@ -270,7 +549,7 @@ const deleteProof = async () => {
 }
 
 .badge {
-  font-size: 0.75rem;
+  font-size: 1rem;
   padding: 2px 10px;
   border-radius: 12px;
   font-weight: 500;
@@ -295,7 +574,7 @@ const deleteProof = async () => {
 
 /* 인증글 본문 */
 .proof-content p {
-  font-size: 1rem;
+  font-size: 1.25rem;
   line-height: 1.6;
   color: #444;
   margin-bottom: 8px;
@@ -311,11 +590,13 @@ const deleteProof = async () => {
 
 .hashtags {
   color: #3cb371;
-  font-size: 0.8rem;
+  font-size: 1rem;
+  display: flex;
+  gap: 10px;
 }
 
 .go-challenge {
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: #3cb371;
   font-weight: bold;
   text-decoration: none;
@@ -333,12 +614,12 @@ const deleteProof = async () => {
   align-items: center;
   border-top: 1px solid #eee;
   padding-top: 12px;
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: #666;
 }
 
 .write-date {
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: #888;
 }
 
@@ -356,10 +637,44 @@ const deleteProof = async () => {
   font-size: 1rem;
   gap: 7px;
 }
-
 .stats .like {
+  cursor: pointer;
+}
+
+.stats .like i {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.stats .like:hover i {
+  transform: scale(1.8);
+  color: #ff8787; /* hover 시 색 강조 */
+}
+
+.fa-heart.liked {
+  color: #ff6b6b;
+}
+.fa-heart {
+  color: #ccc;
+  transition: color 0.3s;
+}
+/* .stats .like {
   color: #ff6b6b;
   cursor: pointer;
+} */
+.pop {
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .stats .views {

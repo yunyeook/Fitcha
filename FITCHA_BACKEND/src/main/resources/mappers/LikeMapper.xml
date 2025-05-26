@@ -37,8 +37,8 @@
 	
 	<!-- ===========인증글 좋아요 ==================-->
 	<!-- 인증글 좋아요 여부 조회 -->
-	<select id="selectProofLike" parameterType="like" resultType="like">
-		SELECT * 
+	<select id="selecCheckProofLike" parameterType="like" resultType="int">
+		SELECT Count(*) 
 	 	 FROM proof_like
 	    WHERE proof_board_id = #{boardId}
 		  AND writer = #{writer}
