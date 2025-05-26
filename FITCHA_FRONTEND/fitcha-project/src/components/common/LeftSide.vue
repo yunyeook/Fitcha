@@ -61,11 +61,11 @@
 </template>
 
 <script setup>
-import { useUserStore } from '@/stores/user';
-import { useRouter } from 'vue-router';
-import { logout } from '@/stores/logout';
+import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
+import { logout } from "@/stores/logout";
 
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -132,8 +132,8 @@ const handleLogout = () => {
   background-color: #fff;
   border: none;
   color: #9fa3a6;
-  font-size: 1rem;
-  margin-top: 200px;
+  font-size: 1.2rem;
+  margin-top: 140px;
   cursor: pointer;
 }
 </style>

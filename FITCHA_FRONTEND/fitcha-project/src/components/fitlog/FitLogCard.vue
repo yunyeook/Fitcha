@@ -1,6 +1,6 @@
 <template>
   <!-- 인증글 게시글 카드 구조 -->
-  <router-link class="link-detail" :to="`fitlog/${fitlog.proofBoardId}`">
+  <router-link class="link-detail" :to="`/fitlog/${fitlog.proofBoardId}`">
     <div class="proof-card">
       <a style="text-decoration: none" href="../views/fitLogDetail.html">
         <!-- 헤더 작성자 정보 -->

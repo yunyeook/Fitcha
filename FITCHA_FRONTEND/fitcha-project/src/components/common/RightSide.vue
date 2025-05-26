@@ -2,23 +2,23 @@
   <div class="right-sidebar">
     <!-- 로그인 유저 정보 섹션 -->
 
-    <div class="user-info" v-if="nickName">
+    <div class="profile-section">
       <img
-        v-if="profileImgWithCache"
-        :src="profileImgWithCache"
-        alt="profile image"
+        :src="profileImgWithCache || defaultProfileImg"
+        alt="프로필 이미지"
         class="profile-img"
       />
-      <img
-        v-else
-        :src="defaultProfileImg"
-        alt="default profile image"
-        class="profile-img"
-      />
-      <div class="user-details">
+      <div class="profile-text">
         <span class="nickname">{{ nickName }}</span>
-        <span class="status-indicator" title="온라인 상태"></span>
+        <span class="user-meta">🌱 challenge Lv.1</span>
       </div>
+      <router-link
+        :to="`/myfit/${nickName}`"
+        class="settings-icon"
+        title="마이페이지"
+      >
+        <i class="fas fa-cog"></i>
+      </router-link>
     </div>
 
     <!-- 로그인 버튼 -->
@@ -301,6 +301,7 @@ const profileImgWithCache = computed(() => {
   font-size: 0.9rem;
   box-sizing: border-box;
   height: 300px;
+  margin-top: 25px;
   /* 자식 요소가 넘치지 않도록 */
   /* overflow-x: hidden; */
 }
@@ -328,7 +329,7 @@ const profileImgWithCache = computed(() => {
 .weather {
   padding: 0px 20px;
   padding-bottom: 20px;
-  margin-top: 30px;
+  margin-top: 20px;
   border-radius: 16px;
   /* background: linear-gradient(135deg, #e0f7f1, #d0f0ff); */
   /* box-shadow: 0 8px 20px rgba(50, 115, 170, 0.1); */
@@ -484,5 +485,81 @@ const profileImgWithCache = computed(() => {
 
 .modal-content .reject-btn:hover {
   background-color: #b91c1c;
+}
+
+.user-info-card {
+  background: linear-gradient(135deg, #f0fdfa, #e0f2fe);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeIn 0.4s ease-in-out;
+  position: relative;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.profile-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.nickname {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.user-meta {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.settings-icon {
+  margin-left: auto;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.settings-icon:hover {
+  color: #0f766e;
+}
+
+.user-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.user-stats div {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #64748b;
 }
 </style>

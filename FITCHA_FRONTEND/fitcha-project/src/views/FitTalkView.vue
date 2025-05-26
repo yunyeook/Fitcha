@@ -4,16 +4,28 @@
     <MainContentSearch />
     <MainDetailLayout>
       <div class="chat-room-list">
-        <h2>💬 채팅방 목록</h2>
+        <h2><i class="fa-solid fa-message"></i> 채팅방 목록</h2>
+
         <div class="chat-room-input">
-          <input v-model="newRoom" placeholder="채팅방 이름 입력" @keyup.enter="createRoom" />
-          <button @click="createRoom">➕ 채팅방 생성</button>
+          <input
+            v-model="newRoom"
+            placeholder="새 채팅방 이름"
+            @keyup.enter="createRoom"
+          />
+          <button @click="createRoom">
+            <i class="fa-solid fa-paper-plane"></i> 생성
+          </button>
         </div>
 
         <ul class="room-list">
           <li class="room-item" v-for="room in filteredRooms" :key="room.id">
-            <span class="room-name">{{ room.name }}</span>
-            <router-link class="enter-btn" :to="`/fittalk/room/${room.id}`">입장</router-link>
+            <!-- room.name 아이콘 -->
+            <span class="room-name">
+              {{ room.name }}
+            </span>
+            <router-link class="enter-btn" :to="`/fittalk/room/${room.id}`"
+              >입장</router-link
+            >
           </li>
         </ul>
       </div>
@@ -22,118 +34,299 @@
 </template>
 
 <script setup>
-import MainHeader from '@/components/common/MainHeader.vue';
-import MainContentSearch from '@/components/common/MainContentSearch.vue';
-import MainDetailLayout from '@/components/common/MainDetailLayout.vue';
+import MainHeader from "@/components/common/MainHeader.vue";
+import MainContentSearch from "@/components/common/MainContentSearch.vue";
+import MainDetailLayout from "@/components/common/MainDetailLayout.vue";
 
-import api from '@/api/api';
-import { ref, onMounted, computed } from 'vue';
+import api from "@/api/api";
+import { ref, onMounted, computed } from "vue";
 
 const rooms = ref([]);
-const newRoom = ref('');
+const newRoom = ref("");
 
-const filteredRooms = computed(() => (Array.isArray(rooms.value) ? rooms.value.filter(r => r?.name) : []));
+const filteredRooms = computed(() =>
+  Array.isArray(rooms.value) ? rooms.value.filter((r) => r?.name) : []
+);
 
 async function loadRooms() {
   try {
-    const { data } = await api.get('/api/chat/rooms');
-    console.log('rooms 응답:', data);
+    const { data } = await api.get("/api/chat/rooms");
+    console.log("rooms 응답:", data);
 
     rooms.value = data;
   } catch (err) {
-    console.error('방 목록 불러오기 실패:', err);
+    console.error("방 목록 불러오기 실패:", err);
   }
 }
 
 async function createRoom() {
-  console.log('버튼클릭함');
+  console.log("버튼클릭함");
   const name = newRoom.value.trim();
   if (!name) return;
-  console.log('채팅방 생성 요청:', name); // ✅ 이거 찍어보세요
+  console.log("채팅방 생성 요청:", name); // ✅ 이거 찍어보세요
   try {
-    await api.post('/api/chat/rooms', { name });
-    newRoom.value = '';
+    await api.post("/api/chat/rooms", { name });
+    newRoom.value = "";
     await loadRooms();
   } catch (err) {
-    console.error('채팅방 생성 실패:', err);
+    console.error("채팅방 생성 실패:", err);
   }
 }
 
 onMounted(loadRooms);
 </script>
+
 <style scoped>
 .chat-room-list {
-  padding: 0px 20px 20px;
-  max-width: 640px;
-  margin: 0 auto;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  padding: 12px;
+  max-width: 720px;
+  margin: 10px auto;
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
 }
 
-/* 생성 인풋 영역 (기존) */
+.chat-room-list h2 {
+  font-size: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #2f9e44; /* 진한 초록 */
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 10px;
+}
+.chat-room-list h2 i {
+  color: #2f9e44;
+  font-size: 22px;
+}
+
 .chat-room-input {
   display: flex;
+  align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
+  background-color: #f1f3f5;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
 }
 
 .chat-room-input input {
   flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #ffffff;
+  color: #212529;
+  transition: box-shadow 0.2s;
+}
+.chat-room-input input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(64, 192, 87, 0.3);
 }
 
 .chat-room-input button {
-  padding: 8px 16px;
+  padding: 10px 16px;
   background-color: #40c057;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+}
+.chat-room-input button:hover {
+  background-color: #37b24d;
 }
 
-/* 방 목록을 카드 형태로 */
 .room-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .room-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  background-color: #f8f9fa;
-  transition: background-color 0.2s, box-shadow 0.2s;
+  padding: 16px 20px;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  background-color: #ffffff;
+  transition: box-shadow 0.2s, transform 0.1s;
 }
 .room-item:hover {
-  background-color: #e9ecef;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
 }
 
 .room-name {
-  font-weight: 500;
-  color: #495057;
+  font-size: 16px;
+  font-weight: 600;
+  color: #343a40;
+  display: flex;
+  align-items: center;
+  gap: 30px;
 }
 
-/* 댓글 등록 버튼 스타일과 비슷하게 */
+.icon-room {
+  color: #2f9e44;
+  font-size: 18px;
+}
+
 .enter-btn {
-  padding: 6px 14px;
+  padding: 8px 16px;
   background-color: #40c057;
   color: white;
-  border-radius: 6px;
+  border-radius: 8px;
   text-decoration: none;
   font-size: 14px;
+  font-weight: 500;
   transition: background-color 0.2s;
 }
 .enter-btn:hover {
   background-color: #37b24d;
+}
+.chat-room-list {
+  padding: 3px 24px 20px;
+  max-width: 720px;
+  margin: 10px auto;
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  border-radius: 30px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.chat-room-list h2 {
+  font-size: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  color: #2f9e44; /* 진한 초록 */
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 10px;
+}
+.chat-room-list h2 i {
+  color: #2f9e44;
+  font-size: 22px;
+}
+
+.chat-room-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f1f3f5;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+}
+
+.chat-room-input input {
+  flex: 1;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #ffffff;
+  color: #212529;
+  transition: box-shadow 0.2s;
+}
+.chat-room-input input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(64, 192, 87, 0.3);
+}
+
+.chat-room-input button {
+  padding: 10px 16px;
+  background-color: #fac74f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+}
+.chat-room-input button:hover {
+  background-color: #fab005;
+}
+
+.room-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.room-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  background-color: #ffffff;
+  transition: box-shadow 0.2s, transform 0.1s;
+}
+.room-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.room-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #343a40;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-room {
+  color: #40c057;
+  font-size: 18px;
+}
+
+.enter-btn {
+  padding: 8px 16px;
+  background-color: #20c997;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.enter-btn:hover {
+  background-color: #37b24d;
+}
+
+.room-name {
+  gap: 16px;
+}
+
+.chat-room-list h2 i {
+  color: #ffffff;
+}
+
+.chat-room-list h2 {
+  background: linear-gradient(135deg, #69db7c 0%, #38d9a9 100%);
+  border-radius: 30px;
+  color: #ffffff;
+  height: 50px;
+  padding: 15px 40px;
 }
 </style>
