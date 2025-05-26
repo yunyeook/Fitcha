@@ -83,14 +83,11 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import { useUserStore } from '@/stores/user';
 import dayjs from 'dayjs';
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 
-onMounted(() => {
-  console.log(imgUrl.value)
-})
 
 import api, { BASE_URL } from '@/api/api';
 
