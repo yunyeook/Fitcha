@@ -1,21 +1,31 @@
 <template>
-  <div class="chat-room-list">
-    <h2>💬 채팅방 목록</h2>
-    <div class="chat-room-input">
-      <input v-model="newRoom" placeholder="채팅방 이름 입력" />
-      <button @click="createRoom">➕ 채팅방 생성</button>
-    </div>
+  <div class="page-wrapper">
+    <MainHeader />
+    <MainContentSearch />
+    <MainDetailLayout>
+      <div class="chat-room-list">
+        <h2>💬 채팅방 목록</h2>
+        <div class="chat-room-input">
+          <input v-model="newRoom" placeholder="채팅방 이름 입력" @keyup.enter="createRoom" />
+          <button @click="createRoom">➕ 채팅방 생성</button>
+        </div>
 
-    <ul>
-      <li v-for="room in filteredRooms" :key="room.id">
-        <span>{{ room.name }}</span>
-        <router-link :to="`/fittalk/room/${room.id}`">입장</router-link>
-      </li>
-    </ul>
+        <ul class="room-list">
+          <li class="room-item" v-for="room in filteredRooms" :key="room.id">
+            <span class="room-name">{{ room.name }}</span>
+            <router-link class="enter-btn" :to="`/fittalk/room/${room.id}`">입장</router-link>
+          </li>
+        </ul>
+      </div>
+    </MainDetailLayout>
   </div>
 </template>
 
 <script setup>
+import MainHeader from '@/components/common/MainHeader.vue';
+import MainContentSearch from '@/components/common/MainContentSearch.vue';
+import MainDetailLayout from '@/components/common/MainDetailLayout.vue';
+
 import api from '@/api/api';
 import { ref, onMounted, computed } from 'vue';
 
@@ -51,17 +61,20 @@ async function createRoom() {
 
 onMounted(loadRooms);
 </script>
-
 <style scoped>
 .chat-room-list {
-  padding: 20px;
-  max-width: 600px;
+  padding: 0px 20px 20px;
+  max-width: 640px;
   margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
+/* 생성 인풋 영역 (기존) */
 .chat-room-input {
   display: flex;
-  justify-content: space-between;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -74,7 +87,7 @@ onMounted(loadRooms);
 }
 
 .chat-room-input button {
-  padding: 8px 12px;
+  padding: 8px 16px;
   background-color: #40c057;
   color: white;
   border: none;
@@ -82,26 +95,45 @@ onMounted(loadRooms);
   cursor: pointer;
 }
 
+/* 방 목록을 카드 형태로 */
 .room-list {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .room-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
-  border: 1px solid #ddd;
+  padding: 14px 16px;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   background-color: #f8f9fa;
+  transition: background-color 0.2s, box-shadow 0.2s;
 }
+.room-item:hover {
+  background-color: #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.room-name {
+  font-weight: 500;
+  color: #495057;
+}
+
+/* 댓글 등록 버튼 스타일과 비슷하게 */
 .enter-btn {
-  padding: 6px 12px;
+  padding: 6px 14px;
   background-color: #40c057;
   color: white;
   border-radius: 6px;
   text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+.enter-btn:hover {
+  background-color: #37b24d;
 }
 </style>
