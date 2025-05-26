@@ -88,6 +88,8 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity<Void> registUser(@RequestBody User user) {
 
+		System.out.println(user.getNickName());
+
 		if (userService.registUser(user)) {
 
 			return ResponseEntity.ok().build();
@@ -188,30 +190,29 @@ public class UserController {
 
 	@Operation(summary = "프로필 이미지 수정")
 	@PutMapping("/update/{userBoardId}")
-	public ResponseEntity<User> updateUserInfo(@PathVariable int userBoardId,@RequestParam("nickName") String nickName,
-	        @RequestParam(value = "profileImgUrl", required = false) MultipartFile profileImgUrl) {
-		
-		
+	public ResponseEntity<User> updateUserInfo(@PathVariable int userBoardId, @RequestParam("nickName") String nickName,
+			@RequestParam(value = "profileImgUrl", required = false) MultipartFile profileImgUrl) {
+
 		User user = new User();
-		user.setUserBoardId(userBoardId);
+		user.setUserBoardId(Integer.valueOf(userBoardId));
 		user.setNickName(nickName);
-		
-	    try {
-	        if (profileImgUrl != null && !profileImgUrl.isEmpty()) {
-	            String imageUrl = fileService.updateUserFile(profileImgUrl);
-	            user.setProfileImgUrl(imageUrl);
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
 
-	    if (userService.updateUserInfo(user)) {
-	    	User updatedUser = userService.getUserInfo(nickName);
-	        return ResponseEntity.ok(updatedUser);
-	    }
+		try {
+			if (profileImgUrl != null && !profileImgUrl.isEmpty()) {
+				String imageUrl = fileService.updateUserFile(profileImgUrl);
+				user.setProfileImgUrl(imageUrl);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 
-	    return ResponseEntity.badRequest().build();
+		if (userService.updateUserInfo(user)) {
+			User updatedUser = userService.getUserInfo(nickName);
+			return ResponseEntity.ok(updatedUser);
+		}
+
+		return ResponseEntity.badRequest().build();
 
 	}
 

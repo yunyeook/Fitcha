@@ -3,8 +3,8 @@ package com.ssafy.fitcha.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.ssafy.fitcha.interceptor.LoginInterceptor;
 
@@ -36,8 +36,9 @@ public class WebConfig implements WebMvcConfigurer {
 		// "/uploads/**" 로 시작하는 요청을
 		// 실제 파일 시스템의 "C:/SSAFY/" 폴더에 있는 파일로 응답하도록 설정
 		registry.addResourceHandler("/upload/**")
-                .addResourceLocations("file:///C:/SSAFY/upload/");
-//				.addResourceLocations("file:///Users/ohsewon/Desktop/images/");
+//		.addResourceLocations("file:///C:/SSAFY/upload/");
+//		.addResourceLocations("file:///Users/ohsewon/Desktop/images/");
+				.addResourceLocations("file:/Users/hansol/Desktop/img/");
 
 	}
 

@@ -1,6 +1,5 @@
 package com.ssafy.fitcha.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,14 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.fitcha.model.service.NicknameService;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/api/nickname")
-@RequiredArgsConstructor
 public class NicknameController {
 
-	private final NicknameService nicknameService;
+	private NicknameService nicknameService;
 
 	public NicknameController(NicknameService nicknameService) {
 		this.nicknameService = nicknameService;

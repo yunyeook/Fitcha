@@ -2,18 +2,15 @@ package com.ssafy.fitcha.model.service;
 
 import java.util.Random;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.fitcha.model.dao.UserDao;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class NicknameService {
 
-	private final UserDao userDao;
+	private UserDao userDao;
 
 	public NicknameService(UserDao userDao) {
 		this.userDao = userDao;

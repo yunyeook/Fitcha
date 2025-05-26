@@ -97,6 +97,28 @@
         />
       </div>
     </section>
+
+    <!--새로 생성한 챌린지 -->
+    <h3>🆕 새로 등록된 챌린지</h3>
+
+    <section class="recent-challenges">
+      <div class="recent-slide-track">
+        <div class="challenge-card-slide" v-for="challenge in challenges.recent" :key="challenge.challengeBoardId">
+          <router-link
+            class="router-link"
+            :to="{
+              name: 'ChallengeFitDetail',
+              params: { id: challenge.challengeBoardId },
+              query: { isViewCounted: 'true', writer: nickName },
+            }"
+          >
+            <img :src="`${BASE_URL}/${challenge.challengeFiles[0]?.fileUploadName}`" alt="챌린지 이미지" />
+            <h4>{{ challenge.title }}</h4>
+            <p>{{ challenge.subhead }}</p>
+          </router-link>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -363,7 +385,8 @@ onUnmounted(() => {
   box-shadow: 0 5px 12px rgba(46, 139, 87, 0.15);
   transition: filter 0.3s ease;
 }
-.challenge-card h4 {
+.challenge-card h4,
+.challenge-card-slide h4 {
   margin-bottom: 6px;
   font-size: 1.15rem;
   color: #33643d;
@@ -474,7 +497,7 @@ onUnmounted(() => {
 /* 인증 사진 슬라이더 */
 .proof-gallery {
   overflow: hidden;
-  height: 180px;
+  /* height: 180px; */
   position: relative;
   border-radius: 16px;
   margin-bottom: 30px;
@@ -503,6 +526,7 @@ onUnmounted(() => {
   width: calc(180px * 12 + 18px * 11);
   animation: smoothSlide 25s ease-in-out infinite;
   margin-top: 40px;
+  width: max-content;
 }
 .proof-gallery img {
   width: 180px;
@@ -518,6 +542,90 @@ onUnmounted(() => {
   transform: translateY(-10px) scale(1.08) rotate(-1deg);
   box-shadow: 0 15px 30px rgba(46, 139, 87, 0.35);
   z-index: 1;
+}
+
+/* 새로 생성된 챌린지 슬라이드 */
+.recent-challenges {
+  position: relative;
+  margin-bottom: 60px;
+  padding: 20px 10px;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(46, 139, 87, 0.2), 0 4px 10px rgba(46, 139, 87, 0.1);
+}
+h3 {
+  /* text-align: center; */
+  margin: 10px 0px;
+  font-size: 1.8rem;
+  color: #3a6b47;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(58, 107, 71, 0.4);
+  animation: fadeInUp 1.3s ease forwards;
+}
+
+.recent-slide-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: smoothSlide 25s linear infinite;
+  padding-left: 5px;
+  align-items: stretch;
+}
+
+.challenge-card-slide {
+  width: 180px;
+  height: 280px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 14px;
+  text-align: center;
+  color: #2e4d38;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.challenge-card-slide img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.challenge-card-slide p {
+  font-size: 0.85rem;
+  color: #4a6b56;
+  line-height: 1.4;
+  height: 2.8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+/* 양옆 안개 효과 */
+.recent-challenges::before,
+.recent-challenges::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 80px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+.recent-challenges::before {
+  left: 0;
+  background: linear-gradient(to right, #ffffff, transparent);
+}
+.recent-challenges::after {
+  right: 0;
+  background: linear-gradient(to left, #ffffff, transparent);
 }
 
 /* ===== 애니메이션 ===== */
@@ -692,9 +800,6 @@ onUnmounted(() => {
   }
   .video-item iframe {
     height: 160px;
-  }
-  .proof-gallery {
-    height: 110px;
   }
   .proof-gallery img {
     width: 110px;

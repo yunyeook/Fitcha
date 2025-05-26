@@ -38,12 +38,13 @@
           MyFit
         </router-link>
       </li>
-      <!-- <li>
-        <a href="#">
+
+      <li>
+        <router-link to="/fittalk">
           <i class="fas fa-comments"></i>
           FitTalk
-        </a>
-      </li> -->
+        </router-link>
+      </li>
     </ul>
 
     <!-- 로그아웃 버튼 -->
@@ -57,11 +58,11 @@
 </template>
 
 <script setup>
-import { useUserStore } from "@/stores/user";
-import { useRouter } from "vue-router";
-import { logout } from "@/stores/logout";
+import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
+import { logout } from '@/stores/logout';
 
-import { computed } from "vue";
+import { computed } from 'vue';
 
 const router = useRouter();
 const userStore = useUserStore();
