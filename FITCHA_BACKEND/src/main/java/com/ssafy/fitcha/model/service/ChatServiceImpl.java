@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.fitcha.model.dao.ChatDao;
 import com.ssafy.fitcha.model.dto.ChatMessage;
 import com.ssafy.fitcha.model.dto.ChatRoom;
+import com.ssafy.fitcha.model.dto.SearchChallenge;
 
 @Service
 public class ChatServiceImpl implements ChatService {
@@ -16,8 +17,8 @@ public class ChatServiceImpl implements ChatService {
 	private ChatDao chatDao;
 
 	@Override
-	public List<ChatRoom> getRooms() {
-		return chatDao.getRooms();
+	public List<ChatRoom> getRooms(SearchChallenge search) {
+		return chatDao.getRooms(search);
 	}
 
 	@Override
@@ -41,5 +42,11 @@ public class ChatServiceImpl implements ChatService {
 	@Override
 	public void sendMessage(ChatMessage message) {
 		chatDao.sendMessage(message);
+	}
+
+	@Override
+	public void deleteRoom(int roomId) {
+		chatDao.deleteRoom(roomId);
+
 	}
 }

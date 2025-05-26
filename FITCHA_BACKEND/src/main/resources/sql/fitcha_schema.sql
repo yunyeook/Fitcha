@@ -422,8 +422,12 @@ select * from challenge_like;
 
 CREATE TABLE chat_room (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-);
+    name VARCHAR(255) NOT NULL,
+	writer VARCHAR(255) NOT NULL,
+    reg_date TIMESTAMP DEFAULT NOW()
+    );
+    
+ 
 
 CREATE TABLE chat_message (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -437,3 +441,4 @@ SELECT * FROM chat_room;
 select * from chat_message;
 
 select * from user_board;
+select * from chat_room;

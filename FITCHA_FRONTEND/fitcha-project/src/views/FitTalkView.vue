@@ -2,10 +2,12 @@
   <div class="page-wrapper">
     <MainHeader />
     <MainContentSearch />
+
     <MainDetailLayout>
       <div class="chat-room-list">
         <h2><i class="fa-solid fa-message"></i> 채팅방 목록</h2>
 
+        <!-- 항상 보이게 -->
         <div class="chat-room-input">
           <input
             v-model="newRoom"
@@ -17,15 +19,25 @@
           </button>
         </div>
 
-        <ul class="room-list">
+        <!-- 조건부로 NoContent 또는 방 리스트 보여줌 -->
+        <div v-if="noContent" class="noContent-container">
+          <NoContent />
+        </div>
+        <ul v-else class="room-list">
           <li class="room-item" v-for="room in filteredRooms" :key="room.id">
-            <!-- room.name 아이콘 -->
-            <span class="room-name">
-              {{ room.name }}
-            </span>
-            <router-link class="enter-btn" :to="`/fittalk/room/${room.id}`"
-              >입장</router-link
-            >
+            <span class="room-name">{{ room.name }}</span>
+            <div class="button-group">
+              <router-link class="enter-btn" :to="`/fittalk/room/${room.id}`">
+                입장
+              </router-link>
+              <button
+                v-if="room.writer === nickName"
+                class="delete-btn"
+                @click="deleteRoom(room.id)"
+              >
+                삭제
+              </button>
+            </div>
           </li>
         </ul>
       </div>
@@ -37,23 +49,34 @@
 import MainHeader from "@/components/common/MainHeader.vue";
 import MainContentSearch from "@/components/common/MainContentSearch.vue";
 import MainDetailLayout from "@/components/common/MainDetailLayout.vue";
+import NoContent from "@/components/error/NoContent204.vue";
 
 import api from "@/api/api";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
 
+const route = useRoute();
+const router = useRouter();
+const { userId, nickName } = useUserStore();
 const rooms = ref([]);
 const newRoom = ref("");
+const noContent = ref(false);
 
 const filteredRooms = computed(() =>
   Array.isArray(rooms.value) ? rooms.value.filter((r) => r?.name) : []
 );
 
-async function loadRooms() {
+async function loadRooms(searchKey, searchWord) {
   try {
-    const { data } = await api.get("/api/chat/rooms");
-    console.log("rooms 응답:", data);
-
-    rooms.value = data;
+    let response = await api.get("/api/chat/rooms", {
+      params: {
+        key: searchKey,
+        word: searchWord,
+      },
+    });
+    rooms.value = response.data;
+    noContent.value = rooms.value.length === 0;
   } catch (err) {
     console.error("방 목록 불러오기 실패:", err);
   }
@@ -65,7 +88,7 @@ async function createRoom() {
   if (!name) return;
   console.log("채팅방 생성 요청:", name); // ✅ 이거 찍어보세요
   try {
-    await api.post("/api/chat/rooms", { name });
+    await api.post("/api/chat/rooms", { name, writer: nickName });
     newRoom.value = "";
     await loadRooms();
   } catch (err) {
@@ -73,10 +96,31 @@ async function createRoom() {
   }
 }
 
+async function deleteRoom(roomId) {
+  try {
+    await api.delete(`/api/chat/${roomId}`);
+
+    await loadRooms();
+  } catch (err) {
+    console.error("채팅방 삭제 실패:", err);
+  }
+}
+
 onMounted(loadRooms);
+
+// 쿼리 변경 감지 시 재검색
+watch(
+  () => [route.query.key, route.query.word], // key 또는 word 둘 중 하나라도 바뀌면
+  ([newKey, newWord]) => {
+    loadRooms(newKey, newWord);
+  }
+);
 </script>
 
 <style scoped>
+.noContent-container {
+  margin-top: 10px;
+}
 .chat-room-list {
   padding: 12px;
   max-width: 720px;
@@ -327,6 +371,56 @@ onMounted(loadRooms);
   border-radius: 30px;
   color: #ffffff;
   height: 50px;
-  padding: 15px 40px;
+  padding: 7px 40px;
+}
+.room-item button {
+  padding: 8px 16px;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.room-item button:hover {
+  background-color: #fa5252;
+  transform: translateY(-1px);
+}
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.enter-btn {
+  padding: 8px 16px;
+  background-color: #20c997;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.enter-btn:hover {
+  background-color: #37b24d;
+}
+
+.delete-btn {
+  padding: 8px 16px;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+.delete-btn:hover {
+  background-color: #fa5252;
+  transform: translateY(-1px);
 }
 </style>
