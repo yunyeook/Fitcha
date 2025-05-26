@@ -59,8 +59,8 @@ public class UserServiceImpl implements UserService {
 
 	// 유저 팔로우, 팔로잉 전체 수 조회 
 	@Override
-	public Map<String, Integer> getFollowAllCount(int userBoardId) {
-		return userDao.selectFollowCount(userBoardId);
+	public Map<String, Integer> getFollowAllCount(String nickName) {
+		return userDao.selectFollowCount(nickName);
 	}
 	
 	// 유저 팔로워 전체 조회 
@@ -86,6 +86,12 @@ public class UserServiceImpl implements UserService {
 	public boolean updateUserInfo(User user) {
 		
 		return userDao.updateUser(user);
+	}
+
+	// 상대방 팔로우 하는지 체크
+	@Override
+	public boolean isFollowing(String followerNickName, String followingNickName) {
+		return userDao.selectFollowCheck(followerNickName,followingNickName);
 	}
 	
 	

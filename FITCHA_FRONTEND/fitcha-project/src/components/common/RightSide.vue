@@ -287,7 +287,7 @@ const profileImgWithCache = computed(() => {
 .calendar-container {
   width: 220px;
   padding: 0.8rem;
-  margin-top: 4rem;
+  margin-top: 3rem;
   border-radius: 1rem;
   background: #f0fdfa;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -320,7 +320,6 @@ const profileImgWithCache = computed(() => {
 /* 날씨 영역 스타일 */
 .weather {
   height: auto;
-  margin-top: 5px;
   padding: 20px;
   border-radius: 16px;
   display: flex;

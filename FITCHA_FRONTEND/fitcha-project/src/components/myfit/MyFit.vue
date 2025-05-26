@@ -18,10 +18,20 @@
         <h2 class="user-name">{{ userInfo.name }}</h2>
         <p class="user-nickname">@{{ userInfo.nickName }}</p>
       </div>
-      <button class="edit-btn" type="button" @click="isEditing = true">
+
+      <!-- 팔로워/팔로잉 수 표시 삭제됨 -->
+
+      <!-- 프로필 수정 버튼만 남김 -->
+      <button
+        v-if="isMine"
+        class="edit-btn"
+        type="button"
+        @click="isEditing = true"
+      >
         프로필 수정
       </button>
     </div>
+
     <MyFitUpdate
       v-if="isEditing"
       :name="userInfo.name"
@@ -79,12 +89,21 @@ import FitLogCard from "../fitlog/FitLogCard.vue";
 import ChallengeFitCard from "../challengefit/ChallengeFitCard.vue";
 import MyFitUpdate from "./MyFitUpdate.vue";
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const targetNickName = route.params.targetNickName;
 const isEditing = ref(false);
 const userStore = useUserStore();
-const { nickName, userBoardId } = storeToRefs(userStore);
+const { nickName } = storeToRefs(userStore);
 const userInfo = ref({});
 const fitlogs = ref([]);
 const challenges = ref([]);
+const isMine = computed(() => targetNickName === nickName.value);
+
+// 팔로우 관련 상태와 함수 제거
+// const isFollowing = ref(false);
+// const isLoading = ref(false);
 
 const profileImgUrl = computed(() => {
   if (userInfo.value?.profileImgUrl) {
@@ -104,7 +123,6 @@ const handleClose = (updatedProfile) => {
   if (updatedProfile) {
     userInfo.value = { ...userInfo.value, ...updatedProfile };
 
-    // 캐시 방지용으로 profileImgUrl 갱신 (이미지가 바로 안 바뀌는 경우)
     if (updatedProfile.profileImgUrl) {
       userInfo.value.profileImgUrl = `${
         updatedProfile.profileImgUrl
@@ -115,26 +133,35 @@ const handleClose = (updatedProfile) => {
   isEditing.value = false;
 };
 
-onMounted(async () => {
-  if (!nickName.value) return; // 값이 없으면 요청 안 보냄
+const isDataLoaded = ref(false);
 
+onMounted(async () => {
   try {
     const [userInfoList, challengeList, fitlogList] = await Promise.all([
-      api.get(`/user/${nickName.value}`),
-      api.get(`/challenge/participate/${nickName.value}`),
+      api.get(`/user/${targetNickName}`),
+      api.get(`/challenge/participate/${targetNickName}`),
       api.get(`/proof`, {
-        params: { key: "writer", word: nickName.value },
+        params: { key: "writer", word: targetNickName },
       }),
     ]);
 
     userInfo.value = userInfoList.data;
     challenges.value = challengeList.data;
     fitlogs.value = fitlogList.data;
+
+    // 팔로우 여부 체크 코드 삭제
+    /*
+    if (nickName.value && !isMine.value) {
+      const res = await api.get(
+        `/follow/check/${nickName.value}/${targetNickName}`
+      );
+      isFollowing.value = res.data;
+    }
+    */
+
+    isDataLoaded.value = true;
   } catch (error) {
-    console.error(
-      "병렬 처리(유저 정보, 챌린지글, 인증글) 불러오기 실패:",
-      error
-    );
+    console.error("초기 데이터 불러오기 실패:", error);
   }
 });
 </script>
@@ -253,5 +280,41 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+.follow-btn {
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  background-color: #3cb371;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.follow-btn.followed {
+  background-color: white;
+  color: #3cb371;
+  border: 1px solid #3cb371;
+}
+.follow-stats {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-count {
+  font-weight: 700;
+  font-size: 1rem;
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #888;
 }
 </style>

@@ -28,7 +28,7 @@ public interface UserDao {
 			@Param("followingNickName") String followingNickName);
 
 	// 유저 팔로우, 팔로잉 전체 수 조회
-	Map<String, Integer> selectFollowCount(int userBoardId);
+	Map<String, Integer> selectFollowCount(String nickName);
 
 	// 유저 팔로워 전체 조회
 	List<String> selectFollowerAll(String userNickName);
@@ -44,5 +44,12 @@ public interface UserDao {
 	
 	// 유저 정보 수정 
 	boolean updateUser(User user);
+	
+	// 상대방 팔로우 체크
+	boolean selectFollowCheck(
+	    @Param("followerNickName") String followerNickName,
+	    @Param("followingNickName") String followingNickName
+	);
+
 
 }

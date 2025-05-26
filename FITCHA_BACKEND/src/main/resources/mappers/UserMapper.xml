@@ -50,12 +50,12 @@
 	</delete>
 
 	<!-- 유저 팔로우, 팔로잉 수 전체 조회 -->
-	<select id="selectFollowCount" parameterType="int"
+	<select id="selectFollowCount" parameterType="string"
 		resultType="Map">
 		SELECT follower_count AS followerCount, following_count AS
 		followingCount
 		FROM user_board
-		WHERE user_board_id = #{userBoardId}
+		WHERE nick_name = #{nickName};
 	</select>
 
 	<!-- 유저 팔로워 전체 조회 -->
@@ -91,12 +91,21 @@
 		WHERE nick_name = #{userNickName}
 	</select>
 
-	<!-- 유저  정보 수 -->
-	<update id="updateUser" parameterType="User" >
+	<!-- 유저 정보 수 -->
+	<update id="updateUser" parameterType="User">
 		UPDATE user_board
 		SET
 		profile_img_url = #{profileImgUrl}
-		WHERE user_board_id = #{userBoardId}
+		WHERE user_board_id =
+		#{userBoardId}
 	</update>
 
+    <!-- 상대방 팔로우 여부 체크 -->	
+	<select id="selectFollowCheck" resultType="boolean"
+		parameterType="map">
+		SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+		FROM user_follow
+		WHERE follower_nick_name = #{followerNickName}
+		AND following_nick_name = #{followingNickName}
+	</select>
 </mapper>

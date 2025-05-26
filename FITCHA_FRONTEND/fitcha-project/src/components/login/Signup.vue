@@ -18,25 +18,56 @@
 
       <div class="form-group">
         <label for="password">패스워드</label>
-        <input type="password" id="password" placeholder="비밀번호를 입력하세요" v-model="form.password" required />
+        <input
+          type="password"
+          id="password"
+          placeholder="비밀번호를 입력하세요"
+          v-model="form.password"
+          required
+        />
       </div>
 
       <div class="form-group">
         <label for="name">이름</label>
-        <input type="text" id="name" placeholder="이름을 입력하세요" required v-model="form.name" />
+        <input
+          type="text"
+          id="name"
+          placeholder="이름을 입력하세요"
+          required
+          v-model="form.name"
+        />
       </div>
 
       <div class="form-group">
         <label for="nickname">닉네임</label>
-        <input type="text" id="nickname" placeholder="닉네임을 입력하세요" v-model="form.nickName" required />
-        <p :style="{ color: isNicknameValid ? 'green' : 'red', fontSize: '0.85rem', marginTop: '5px' }">
+        <input
+          type="text"
+          id="nickname"
+          placeholder="닉네임을 입력하세요"
+          v-model="form.nickName"
+          required
+        />
+        <p
+          :style="{
+            color: isNicknameValid ? 'green' : 'red',
+            fontSize: '0.85rem',
+            marginTop: '5px',
+          }"
+        >
           {{ nicknameMessage }}
         </p>
       </div>
 
       <div class="form-group">
         <label for="age">나이</label>
-        <input type="number" id="age" placeholder="나이를 입력하세요" required v-model="form.age" min="0" />
+        <input
+          type="number"
+          id="age"
+          placeholder="나이를 입력하세요"
+          required
+          v-model="form.age"
+          min="0"
+        />
       </div>
 
       <div class="form-group">
@@ -45,36 +76,37 @@
           <option value="">선택</option>
           <option>남성</option>
           <option>여성</option>
-          <option>기타</option>
         </select>
       </div>
 
-      <button type="submit" class="signup-btn"><i class="fas fa-dumbbell"></i> 회원가입 완료</button>
+      <button type="submit" class="signup-btn">
+        <i class="fas fa-dumbbell"></i> 회원가입 완료
+      </button>
     </form>
   </div>
 </template>
 
 <script setup>
-import axios from 'axios';
-import { onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import api, { BASE_URL } from '@/api/api';
+import axios from "axios";
+import { onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import api, { BASE_URL } from "@/api/api";
 
 const route = useRoute();
 const router = useRouter();
 
 const form = ref({
-  userId: '',
-  password: '',
-  email: '',
-  name: '',
-  nickName: '',
-  age: '',
-  gender: '',
+  userId: "",
+  password: "",
+  email: "",
+  name: "",
+  nickName: "",
+  age: "",
+  gender: "",
 });
 
 const isPossible = ref(true);
-const nicknameMessage = ref('');
+const nicknameMessage = ref("");
 const isNicknameValid = ref(true);
 
 // 닉네임 자동 생성
@@ -82,10 +114,10 @@ async function getRandomNickname() {
   try {
     const { data } = await axios.get(`${BASE_URL}/api/nickname/generate`);
     form.value.nickName = data;
-    nicknameMessage.value = '자동으로 생성된 닉네임입니다.';
+    nicknameMessage.value = "자동으로 생성된 닉네임입니다.";
     isNicknameValid.value = true;
   } catch {
-    nicknameMessage.value = '닉네임 생성 실패';
+    nicknameMessage.value = "닉네임 생성 실패";
     isNicknameValid.value = false;
   }
 }
@@ -95,7 +127,7 @@ async function checkNickname() {
   const trimmed = form.value.nickName.trim();
 
   if (!trimmed) {
-    nicknameMessage.value = '닉네임을 입력해주세요.';
+    nicknameMessage.value = "닉네임을 입력해주세요.";
     isNicknameValid.value = false;
     return;
   }
@@ -106,14 +138,14 @@ async function checkNickname() {
     });
 
     if (exists) {
-      nicknameMessage.value = '이미 사용 중인 닉네임입니다.';
+      nicknameMessage.value = "이미 사용 중인 닉네임입니다.";
       isNicknameValid.value = false;
     } else {
-      nicknameMessage.value = '사용 가능한 닉네임입니다.';
+      nicknameMessage.value = "사용 가능한 닉네임입니다.";
       isNicknameValid.value = true;
     }
   } catch {
-    nicknameMessage.value = '닉네임 확인 실패';
+    nicknameMessage.value = "닉네임 확인 실패";
     isNicknameValid.value = false;
   }
 }
@@ -137,21 +169,21 @@ watch(
 );
 
 // 회원가입 요청
-const signup = async e => {
+const signup = async (e) => {
   e.preventDefault();
 
   if (!isNicknameValid.value) {
-    alert('닉네임이 중복되었습니다. 다른 닉네임을 사용해주세요.');
+    alert("닉네임이 중복되었습니다. 다른 닉네임을 사용해주세요.");
     return;
   }
 
   try {
     form.value.nickName = form.value.nickName.trim(); // 백엔드로 전송 전 trim 처리
     await axios.post(`${BASE_URL}/user/signup`, form.value);
-    alert('회원가입에 성공했습니다. 로그인해주세요');
+    alert("회원가입에 성공했습니다. 로그인해주세요");
     router.push(`/login`);
   } catch (err) {
-    console.log('회원가입 실패: ', err);
+    console.log("회원가입 실패: ", err);
   }
 };
 </script>
@@ -165,7 +197,7 @@ const signup = async e => {
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(144, 228, 200, 0.5);
   text-align: center;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 .signup-wrapper h2 {

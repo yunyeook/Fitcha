@@ -3,24 +3,31 @@
     <div class="proof-detail">
       <!-- 상단 작성자 정보 -->
       <div class="header">
-        <div class="userAndTitle">
-          <img
-            v-if="writerProfileImgUrl"
-            class="user-profile-image"
-            :src="writerProfileImgUrl"
-            alt="작성자 프로필"
-          />
-          <img
-            v-else
-            :src="defaultProfileImg"
-            class="user-profile-image"
-            alt="작성자 프로필"
-          />
-          <div class="user-info">
-            <span class="title">{{ fitlog.title }}</span>
-            <span class="user-name">{{ fitlog.writer }}</span>
+        <router-link
+          v-if="fitlog.writer"
+          :to="{ name: 'MyFitView', params: { targetNickName: fitlog.writer } }"
+          style="text-decoration: none"
+        >
+          <div class="userAndTitle">
+            <img
+              v-if="writerProfileImgUrl"
+              class="user-profile-image"
+              :src="writerProfileImgUrl"
+              alt="작성자 프로필"
+            />
+            <img
+              v-else
+              :src="defaultProfileImg"
+              class="user-profile-image"
+              alt="작성자 프로필"
+            />
+            <div class="user-info">
+              <span class="title">{{ fitlog.title }}</span>
+              <span class="user-name">{{ fitlog.writer }}</span>
+            </div>
           </div>
-        </div>
+        </router-link>
+
         <!-- 내 글이면 메뉴 보임 -->
         <div v-if="isMyFitLog" class="proof-menu" @click="openProofModal">
           <i class="fas fa-ellipsis-v"></i>

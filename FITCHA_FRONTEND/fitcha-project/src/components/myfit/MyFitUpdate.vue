@@ -169,10 +169,10 @@ const closeEdit = () => {
   bottom: -2px;
   background-color: #3cb371;
   border-radius: 50%;
-  padding: 6px;
+  padding: 6px 12px;
   color: white;
   cursor: pointer;
-  font-size: 1.7rem;
+  font-size: 1.5rem;
 }
 
 .profile-update-wrapper .form-group {

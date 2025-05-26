@@ -68,7 +68,7 @@ const routes = [
   { path: "/oauth-success", name: "OAuthSuccess", component: OAuthSuccessView },
 
   { path: "/signup", name: "Signup", component: SignupView },
-  { path: "/myfit", component: MyFitView },
+  { path: "/myfit/:targetNickName", name: "MyFitView", component: MyFitView },
   { path: "/myfit/update", component: MyFitUpdateView },
 ];
 
