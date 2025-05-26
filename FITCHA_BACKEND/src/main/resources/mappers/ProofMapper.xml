@@ -96,9 +96,11 @@
 	<insert id="insertProofBoardHashtags" parameterType="map">
 		INSERT INTO proof_board_hashtag (proof_board_id, hashtag)
 		VALUES
-		<foreach collection="hashTags" item="tag" separator=",">
-			(#{proofBoardId}, #{tag})
-		</foreach>
+		<if test="hashTags != null">
+			<foreach collection="hashTags" item="tag" separator=",">
+				(#{proofBoardId}, #{tag})
+			</foreach>
+		</if>
 	</insert>
 	<!-- 인증글 목록에서 모든 해쉬태그 가져오기 -->
 	<select id="selectHashTagsByProofBoardIds" resultType="map"
@@ -139,7 +141,8 @@
 	<!-- 인증글 이미지들 조회 -->
 	<select id="selectProofImages" resultType="String">
 		SELECT file_url
-		FROM proof_file
+		FROM
+		proof_file
 		ORDER BY proof_file_id DESC
 		LIMIT 10;
 	</select>
