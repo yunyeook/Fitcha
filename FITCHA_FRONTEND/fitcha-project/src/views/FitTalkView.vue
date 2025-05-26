@@ -2,18 +2,22 @@
   <div class="page-wrapper">
     <MainHeader />
     <MainContentSearch />
-    <MainDetailLayout>
-      <div class="chat-room-list">
-        <h2>💬 채팅방 목록</h2>
-        <div class="chat-room-input">
-          <input v-model="newRoom" placeholder="채팅방 이름 입력" @keyup.enter="createRoom" />
-          <button @click="createRoom">➕ 채팅방 생성</button>
-        </div>
 
+    <h2>💬 채팅방 목록</h2>
+    <div class="chat-room-input">
+      <input v-model="newRoom" placeholder="채팅방 이름 입력" @keyup.enter="createRoom" />
+      <button @click="createRoom">➕ 채팅방 생성</button>
+    </div>
+
+    <NoContent v-if="noContent" />
+
+    <MainDetailLayout v-else>
+      <div class="chat-room-list">
         <ul class="room-list">
           <li class="room-item" v-for="room in filteredRooms" :key="room.id">
             <span class="room-name">{{ room.name }}</span>
             <router-link class="enter-btn" :to="`/fittalk/room/${room.id}`">입장</router-link>
+            <button v-if="room.writer == nickName" @click="deleteRoom(room.id)">채팅방 삭제</button>
           </li>
         </ul>
       </div>
@@ -25,21 +29,32 @@
 import MainHeader from '@/components/common/MainHeader.vue';
 import MainContentSearch from '@/components/common/MainContentSearch.vue';
 import MainDetailLayout from '@/components/common/MainDetailLayout.vue';
+import NoContent from '@/components/error/NoContent204.vue';
 
 import api from '@/api/api';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
+const route = useRoute();
+const router = useRouter();
+const { userId, nickName } = useUserStore();
 const rooms = ref([]);
 const newRoom = ref('');
+const noContent = ref(false);
 
 const filteredRooms = computed(() => (Array.isArray(rooms.value) ? rooms.value.filter(r => r?.name) : []));
 
-async function loadRooms() {
+async function loadRooms(searchKey, searchWord) {
   try {
-    const { data } = await api.get('/api/chat/rooms');
-    console.log('rooms 응답:', data);
-
-    rooms.value = data;
+    let response = await api.get('/api/chat/rooms', {
+      params: {
+        key: searchKey,
+        word: searchWord,
+      },
+    });
+    rooms.value = response.data;
+    noContent.value = rooms.value.length === 0;
   } catch (err) {
     console.error('방 목록 불러오기 실패:', err);
   }
@@ -51,7 +66,7 @@ async function createRoom() {
   if (!name) return;
   console.log('채팅방 생성 요청:', name); // ✅ 이거 찍어보세요
   try {
-    await api.post('/api/chat/rooms', { name });
+    await api.post('/api/chat/rooms', { name, writer: nickName });
     newRoom.value = '';
     await loadRooms();
   } catch (err) {
@@ -59,7 +74,25 @@ async function createRoom() {
   }
 }
 
+async function deleteRoom(roomId) {
+  try {
+    await api.delete(`/api/chat/${roomId}`);
+
+    await loadRooms();
+  } catch (err) {
+    console.error('채팅방 삭제 실패:', err);
+  }
+}
+
 onMounted(loadRooms);
+
+// 쿼리 변경 감지 시 재검색
+watch(
+  () => [route.query.key, route.query.word], // key 또는 word 둘 중 하나라도 바뀌면
+  ([newKey, newWord]) => {
+    loadRooms(newKey, newWord);
+  }
+);
 </script>
 <style scoped>
 .chat-room-list {
