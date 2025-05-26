@@ -42,7 +42,7 @@
             }"
           >
             <img
-              :src="`${BASE_URL}/${challenge.challengeFiles[0].fileUploadName}`"
+              :src="`${BASE_URL}/${challenge.challengeFiles[0].fileUrl}`"
               alt="요가챌린지"
             />
             <h4>{{ challenge.title }}</h4>
@@ -119,7 +119,7 @@
             }"
           >
             <img
-              :src="`${BASE_URL}/${challenge.challengeFiles[0]?.fileUploadName}`"
+              :src="`${BASE_URL}/${challenge.challengeFiles[0]?.fileUrl}`"
               alt="챌린지 이미지"
             />
             <h4>{{ challenge.title }}</h4>

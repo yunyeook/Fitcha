@@ -2,7 +2,7 @@
   <div class="right-sidebar">
     <!-- 로그인 유저 정보 섹션 -->
 
-    <div class="profile-section">
+    <div class="profile-section" v-if="nickName">
       <img
         :src="profileImgWithCache || defaultProfileImg"
         alt="프로필 이미지"

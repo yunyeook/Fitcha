@@ -51,7 +51,10 @@ public class SecurityConfig {
 
 						// 5) 파일시스템 이미지
 						.requestMatchers("/upload/**").permitAll()
-
+						
+						// 날씨 호출 & Home view
+						.requestMatchers("/weather","/proof/images","/home","/challenge/top5").permitAll()
+						
 						// 6) 그 외는 모두 인증 필요
 						.anyRequest().authenticated())
 				.oauth2Login(
