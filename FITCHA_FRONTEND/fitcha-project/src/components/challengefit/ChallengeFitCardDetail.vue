@@ -324,7 +324,7 @@ async function requestChallengeDetail() {
     },
   });
   challenge.value = data;
-  imgUrl.value = `${BASE_URL}/${data.challengeFiles[0].fileUploadName}`;
+  imgUrl.value = `${BASE_URL}/${data.challengeFiles[0].fileUrl}`;
   isViewCounted.value = 'false';
   comments.value = data.comments;
 
