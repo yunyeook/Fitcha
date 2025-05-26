@@ -27,6 +27,7 @@
   /* ✨ 높이 제한 제거 */
   max-height: unset;
   overflow: visible;
+  padding-bottom: 50px;
 }
 
 /* 스크롤바 디자인 */

@@ -52,6 +52,21 @@
       </div>
     </section>
 
+    <!-- 사진 슬라이더 -->
+
+    <section class="proof-gallery">
+      <h3>✨ 오늘의 인증</h3>
+      <div class="slide-track">
+        <!-- 무한 슬라이드를 위해 복제 -->
+        <img
+          v-for="proofImage in proofImages"
+          :key="proofImage"
+          :src="'http://localhost:8080/' + proofImage"
+          alt="인증사진"
+        />
+      </div>
+    </section>
+
     <!-- 랭킹 섹션과 추천 동영상 한 줄에 배치 -->
     <section class="ranking-and-recommendation">
       <section class="ranking-section">
@@ -85,25 +100,16 @@
       </section>
     </section>
 
-    <!-- 사진 슬라이더 -->
-    <section class="proof-gallery">
-      <div class="slide-track">
-        <!-- 무한 슬라이드를 위해 복제 -->
-        <img
-          v-for="proofImage in proofImages"
-          :key="proofImage"
-          :src="'http://localhost:8080/' + proofImage"
-          alt="인증사진"
-        />
-      </div>
-    </section>
-
     <!--새로 생성한 챌린지 -->
-    <h3>🆕 새로 등록된 챌린지</h3>
+    <h3>⚡ 새로 등록된 챌린지</h3>
 
     <section class="recent-challenges">
       <div class="recent-slide-track">
-        <div class="challenge-card-slide" v-for="challenge in challenges.recent" :key="challenge.challengeBoardId">
+        <div
+          class="challenge-card-slide"
+          v-for="challenge in challenges.recent"
+          :key="challenge.challengeBoardId"
+        >
           <router-link
             class="router-link"
             :to="{
@@ -112,7 +118,10 @@
               query: { isViewCounted: 'true', writer: nickName },
             }"
           >
-            <img :src="`${BASE_URL}/${challenge.challengeFiles[0]?.fileUploadName}`" alt="챌린지 이미지" />
+            <img
+              :src="`${BASE_URL}/${challenge.challengeFiles[0]?.fileUploadName}`"
+              alt="챌린지 이미지"
+            />
             <h4>{{ challenge.title }}</h4>
             <p>{{ challenge.subhead }}</p>
           </router-link>
@@ -142,7 +151,6 @@ async function fetchProofImages() {
     const { data } = await api.get("/proof/images"); // 예시 API 엔드포인트
     // data가 이미지 URL 배열이라고 가정
     proofImages.value = data;
-    console.log(data);
   } catch (error) {
     console.error("사진 슬라이더 이미지 불러오기 실패:", error);
   }
@@ -195,7 +203,7 @@ onUnmounted(() => {
   max-width: 800px;
   width: 100%;
   margin: 0 auto;
-  padding: 30px 20px;
+  padding: 30px 0px;
   font-family: "Noto Sans KR", sans-serif;
   color: #2e4d43;
 }
@@ -247,8 +255,8 @@ onUnmounted(() => {
 .cta-text-hero {
   position: absolute;
   z-index: 10;
-  top: 22%;
-  left: 7%;
+  top: 20%;
+  left: 3%;
   transform: translate(-50%, -50%);
   color: white;
   text-align: center;
@@ -500,7 +508,7 @@ onUnmounted(() => {
   /* height: 180px; */
   position: relative;
   border-radius: 16px;
-  margin-bottom: 30px;
+  margin-bottom: 60px;
 }
 .proof-gallery::before,
 .proof-gallery::after {
@@ -514,11 +522,11 @@ onUnmounted(() => {
 }
 .proof-gallery::before {
   left: 0;
-  background: linear-gradient(to right, #f5fff7, transparent);
+  /* background: linear-gradient(to right, #f5fff7, transparent); */
 }
 .proof-gallery::after {
   right: 0;
-  background: linear-gradient(to left, #f5fff7, transparent);
+  /* background: linear-gradient(to left, #f5fff7, transparent); */
 }
 .proof-gallery .slide-track {
   display: flex;
@@ -527,6 +535,7 @@ onUnmounted(() => {
   animation: smoothSlide 25s ease-in-out infinite;
   margin-top: 40px;
   width: max-content;
+  padding-bottom: 20px;
 }
 .proof-gallery img {
   width: 180px;
@@ -547,11 +556,12 @@ onUnmounted(() => {
 /* 새로 생성된 챌린지 슬라이드 */
 .recent-challenges {
   position: relative;
-  margin-bottom: 60px;
+  margin-bottom: 30px;
   padding: 20px 10px;
   overflow: hidden;
   border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(46, 139, 87, 0.2), 0 4px 10px rgba(46, 139, 87, 0.1);
+  box-shadow: 0 8px 20px rgba(46, 139, 87, 0.2),
+    0 4px 10px rgba(46, 139, 87, 0.1);
 }
 h3 {
   /* text-align: center; */
@@ -611,7 +621,7 @@ h3 {
 /* 양옆 안개 효과 */
 .recent-challenges::before,
 .recent-challenges::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   width: 80px;

@@ -68,7 +68,6 @@
             @keydown.space.prevent="addTag"
             type="text"
             placeholder="해시태그 입력 후 엔터(예: #러닝)"
-            required
           />
         </div>
       </div>

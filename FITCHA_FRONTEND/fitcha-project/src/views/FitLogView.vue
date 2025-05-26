@@ -60,6 +60,6 @@ watch(
 <style scoped>
 .page-wrapper {
   height: 780px;
-  overflow-y: hidden;
+  padding: 0px;
 }
 </style>
