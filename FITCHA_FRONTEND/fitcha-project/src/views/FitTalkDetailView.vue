@@ -1,14 +1,22 @@
 <template>
   <div class="chat-room-wrapper">
-    <h2>{{ roomTitle }}</h2>
-    <div class="chat-messages" ref="messageBox">
-      <div v-for="(msg, index) in messages" :key="index" class="chat-message">
-        <strong>{{ msg.sender }}:</strong> {{ msg.message }}
-      </div>
-    </div>
-    <div class="chat-input">
-      <input v-model="input" type="text" placeholder="메시지를 입력하세요" @keyup.enter="sendMessage" />
-      <button @click="sendMessage">전송</button>
+    <div class="chat-room-content">
+      <MainDetailLayout>
+        <div class="chat-title">
+          <span><i class="fa-regular fa-comment fa-2x"></i></span>
+
+          <h2>{{ roomTitle }}</h2>
+        </div>
+        <div class="chat-messages" ref="messageBox">
+          <div v-for="(msg, index) in messages" :key="index" class="chat-message">
+            <strong>{{ msg.sender }}:</strong> {{ msg.message }}
+          </div>
+        </div>
+        <div class="chat-input">
+          <input v-model="input" type="text" placeholder="메시지를 입력하세요" @keyup.enter="sendMessage" />
+          <button @click="sendMessage">전송</button>
+        </div>
+      </MainDetailLayout>
     </div>
   </div>
 </template>
@@ -20,6 +28,7 @@ import api, { BASE_URL } from '@/api/api';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import { useUserStore } from '@/stores/user';
+import MainDetailLayout from '@/components/common/MainDetailLayout.vue';
 
 const route = useRoute();
 const roomId = route.params.roomId;
@@ -34,7 +43,7 @@ let stompClient = null;
 const fetchRoomTitle = async () => {
   try {
     const { data } = await api.get(`/api/chat/rooms/${roomId}`);
-    roomTitle.value = data.name ? `채팅방 #${data.name}` : '채팅방';
+    roomTitle.value = data.name ? data.name : 'FITCHA';
   } catch (err) {
     console.error('방 제목 로딩 실패:', err);
     roomTitle.value = '채팅방';
@@ -137,9 +146,24 @@ onBeforeUnmount(() => {
   padding: 30px;
   background-color: #f5f5f5;
   border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column; /* 위에서부터 쌓이도록 */
+
+  align-items: flex-start; /* 세로축은 위에서부터 쌓이도록 */
 }
+.chat-room-content {
+  width: 100%;
+}
+.chat-title {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
 .chat-messages {
-  height: 400px;
+  flex: 1;
+  height: 500px;
   overflow-y: auto;
   border: 1px solid #ccc;
   padding: 10px;

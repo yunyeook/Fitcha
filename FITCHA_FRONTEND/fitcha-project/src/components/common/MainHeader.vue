@@ -4,15 +4,11 @@
     <h2 v-if="nickName">
       Hello! <span class="userName">{{ nickName }}</span>
     </h2>
-    <h2 v-if="!nickName">
-      Welcome! <span class="userName"></span>
-    </h2>
-    <div class="challenge-create-wrapper">
+    <h2 v-if="!nickName">Welcome! <span class="userName"></span></h2>
+    <div class="challenge-create-wrapper" v-if="menu === 'challengefit'">
       <RouterLink :to="{ name: 'ChallengeFitRegist' }">
         <a>
-          <button class="header__challenge-create-btn">
-            <i class="fas fa-pen"></i> 챌린지 작성
-          </button>
+          <button class="header__challenge-create-btn"><i class="fas fa-pen"></i> 챌린지 작성</button>
         </a>
       </RouterLink>
     </div>
@@ -20,10 +16,13 @@
 </template>
 
 <script setup>
-import { useUserStore } from "@/stores/user";
-import { storeToRefs } from "pinia";
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
+import { ref } from 'vue';
+ref;
 const userStore = useUserStore();
 const { nickName } = storeToRefs(userStore);
+const menu = ref(window.location.pathname.split('/')[1]);
 </script>
 
 <style scoped>
@@ -50,11 +49,7 @@ const { nickName } = storeToRefs(userStore);
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(
-    135deg,
-    #3cb371,
-    #2e8b57
-  ); /* 민트~그린 그라디언트 */
+  background: linear-gradient(135deg, #3cb371, #2e8b57); /* 민트~그린 그라디언트 */
   color: white;
   border: none;
   padding: 10px 16px;
