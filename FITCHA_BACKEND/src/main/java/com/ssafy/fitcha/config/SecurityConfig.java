@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,46 +24,63 @@ public class SecurityConfig {
 
 	@Autowired
 	private CustomOAuth2UserService customOAuth2UserService;
+
 	@Autowired
 	private CustomOidcUserService customOidcUserService;
+
 	@Autowired
 	private JwtUtil jwtUtil;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/**/*.html", "/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg",
-								"/**/*.svg", "/favicon.ico", "/api/nickname/**")
-						.permitAll()
-						// REST로그인, 회원가입,oauth2엔드포인트 허용
-						.requestMatchers("/user/login", "/user/signup", "/oauth2/**", "/uploads/**").permitAll()
+				.and().authorizeHttpRequests(auth -> auth
+						// 1) 여기에 static resources 허용 (css, js, images, index.html 등)
+						.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+
+						.requestMatchers("/", "/index.html").permitAll()
+
+						// 2) 로그인 / 회원가입 / 닉네임 API
+						.requestMatchers("/user/login", "/user/signup", "/api/nickname/**").permitAll()
+
+						// 3) 채팅 REST API 허용
+						.requestMatchers("/api/chat/**").permitAll()
+
+						// 4) WebSocket STOMP 엔드포인트
+						.requestMatchers("/ws/**", "/ws/info", "/ws/info/**", "/topic/**", "/app/**").permitAll()
+
+						// 5) 파일시스템 이미지
+						.requestMatchers("/upload/**").permitAll()
+
+						// 6) 그 외는 모두 인증 필요
 						.anyRequest().authenticated())
-				.oauth2Login(oauth2 -> oauth2
-						// 인가 요청 시작( ex. GET /oauth2/authorization/kakao )
-						.authorizationEndpoint(endpoint -> endpoint.baseUri("/oauth2/authorization"))
-						// 리다이렉션 URL 패턴 -> 설정을 해줘야 스프링 시큐리티가 가로채서 처리하니까 .
-						.redirectionEndpoint(endpoints -> endpoints.baseUri("/login/oauth2/code/*"))
-						.userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService) // 구글 전용
-								.userService(customOAuth2UserService) // 카카오, 네이버 전용
-						)
-						// 인증 성공 후 토큰 생성하여 Vue라우터에서 처리함.
-						.successHandler((request, response, authentication) -> {
-							String status = (String) request.getSession().getAttribute("signupStatus");
-							User user = (User) request.getSession().getAttribute("user");
-							String token = jwtUtil.createToken(authentication.getName());
-							String userId = user != null ? user.getUserId() : "none";
-							String nickName = user != null ? user.getNickName() : "none";
+				.oauth2Login(
+						oauth2 -> oauth2.authorizationEndpoint(endpoint -> endpoint.baseUri("/oauth2/authorization"))
+								.redirectionEndpoint(endpoints -> endpoints.baseUri("/login/oauth2/code/*"))
+								.userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService)
+										.userService(customOAuth2UserService))
+								.successHandler((request, response, authentication) -> {
+									// 세션에서 꺼낸 값이 null 이면 빈 문자열로 대체
+									String status = (String) request.getSession().getAttribute("signupStatus");
+									if (status == null)
+										status = "";
 
-							String redirectUrl = "http://localhost:5173/oauth-success" + "?token="
-									+ URLEncoder.encode(token, StandardCharsets.UTF_8) + "&userId="
-									+ URLEncoder.encode(userId, StandardCharsets.UTF_8) + "&nickName="
-									+ URLEncoder.encode(nickName, StandardCharsets.UTF_8) + "&signup="
-									+ URLEncoder.encode(status, StandardCharsets.UTF_8);
+									User user = (User) request.getSession().getAttribute("user");
+									String userId = (user != null && user.getUserId() != null) ? user.getUserId() : "";
+									String nickName = (user != null && user.getNickName() != null) ? user.getNickName()
+											: "";
 
-							response.sendRedirect(redirectUrl);
-						}))
+									// 토큰은 당연히 null 이 아니라고 가정
+									String token = jwtUtil.createToken(authentication.getName());
+
+									String redirectUrl = "http://localhost:5173/oauth-success" + "?token="
+											+ URLEncoder.encode(token, StandardCharsets.UTF_8) + "&userId="
+											+ URLEncoder.encode(userId, StandardCharsets.UTF_8) + "&nickName="
+											+ URLEncoder.encode(nickName, StandardCharsets.UTF_8) + "&signup="
+											+ URLEncoder.encode(status, StandardCharsets.UTF_8);
+
+									response.sendRedirect(redirectUrl);
+								}))
 				.exceptionHandling().authenticationEntryPoint((request, response, authException) -> {
 					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
 				});
@@ -70,6 +88,5 @@ public class SecurityConfig {
 		http.addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
-
 	}
 }

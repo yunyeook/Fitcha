@@ -1,6 +1,6 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia';
 
-export const useUserStore = defineStore("user", {
+export const useUserStore = defineStore('user', {
   state: () => ({
     userId: null,
     userBoardId: null,
@@ -8,7 +8,7 @@ export const useUserStore = defineStore("user", {
     profileImgUrl: null,
   }),
   getters: {
-    isLoggedIn: (state) => !!state.userId,
+    isLoggedIn: state => !!state.userId,
   },
   actions: {
     setUser({ userId, userBoardId, nickName, profileImgUrl }) {
