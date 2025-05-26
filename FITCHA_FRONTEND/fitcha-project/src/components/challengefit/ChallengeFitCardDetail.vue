@@ -391,7 +391,6 @@ async function requestChallengeDetail() {
   isViewCounted.value = "false";
   comments.value = data.comments;
 
-  console.log(challenge.value);
   // 작성자 프로필 이미지가 서버 응답에 포함되어 있다고 가정
   writerProfileImgUrl.value = challenge.value.userProfileImgUrl
     ? `http://localhost:8080/${challenge.value.userProfileImgUrl}`

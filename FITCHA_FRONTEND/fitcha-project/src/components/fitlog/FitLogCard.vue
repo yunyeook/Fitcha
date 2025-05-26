@@ -63,6 +63,7 @@
 <script setup>
 import { computed } from "vue";
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
+import { BASE_URL } from "@/api/api";
 
 const props = defineProps({
   fitlog: {
@@ -72,14 +73,14 @@ const props = defineProps({
 
 const profileImgUrl = computed(() => {
   if (props.fitlog?.userProfileImgUrl) {
-    return "http://localhost:8080/" + props.fitlog.userProfileImgUrl;
+    return BASE_URL + "/" + props.fitlog.userProfileImgUrl;
   }
   return "";
 });
 
 const imgUrl = computed(() => {
   return props.fitlog?.proofFiles?.length > 0
-    ? "http://localhost:8080/" + props.fitlog.proofFiles[0].fileUrl
+    ? BASE_URL + "/" + props.fitlog.proofFiles[0].fileUrl
     : "";
 });
 </script>

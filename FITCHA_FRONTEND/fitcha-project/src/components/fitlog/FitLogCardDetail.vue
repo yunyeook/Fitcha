@@ -160,6 +160,7 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import FitlogCardComment from "./FitlogCardComment.vue";
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
+import { BASE_URL } from "@/api/api";
 
 // props로 fitlog 객체 받음
 const props = defineProps({
@@ -184,7 +185,7 @@ const cacheBuster = ref(Date.now());
 // 캐시 무효화를 위한 쿼리스트링 추가
 const profileImgWithCache = computed(() => {
   if (profileImgUrl.value) {
-    return `http://localhost:8080/${profileImgUrl.value}?t=${cacheBuster.value}`;
+    return `${BASE_URL}/${profileImgUrl.value}?t=${cacheBuster.value}`;
   }
   return "";
 });
@@ -202,7 +203,7 @@ const showProofModal = ref(false);
 // 인증 이미지 URL (첫번째 proofFile이 있으면 주소 붙여서 반환)
 const imgUrl = computed(() => {
   if (fitlog.value?.proofFiles?.length > 0) {
-    return "http://localhost:8080/" + fitlog.value.proofFiles[0].fileUrl;
+    return BASE_URL + "/" + fitlog.value.proofFiles[0].fileUrl;
   }
   return "";
 });
@@ -449,7 +450,7 @@ watch(
       try {
         const { data } = await api.get(`/user/${writer}`);
         writerProfileImgUrl.value = data.profileImgUrl
-          ? `http://localhost:8080/${data.profileImgUrl}`
+          ? `${BASE_URL}/${data.profileImgUrl}`
           : defaultProfileImg;
       } catch (error) {
         console.error("작성자 프로필 이미지 가져오기 실패:", error);

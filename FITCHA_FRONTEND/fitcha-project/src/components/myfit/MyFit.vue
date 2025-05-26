@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import api from "@/api/api";
+import api, { BASE_URL } from "@/api/api";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onMounted, ref, computed } from "vue";
@@ -79,7 +79,6 @@ import FitLogCard from "../fitlog/FitLogCard.vue";
 import ChallengeFitCard from "../challengefit/ChallengeFitCard.vue";
 import MyFitUpdate from "./MyFitUpdate.vue";
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
-
 const isEditing = ref(false);
 const userStore = useUserStore();
 const { nickName, userBoardId } = storeToRefs(userStore);
@@ -89,7 +88,7 @@ const challenges = ref([]);
 
 const profileImgUrl = computed(() => {
   if (userInfo.value?.profileImgUrl) {
-    return "http://localhost:8080/" + userInfo.value?.profileImgUrl;
+    return BASE_URL + "/" + userInfo.value?.profileImgUrl;
   }
   return "";
 });

@@ -502,7 +502,7 @@ onUnmounted(() => {
   gap: 18px;
   width: calc(180px * 12 + 18px * 11);
   animation: smoothSlide 25s ease-in-out infinite;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 .proof-gallery img {
   width: 180px;

@@ -31,26 +31,17 @@
         <div class="divider"><span>또는</span></div>
 
         <button class="social-btn kakao" @click="oauthLogin('kakao')">
-          <img
-            src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png"
-            alt="Kakao"
-          />
+          <img src="../../assets/images/login/kakao.svg" alt="Kakao" />
           카카오로 시작하기
         </button>
 
         <button class="social-btn naver" @click="oauthLogin('naver')">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Naver_Logotype.svg"
-            alt="Naver"
-          />
+          <img src="../../assets/images/login/naver.svg" alt="Naver" />
           네이버로 시작하기
         </button>
 
         <button class="social-btn google" @click="oauthLogin('google')">
-          <img
-            src="https://developers.google.com/identity/images/g-logo.png"
-            alt="Google"
-          />
+          <img src="../../assets/images/login/google.png" alt="Google" />
           구글로 시작하기
         </button>
       </div>
@@ -59,6 +50,7 @@
 </template>
 
 <script setup>
+import { BASE_URL } from "@/api/api";
 import { useUserStore } from "@/stores/user";
 import axios from "axios";
 import { ref } from "vue";
@@ -66,7 +58,6 @@ import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
 const router = useRouter();
-const BASE_URL = "http://localhost:8080";
 
 const form = ref({
   userId: "",
