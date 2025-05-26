@@ -109,39 +109,31 @@ public class UserController {
 	}
 
 	@Operation(summary = "다른 사용자 팔로우 등록")
-	@PostMapping("/follow/{followingNickName}")
-	public ResponseEntity<Void> followUser(@PathVariable("followingNickName") String followingNickName,
-			HttpSession session) {
-		User loginUser = (User) session.getAttribute("loginUser");
-		String followerNickName = loginUser.getNickName(); // 팔로워 하는 사람 (나)
-
+	@PostMapping("/follow")
+	public ResponseEntity<Void> followUser(@RequestParam String followerNickName,
+			@RequestParam String followingNickName) {
 		if (userService.follow(followerNickName, followingNickName)) {
 			return ResponseEntity.ok().build();
 		}
-
 		return ResponseEntity.badRequest().build();
 	}
 
 	@Operation(summary = "다른 사용자 팔로잉 취소")
-	@DeleteMapping("/follow/{followingNickName}")
-	public ResponseEntity<Void> unfollowUser(@PathVariable("followingNickName") String followingNickName,
-			HttpSession session) {
-		User loginUser = (User) session.getAttribute("loginUser");
-		String followerNickName = loginUser.getNickName(); // 팔로워 하는 사람 (나)
-
+	@DeleteMapping("/follow")
+	public ResponseEntity<Void> unfollowUser(@RequestParam String followerNickName,
+			@RequestParam String followingNickName) {
 		if (userService.unfollow(followerNickName, followingNickName)) {
 			return ResponseEntity.ok().build();
 		}
-
 		return ResponseEntity.badRequest().build();
 	}
 
 	@Operation(summary = "사용자의 팔로워 및 팔로잉 수 조회")
-	@GetMapping("/follow/{userBoardId}")
-	public ResponseEntity<Map<String, Integer>> getFollowCount(@PathVariable("userBoardId") int userBoardId) {
+	@GetMapping("/follow/{targetNickName}")
+	public ResponseEntity<Map<String, Integer>> getFollowCount(@PathVariable("targetNickName") String nickName) {
 
 		Map<String, Integer> followCount = new HashMap<>(); // 맵 형태로 팔로워 수, 팔로잉 수 저장
-		followCount = userService.getFollowAllCount(userBoardId);
+		followCount = userService.getFollowAllCount(nickName);
 
 		if (followCount != null) {
 			return ResponseEntity.ok(followCount);
@@ -151,6 +143,19 @@ public class UserController {
 
 	}
 
+	@Operation(summary = "상대방을 팔로우하고 있는지 여부를 반환")
+	@GetMapping("/follow/check/{nickName}/{followingNickName}")
+	public ResponseEntity<Boolean> checkFollowing(
+	    @PathVariable("nickName") String followerNickName,
+	    @PathVariable("followingNickName") String followingNickName // ✅ 일치시킴
+	) {
+	    System.out.println("followerNickName: " + followerNickName);
+	    System.out.println("followingNickName: " + followingNickName);
+	    boolean isFollowing = userService.isFollowing(followerNickName, followingNickName);
+	    return ResponseEntity.ok(isFollowing);
+	}
+
+	
 	@Operation(summary = "사용자의 팔로워 전체 목록 조회")
 	@GetMapping("/follow/{userNickName}/follower")
 	public ResponseEntity<List<String>> getFollowerAll(@PathVariable("userNickName") String userNickName) {

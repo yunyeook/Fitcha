@@ -99,10 +99,9 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import api from "@/api/api";
+import api, { BASE_URL } from "@/api/api";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-
 const router = useRouter();
 const props = defineProps({
   fitlog: {
@@ -139,8 +138,7 @@ watch(
     hashtags.value = [...(fitlog.hashTags || [])];
 
     if (fitlog.proofFiles?.length > 0) {
-      thumbnailPreview.value =
-        "http://localhost:8080/" + fitlog.proofFiles[0].fileUrl;
+      thumbnailPreview.value = BASE_URL + "/" + fitlog.proofFiles[0].fileUrl;
     }
   },
   { immediate: true }

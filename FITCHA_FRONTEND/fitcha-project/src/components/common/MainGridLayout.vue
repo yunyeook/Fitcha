@@ -20,13 +20,14 @@
 
 .main-content {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 25px;
   width: 100%;
   box-sizing: border-box;
   /* ✨ 높이 제한 제거 */
   max-height: unset;
   overflow: visible;
+  padding-bottom: 50px;
 }
 
 /* 스크롤바 디자인 */

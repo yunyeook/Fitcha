@@ -40,6 +40,7 @@ import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 import api from "@/api/api";
+import { BASE_URL } from "@/api/api";
 
 const userStore = useUserStore();
 const { nickName, userId } = storeToRefs(userStore);
@@ -67,7 +68,7 @@ watch(
       try {
         const { data } = await api.get(`/user/${writer}`);
         commentProfileImgUrl.value = data.profileImgUrl
-          ? `http://localhost:8080/${data.profileImgUrl}`
+          ? `${BASE_URL}/${data.profileImgUrl}`
           : defaultProfileImg;
       } catch (error) {
         console.error("작성자 프로필 이미지 가져오기 실패:", error);

@@ -24,7 +24,7 @@ public interface UserService {
 	boolean unfollow(String followerNickName, String followingNickName);
 	
 	// 유저 팔로워 팔로잉 수 조회 
-	Map<String, Integer> getFollowAllCount(int userBoardId);
+	Map<String, Integer> getFollowAllCount(String nickName);
 	
 	// 유저 팔로워 전체 조회 
 	List<String> getFollowerAllList(String userNickName);
@@ -37,6 +37,9 @@ public interface UserService {
 	
 	// 유저 정보 수정
 	boolean updateUserInfo(User user);
+	
+	// 상대발 팔로우 하는지 체크 
+	boolean isFollowing(String followerNickName, String followingNickName);
 
 
 }

@@ -25,6 +25,7 @@
           id="thumbnail"
           accept="image/*"
           @change="onImageChange"
+          required
         />
       </div>
 
@@ -36,6 +37,7 @@
           id="title"
           placeholder="예: 30일 아침 러닝 챌린지!!"
           v-model="title"
+          required
         />
       </div>
 
@@ -47,6 +49,7 @@
           rows="4"
           placeholder="챌린지 내용을 입력하세요."
           v-model="content"
+          required
         ></textarea>
       </div>
 
@@ -190,7 +193,6 @@ onMounted(async () => {
       writer: writer.value,
     },
   });
-  console.dir(data);
   exerciseType.value = data.exerciseType;
   bodyPart.value = data.bodyPart;
   level.value = data.level;

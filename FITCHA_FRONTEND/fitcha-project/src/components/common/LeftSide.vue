@@ -33,7 +33,10 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/myfit">
+        <router-link
+          v-if="nickName"
+          :to="{ name: 'MyFitView', params: { targetNickName: nickName } }"
+        >
           <i class="fas fa-user-circle"></i>
           MyFit
         </router-link>

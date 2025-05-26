@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import api from "@/api/api";
+import api, { BASE_URL } from "@/api/api";
 import { ref, computed } from "vue";
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg"; // 기본 이미지 경로
 import { useUserStore } from "@/stores/user";
@@ -44,8 +44,7 @@ const props = defineProps({
 // ✅ computed로 미리보기 반영
 const fullProfileImgUrl = computed(() => {
   if (previewUrl.value) return previewUrl.value;
-  if (profileImgUrl.value)
-    return `http://localhost:8080/${profileImgUrl.value}`;
+  if (profileImgUrl.value) return `${BASE_URL}/${profileImgUrl.value}`;
   return defaultProfileImg;
 });
 
@@ -170,10 +169,10 @@ const closeEdit = () => {
   bottom: -2px;
   background-color: #3cb371;
   border-radius: 50%;
-  padding: 6px;
+  padding: 6px 12px;
   color: white;
   cursor: pointer;
-  font-size: 1.7rem;
+  font-size: 1.5rem;
 }
 
 .profile-update-wrapper .form-group {

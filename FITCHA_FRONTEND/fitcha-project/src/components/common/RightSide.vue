@@ -48,22 +48,30 @@
     <!-- 위치 권한 요청 모달이 닫힌 후 보여지는 날씨 정보 영역 -->
     <div class="weather" v-else>
       <div class="weather-icon">
-        <!-- 하늘 상태에 따른 아이콘 클래스 바인딩 -->
         <i :class="weatherIconClass"></i>
       </div>
 
-      <!-- 날씨 정보 로딩 중 표시 -->
       <div v-if="loading">날씨 정보를 불러오는 중입니다...</div>
 
-      <!-- 에러 메시지 출력 -->
       <div v-else-if="error" class="error-msg">{{ error }}</div>
 
-      <!-- 정상적으로 날씨 데이터가 있을 경우 출력, 값이 없으면 "-" 표시 -->
-      <div v-else>
-        <p><strong>기온:</strong> {{ temperature || "-" }}°C</p>
-        <p><strong>습도:</strong> {{ humidity || "-" }}%</p>
-        <p><strong>강수:</strong> {{ rain || "-" }}</p>
-        <p><strong>하늘:</strong> {{ sky || "-" }}</p>
+      <div v-else class="weather-data">
+        <div>
+          <i class="fas fa-temperature-high temp-icon"></i>
+          <span>기온: {{ temperature || "-" }}°C</span>
+        </div>
+        <div>
+          <i class="fas fa-tint humidity-icon"></i>
+          <span>습도: {{ humidity || "-" }}%</span>
+        </div>
+        <div>
+          <i class="fas fa-cloud-rain rain-icon"></i>
+          <span>강수: {{ rain || "-" }}</span>
+        </div>
+        <div>
+          <i class="fas fa-cloud-sun sky-icon"></i>
+          <span>하늘: {{ sky || "-" }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -79,13 +87,27 @@ import "@vuepic/vue-datepicker/dist/main.css";
 const selectedDate = ref(new Date());
 
 // Vue Composition API
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 // 기본 프로필 이미지 임포트
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
 
 // API 호출을 위한 공통 api 모듈 임포트
 import api from "@/api/api";
+
+onMounted(() => {
+  const lastLocationPrompt = localStorage.getItem("lastLocationPrompt");
+  const now = Date.now();
+
+  if (!lastLocationPrompt || now - Number(lastLocationPrompt) > 3600000) {
+    // 1시간(3600000ms) 지났으면 다시 물어봄
+    showLocationRequest.value = true;
+  } else {
+    // 최근에 이미 물어봤으니 그냥 서울로 설정
+    showLocationRequest.value = false;
+    fetchWeather(37.5665, 126.978);
+  }
+});
 
 // --- 상태 변수 선언 ---
 
@@ -132,34 +154,32 @@ async function fetchWeather(lat, lon) {
 // --- 위치 권한 허용 요청 함수 ---
 function requestLocation() {
   if (navigator.geolocation) {
-    // 브라우저 위치 기능이 있다면 위치 요청
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        // 위치 권한 허용 시 모달 닫고 위치 기반 날씨 조회
         showLocationRequest.value = false;
+        localStorage.setItem("lastLocationPrompt", Date.now()); // ✅ 시간 저장
         fetchWeather(pos.coords.latitude, pos.coords.longitude);
       },
       (err) => {
-        // 위치 권한 거부 시 모달 닫고 기본 위치(서울) 날씨 조회, 에러 메시지 출력
         showLocationRequest.value = false;
         error.value =
           "위치 권한이 거부되었습니다. 기본 위치(서울)로 설정합니다.";
+        localStorage.setItem("lastLocationPrompt", Date.now()); // ✅ 시간 저장
         fetchWeather(37.5665, 126.978);
       }
     );
   } else {
-    // 브라우저가 위치 기능을 지원하지 않는 경우
     showLocationRequest.value = false;
     error.value = "이 브라우저는 위치 정보를 지원하지 않습니다.";
+    localStorage.setItem("lastLocationPrompt", Date.now()); // ✅ 시간 저장
   }
 }
 
-// --- 위치 권한 거부 버튼 클릭 시 실행할 함수 ---
 function rejectLocation() {
-  // 모달 닫고 에러 메시지 띄운 뒤 서울 기본 위치로 날씨 조회
   showLocationRequest.value = false;
   error.value =
     "위치 권한 요청이 거부되었습니다. 기본 위치(서울)로 설정합니다.";
+  localStorage.setItem("lastLocationPrompt", Date.now()); // ✅ 시간 저장
   fetchWeather(37.5665, 126.978);
 }
 
@@ -189,10 +209,12 @@ const { nickName, profileImgUrl } = storeToRefs(userStore);
 // --- 프로필 이미지 캐시 무효화용 타임스탬프 (변경 시 이미지 강제 새로고침) ---
 const cacheBuster = ref(Date.now());
 
+import { BASE_URL } from "@/api/api";
+
 // --- 프로필 이미지 URL에 타임스탬프 쿼리 추가 (없으면 빈 문자열 반환) ---
 const profileImgWithCache = computed(() => {
   if (profileImgUrl.value) {
-    return `http://localhost:8080/${profileImgUrl.value}?t=${cacheBuster.value}`;
+    return BASE_URL + `/${profileImgUrl.value}?t=${cacheBuster.value}`;
   }
   return "";
 });
@@ -273,15 +295,14 @@ const profileImgWithCache = computed(() => {
 .calendar-container {
   width: 220px;
   padding: 0.8rem;
-  margin-top: 4rem;
   border-radius: 1rem;
   background: #f0fdfa;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   font-size: 0.9rem;
   box-sizing: border-box;
-
+  height: 300px;
   /* 자식 요소가 넘치지 않도록 */
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 /* Datepicker 내부 스타일 override (선택사항) */
 :deep(.dp__theme_light) {
@@ -305,39 +326,88 @@ const profileImgWithCache = computed(() => {
 /* 날씨 영역 스타일 */
 /* 날씨 영역 스타일 */
 .weather {
-  height: auto;
+  padding: 0px 20px;
+  padding-bottom: 20px;
   margin-top: 30px;
-  padding: 20px;
   border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  /* background: linear-gradient(135deg, #e0f7f1, #d0f0ff); */
+  /* box-shadow: 0 8px 20px rgba(50, 115, 170, 0.1); */
   font-size: 15px;
+  color: #334155;
   text-align: center;
   animation: fadeIn 0.4s ease-in-out;
-  transition: background-color 0.3s ease;
+  user-select: none;
 }
 
-/* 날씨 아이콘 */
 .weather-icon {
-  font-size: 80px;
-  margin-bottom: 10px;
-  color: #fbbf24; /* 햇살 같은 노란색 */
+  font-size: 90px;
+  margin-bottom: 14px;
+  color: #f7b267; /* 부드러운 파스텔 오렌지빛 */
+  /* filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.6)); */
+  transition: color 0.3s ease;
 }
 
-/* 텍스트 부분 */
-.weather p {
-  margin: 4px 0;
-  color: #334155; /* slate-700 */
-  font-weight: 500;
+/* 날씨 데이터 카드 컨테이너 */
+.weather-data {
+  display: flex;
+  justify-content: space-around;
+  gap: 14px;
+  margin-top: 8px;
+  flex-wrap: wrap;
 }
 
-/* 에러 메시지 */
+/* 개별 데이터 카드 */
+.weather-data > div {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  border-radius: 12px;
+  flex: 1 1 90px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1e293b;
+  user-select: text;
+  transition: box-shadow 0.25s ease;
+}
+
+.weather-data > div:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* 아이콘 스타일 */
+.weather-data i {
+  font-size: 20px;
+  color: #34d399;
+}
+
+/* 온도 아이콘 색상 변경 */
+.weather-data .temp-icon {
+  color: #fbbf24; /* 노란 햇살 느낌 */
+}
+
+/* 습도 아이콘 색상 변경 */
+.weather-data .humidity-icon {
+  color: #3b82f6; /* 파란색 물방울 */
+}
+
+/* 강수 아이콘 색상 변경 */
+.weather-data .rain-icon {
+  color: #60a5fa; /* 연한 파란색 빗방울 */
+}
+
+/* 하늘 상태 아이콘 색상 */
+.weather-data .sky-icon {
+  color: #64748b; /* 무채색 톤 */
+}
+
+/* 에러 메시지 폰트 굵게 */
 .error-msg {
   color: #ef4444;
-  font-weight: 600;
+  font-weight: 700;
   margin-top: 10px;
+  user-select: none;
 }
 
 /* 부드러운 fade-in 등장 효과 */

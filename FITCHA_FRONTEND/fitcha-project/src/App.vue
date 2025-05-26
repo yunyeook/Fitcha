@@ -11,16 +11,16 @@
 </template>
 
 <script setup>
-import Layout from './components/common/Layout.vue';
-import LeftSide from './components/common/LeftSide.vue';
-import RightSide from './components/common/RightSide.vue';
-import { onMounted } from 'vue';
-import { useUserStore } from '@/stores/user';
+import Layout from "./components/common/Layout.vue";
+import LeftSide from "./components/common/LeftSide.vue";
+import RightSide from "./components/common/RightSide.vue";
+import { onMounted } from "vue";
+import { useUserStore } from "@/stores/user";
 
 const userStore = useUserStore();
 
 onMounted(() => {
-  const token = localStorage.getItem('access-token');
+  const token = localStorage.getItem("access-token");
   if (!token) {
     userStore.clearUser(); // 토큰 없으면 상태 초기화
   }
@@ -31,7 +31,7 @@ onMounted(() => {
 /* Main */
 .main {
   flex: 1;
-  padding: 30px 10px 40px 30px;
+  padding: 30px 20px 40px 20px;
   border-radius: 50px;
   background-color: #f0f6f4;
   margin: 20px 0px;

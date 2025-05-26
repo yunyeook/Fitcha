@@ -3,24 +3,31 @@
     <div class="proof-detail">
       <!-- 상단 작성자 정보 -->
       <div class="header">
-        <div class="userAndTitle">
-          <img
-            v-if="writerProfileImgUrl"
-            class="user-profile-image"
-            :src="writerProfileImgUrl"
-            alt="작성자 프로필"
-          />
-          <img
-            v-else
-            :src="defaultProfileImg"
-            class="user-profile-image"
-            alt="작성자 프로필"
-          />
-          <div class="user-info">
-            <span class="title">{{ fitlog.title }}</span>
-            <span class="user-name">{{ fitlog.writer }}</span>
+        <router-link
+          v-if="fitlog.writer"
+          :to="{ name: 'MyFitView', params: { targetNickName: fitlog.writer } }"
+          style="text-decoration: none"
+        >
+          <div class="userAndTitle">
+            <img
+              v-if="writerProfileImgUrl"
+              class="user-profile-image"
+              :src="writerProfileImgUrl"
+              alt="작성자 프로필"
+            />
+            <img
+              v-else
+              :src="defaultProfileImg"
+              class="user-profile-image"
+              alt="작성자 프로필"
+            />
+            <div class="user-info">
+              <span class="title">{{ fitlog.title }}</span>
+              <span class="user-name">{{ fitlog.writer }}</span>
+            </div>
           </div>
-        </div>
+        </router-link>
+
         <!-- 내 글이면 메뉴 보임 -->
         <div v-if="isMyFitLog" class="proof-menu" @click="openProofModal">
           <i class="fas fa-ellipsis-v"></i>
@@ -160,6 +167,7 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import FitlogCardComment from "./FitlogCardComment.vue";
 import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
+import { BASE_URL } from "@/api/api";
 
 // props로 fitlog 객체 받음
 const props = defineProps({
@@ -184,7 +192,7 @@ const cacheBuster = ref(Date.now());
 // 캐시 무효화를 위한 쿼리스트링 추가
 const profileImgWithCache = computed(() => {
   if (profileImgUrl.value) {
-    return `http://localhost:8080/${profileImgUrl.value}?t=${cacheBuster.value}`;
+    return `${BASE_URL}/${profileImgUrl.value}?t=${cacheBuster.value}`;
   }
   return "";
 });
@@ -202,7 +210,7 @@ const showProofModal = ref(false);
 // 인증 이미지 URL (첫번째 proofFile이 있으면 주소 붙여서 반환)
 const imgUrl = computed(() => {
   if (fitlog.value?.proofFiles?.length > 0) {
-    return "http://localhost:8080/" + fitlog.value.proofFiles[0].fileUrl;
+    return BASE_URL + "/" + fitlog.value.proofFiles[0].fileUrl;
   }
   return "";
 });
@@ -449,7 +457,7 @@ watch(
       try {
         const { data } = await api.get(`/user/${writer}`);
         writerProfileImgUrl.value = data.profileImgUrl
-          ? `http://localhost:8080/${data.profileImgUrl}`
+          ? `${BASE_URL}/${data.profileImgUrl}`
           : defaultProfileImg;
       } catch (error) {
         console.error("작성자 프로필 이미지 가져오기 실패:", error);

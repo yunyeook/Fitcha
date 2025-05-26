@@ -53,6 +53,7 @@ const formattedDate = computed(() => {
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   flex-direction: column;
+  margin: 0 auto;
 }
 
 .ytc-card:hover {
