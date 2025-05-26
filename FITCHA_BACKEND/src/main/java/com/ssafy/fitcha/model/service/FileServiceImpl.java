@@ -71,7 +71,7 @@ public class FileServiceImpl implements FileService {
 				challengeFile.setChallengeBoardId(challengeBoardId);
 				challengeFile.setFileOriginalName(originalFileName);
 				challengeFile.setFileUploadName(uploadFileName);
-				challengeFile.setFileUrl(uploadDirPath + uploadFileName); // 경로 저장
+				challengeFile.setFileUrl("upload/" + uploadFileName); // 경로 저장
 				challengeFile.setWriter(writer);
 
 				fileDao.insertChallengeFile(challengeFile);
