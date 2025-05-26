@@ -5,18 +5,8 @@
       <a style="text-decoration: none" href="../views/fitLogDetail.html">
         <!-- 헤더 작성자 정보 -->
         <div class="header">
-          <img
-            v-if="profileImgUrl"
-            :src="profileImgUrl"
-            alt="작성자 프로필 사진"
-            class="user-profile-image"
-          />
-          <img
-            v-else
-            :src="defaultProfileImg"
-            alt="기본 프로필 사진"
-            class="user-profile-image"
-          />
+          <img v-if="profileImgUrl" :src="profileImgUrl" alt="작성자 프로필 사진" class="user-profile-image" />
+          <img v-else :src="defaultProfileImg" alt="기본 프로필 사진" class="user-profile-image" />
           <div class="user-info">
             <span class="title">{{ fitlog.title }}</span>
             <span class="user-name">{{ fitlog.writer }}</span>
@@ -61,9 +51,9 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import defaultProfileImg from "@/assets/images/myfit/profile-default.svg";
-import { BASE_URL } from "@/api/api";
+import { computed } from 'vue';
+import defaultProfileImg from '@/assets/images/myfit/profile-default.svg';
+import { BASE_URL } from '@/api/api';
 
 const props = defineProps({
   fitlog: {
@@ -73,15 +63,13 @@ const props = defineProps({
 
 const profileImgUrl = computed(() => {
   if (props.fitlog?.userProfileImgUrl) {
-    return BASE_URL + "/" + props.fitlog.userProfileImgUrl;
+    return BASE_URL + '/' + props.fitlog.userProfileImgUrl;
   }
-  return "";
+  return '';
 });
 
 const imgUrl = computed(() => {
-  return props.fitlog?.proofFiles?.length > 0
-    ? BASE_URL + "/" + props.fitlog.proofFiles[0].fileUrl
-    : "";
+  return props.fitlog?.proofFiles?.length > 0 ? BASE_URL + '/' + props.fitlog.proofFiles[0].fileUrl : '';
 });
 </script>
 
@@ -96,7 +84,7 @@ const imgUrl = computed(() => {
   background-color: #fff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  font-family: "Arial", sans-serif;
+  font-family: 'Arial', sans-serif;
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
