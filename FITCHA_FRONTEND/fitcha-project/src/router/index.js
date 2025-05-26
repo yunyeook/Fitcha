@@ -53,7 +53,11 @@ const routes = [
   { path: "/fittube/:id", name: "FitTubeDetail", component: FitTubeDetailView },
 
   { path: "/fitlog", component: FitLogView },
-  { path: "/fitlog/:id", component: FitLogDetailView },
+  {
+    path: "/fitlog/:id",
+    name: "FitLogDetailView",
+    component: FitLogDetailView,
+  },
 
   {
     path: "/fitlog/regist/:challengeBoardId/:writer",

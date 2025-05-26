@@ -11,18 +11,18 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 const router = useRouter();
 
-const menu = ref(window.location.pathname.split('/')[1]);
+const menu = ref(window.location.pathname.split("/")[1]);
 onMounted(() => {
-  if (menu.value === 'challengefit') {
-    menu.value = '챌린지가';
-  } else if (menu.value === 'fittube') {
-    menu.value = '영상이';
-  } else if (menu.value === 'fitlog') {
-    menu.value = '인증글이';
+  if (menu.value === "challengefit") {
+    menu.value = "챌린지가";
+  } else if (menu.value === "fittube") {
+    menu.value = "영상이";
+  } else if (menu.value === "fitlog") {
+    menu.value = "인증글이";
   }
 });
 function goBack() {
@@ -30,7 +30,7 @@ function goBack() {
 }
 
 function goHome() {
-  router.push('/home');
+  router.push("/home");
 }
 </script>
 
@@ -43,7 +43,7 @@ function goHome() {
   min-height: 400px;
   padding: 32px;
   margin: 0 auto;
-  background-color: #f8f9fa;
+  background-color: #f8f9faa4;
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }

@@ -142,10 +142,13 @@ public class ProofServiceImpl implements ProofService {
 		fileService.insertProofFile(files, proof.getProofBoardId(), proof.getWriter());
 
 		// 해쉬태그 저장
-		Map<String, Object> params = new HashMap<>();
-		params.put("proofBoardId", proofBoardId);
-		params.put("hashTags", proof.getHashTags());
-		proofDao.insertProofBoardHashtags(params);
+		List<String> hashTags = proof.getHashTags();
+		if (hashTags != null && !hashTags.isEmpty()) {
+		    Map<String, Object> params = new HashMap<>();
+		    params.put("proofBoardId", proofBoardId);
+		    params.put("hashTags", hashTags);
+		    proofDao.insertProofBoardHashtags(params);
+		}
 
 		return isRegisted;
 	}
@@ -156,12 +159,16 @@ public class ProofServiceImpl implements ProofService {
 		boolean isUpdated = (1 == proofDao.updateProofBoard(proof));
 
 		// 해쉬태그 수정을 위해 기존에 있는 해쉬 태그 삭제 후 새로운 해쉬태그들 등록
-		Map<String, Object> params = new HashMap<>();
-		params.put("proofBoardId", proof.getProofBoardId());
-		params.put("hashTags", proof.getHashTags());
 		proofDao.deleteProofBoardHashtags(proof.getProofBoardId());
-		proofDao.insertProofBoardHashtags(params);
 
+		List<String> hashTags = proof.getHashTags();
+		if (hashTags != null && !hashTags.isEmpty()) {
+		    Map<String, Object> params = new HashMap<>();
+		    params.put("proofBoardId", proof.getProofBoardId());
+		    params.put("hashTags", hashTags);
+		    proofDao.insertProofBoardHashtags(params);
+		}
+		
 		// 인증글 파일 교체
 		if (files != null && files.size() > 0) {
 			fileService.updateProofFile(files, proof.getProofBoardId(), proof.getWriter());
