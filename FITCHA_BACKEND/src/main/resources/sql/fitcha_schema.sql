@@ -36,8 +36,8 @@ user_id VARCHAR(300) ,
 title VARCHAR(300) NOT NULL,
 content TEXT NOT NULL,
 writer VARCHAR(300) NOT NULL,
-exercise_type VARCHAR(300) NOT NULL DEFAULT '전체',
-body_part VARCHAR(300) NOT NULL DEFAULT '전체',
+exercise_type VARCHAR(300) NOT NULL DEFAULT '유산소',
+body_part VARCHAR(300) NOT NULL DEFAULT '전신',
 `level` VARCHAR(300) NOT NULL DEFAULT '초급',
 duration INT NOT NULL,
 participant_count INT DEFAULT 1 CHECK (participant_count >= 1 AND participant_count <= 100),
@@ -81,7 +81,6 @@ CONSTRAINT proof_board_user_pk FOREIGN KEY (user_id) REFERENCES user_board(user_
 ON DELETE SET NULL
 );
 
-select * from proof_board;
 
 
 CREATE TABLE proof_board_hashtag (
@@ -190,6 +189,24 @@ is_read BOOLEAN DEFAULT FALSE -- TRUE = 1, FALSE = 0 으로 저장된다함.. --
 CREATE TABLE participant_challenge(
 challenge_board_id INT,
 participant VARCHAR(300) NOT NULL 
+);
+
+CREATE TABLE chat_room (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+	writer VARCHAR(255) NOT NULL,
+    reg_date TIMESTAMP DEFAULT NOW()
+    );
+    
+ 
+
+CREATE TABLE chat_message (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    room_id BIGINT NOT NULL,
+    sender VARCHAR(255),
+    message TEXT,
+    timestamp DATETIME,
+    FOREIGN KEY (room_id) REFERENCES chat_room(id) ON DELETE CASCADE;
 );
 
 -- 더미 데이터----------------------------------------------------------------------
@@ -420,23 +437,7 @@ select * from fittube_comment;
 select * from challenge_like;
 
 
-CREATE TABLE chat_room (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-	writer VARCHAR(255) NOT NULL,
-    reg_date TIMESTAMP DEFAULT NOW()
-    );
-    
- 
 
-CREATE TABLE chat_message (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    room_id BIGINT NOT NULL,
-    sender VARCHAR(255),
-    message TEXT,
-    timestamp DATETIME,
-    FOREIGN KEY (room_id) REFERENCES chat_room(id)
-);
 SELECT * FROM chat_room;
 select * from chat_message;
 

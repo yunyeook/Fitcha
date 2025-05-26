@@ -97,7 +97,7 @@ import api, { BASE_URL } from '@/api/api';
 const props = defineProps({ challenge: { type: Object } });
 const { userId, nickName } = useUserStore();
 const imgUrl = computed(() => {
-  return props.challenge?.challengeFiles?.[0]?.fileUploadName
+  return props.challenge?.challengeFiles?.[0]?.fileUrl
     ? `${BASE_URL}/${props.challenge.challengeFiles[0].fileUrl}`
     : '';
 });
