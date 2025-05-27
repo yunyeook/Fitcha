@@ -33,12 +33,16 @@
         </div>
       </MainDetailLayout>
     </div>
+    <a class="challenge-detail__back" @click="goBack">
+      <i class="fas fa-arrow-left"></i>
+      뒤로 가기
+    </a>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import api, { BASE_URL } from "@/api/api";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
@@ -46,6 +50,7 @@ import { useUserStore } from "@/stores/user";
 import MainDetailLayout from "@/components/common/MainDetailLayout.vue";
 
 const route = useRoute();
+const router = useRouter();
 const roomId = route.params.roomId;
 const roomTitle = ref("");
 const messages = ref([]);
@@ -152,6 +157,9 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   if (stompClient) stompClient.deactivate();
 });
+function goBack() {
+  router.back(); // 이전 페이지로 이동
+}
 </script>
 
 <style scoped>
@@ -275,5 +283,15 @@ onBeforeUnmount(() => {
 .chat-messages::-webkit-scrollbar-track {
   background-color: #f1f3f5;
   border-radius: 4px;
+}
+/* 뒤로가기 */
+.challenge-detail__back {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 10px;
+  text-decoration: none;
+  color: #444;
+  gap: 6px;
+  cursor: pointer;
 }
 </style>

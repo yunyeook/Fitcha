@@ -118,7 +118,7 @@ const handleLogout = () => {
 }
 
 .left-sidebar li i {
-  padding-bottom: 5px;
+  padding-top: 2px;
 }
 
 .left-sidebar .logout-btn {

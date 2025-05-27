@@ -24,7 +24,7 @@
   box-shadow: 5px 10px 25px gray;
   display: flex;
   width: 1400px;
-  height: 860px;
+  height: 880px;
   border-radius: 30px;
 }
 </style>

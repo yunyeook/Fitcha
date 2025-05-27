@@ -94,12 +94,16 @@
         <div class="video-list">
           <div class="video-item">
             <iframe
-              src="https://www.youtube.com/embed/HPPBGosyOOM?si=FoCu_IoX__4zak-H"
-              title="추천 영상 1"
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/4kZHHPH6heY?si=FeZ3y5c-xbkAf4df"
+              title="YouTube video player"
               frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
               allowfullscreen
             ></iframe>
-            <p></p>
+            <p>오늘은 이거 하나면 끝! 근력 유산소 30분</p>
           </div>
         </div>
       </section>
