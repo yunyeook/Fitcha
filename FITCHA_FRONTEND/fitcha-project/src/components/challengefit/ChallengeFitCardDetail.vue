@@ -388,7 +388,7 @@ async function requestChallengeDetail() {
   });
   challenge.value = data;
   imgUrl.value = `${BASE_URL}/${data.challengeFiles[0].fileUrl}`;
-  isViewCounted.value = 'false';
+  isViewCounted.value = "false";
   comments.value = data.comments;
 
   // 작성자 프로필 이미지가 서버 응답에 포함되어 있다고 가정
@@ -621,6 +621,9 @@ function goBack() {
   line-height: 1.5;
   font-size: 1rem;
   color: #495057;
+
+  /* 줄바꿈 적용 */
+  white-space: pre-line;
 }
 
 .challenge-detail__progress {

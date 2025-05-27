@@ -77,7 +77,7 @@ async function requestChallengeSearch(searchKey, searchWord) {
       },
     });
   }
-
+  // console.log(response);
   const allChallenges = response.data;
 
   if (viewMode.value === "all") {
@@ -85,8 +85,14 @@ async function requestChallengeSearch(searchKey, searchWord) {
   } else if (viewMode.value === "finished") {
     challenges.value = allChallenges.filter((c) => c.finish);
   } else {
-    // ongoing
-    challenges.value = allChallenges.filter((c) => !c.finish);
+    console.log(viewMode.value);
+    if (allChallenges) {
+      // ongoing
+      challenges.value = allChallenges.filter((c) => !c.finish);
+    } else {
+      noContent.value = true;
+      return;
+    }
   }
   noContent.value = challenges.value.length === 0;
 }

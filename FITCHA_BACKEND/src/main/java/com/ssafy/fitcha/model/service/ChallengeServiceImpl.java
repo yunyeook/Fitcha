@@ -195,7 +195,23 @@ public class ChallengeServiceImpl implements ChallengeService {
 	@Override
 	public List<Challenge> getChallengeByNickName(String userNickName) {
 
-		return challengeDao.selectChallengeByNickName(userNickName);
+		List<Challenge> challengeBoardList = challengeDao.selectChallengeByNickName(userNickName);
+
+		for (Challenge challenge : challengeBoardList) {
+			int challengeBoardId = challenge.getChallengeBoardId();
+			challenge.setChallengeFiles(fileService.getChallengeFileList(challengeBoardId));
+
+			// 종료되었는지 확인후 저장
+			checkAndUpdateFinish(challenge);
+
+			// 유저 프로필 이미지
+			String nickName = challenge.getWriter();
+			User user = userService.getUserInfo(nickName);
+			challenge.setUserProfileImgUrl(user.getProfileImgUrl());
+
+		}
+		return challengeBoardList;
+
 	}
 
 	/**
