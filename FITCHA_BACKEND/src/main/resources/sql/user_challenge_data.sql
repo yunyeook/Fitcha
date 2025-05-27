@@ -7,19 +7,20 @@ INSERT INTO user_board
   (user_id, password, email,   name,    nick_name,     age, gender, follower_count, following_count, profile_img_url)
 VALUES
   -- 형용사 + 동물 닉네임 5명
-  ('alice01', 'passA1!', 'alice01@example.com', '김철수',   '별난거북이',  25, 'M', 12,  8, 'https://cdn.example.com/profiles/alice01.jpg'),
-  ('bob02',   'passB2!', 'bob02@example.com',   '이영희',   '반짝토끼',    22, 'F', 20, 15, 'https://cdn.example.com/profiles/bob02.jpg'),
-  ('carol03', 'passC3!', 'carol03@example.com', '박준혁',   '씩씩호랑이',  30, 'M',  5,  7, 'https://cdn.example.com/profiles/carol03.jpg'),
-  ('dave04',  'passD4!', 'dave04@example.com',  '최민지',   '달콤여우',    28, 'F', 18,  9, 'https://cdn.example.com/profiles/dave04.jpg'),
-  ('ellen05', 'passE5!', 'ellen05@example.com', '정다은',   '차분펭귄',    27, 'F', 14, 12, 'https://cdn.example.com/profiles/ellen05.jpg'),
+  ('alice01', 'passA1!', 'alice01@example.com', '김철수',   '별난거북이',  25, 'M', 12,  8, 'upload/u3.jpg'),
+  ('bob02',   'passB2!', 'bob02@example.com',   '이영희',   '반짝토끼',    22, 'F', 20, 15, 'upload/u13.jpg'),
+  ('carol03', 'passC3!', 'carol03@example.com', '박준혁',   '씩씩호랑이',  30, 'M',  5,  7, 'upload/u12.jpg'),
+  ('dave04',  'passD4!', 'dave04@example.com',  '최민지',   '달콤여우',    28, 'F', 18,  9, 'upload/u4.jpg'),
+  ('ellen05', 'passE5!', 'ellen05@example.com', '정다은',   '차분펭귄',    27, 'F', 14, 12, 'upload/u10.jpg'),
 
   -- 인스타풍 아이디 5명
-  ('fiona06', 'passF6!', 'fiona06@example.com', '김하루',   'h.infin',        23, 'F', 25, 18, 'https://cdn.example.com/profiles/fiona06.jpg'),
-  ('george07','passG7!','george07@example.com','이도윤',   'hrs._.1013',    31, 'M', 30, 20, 'https://cdn.example.com/profiles/george07.jpg'),
-  ('henry08', 'passH8!', 'henry08@example.com', '박수현',   'luv._.sun',      26, 'F', 22, 17, 'https://cdn.example.com/profiles/henry08.jpg'),
-  ('irene09', 'passI9!', 'irene09@example.com', '장서연',   'moon.child_07', 29, 'F', 16, 14, 'https://cdn.example.com/profiles/irene09.jpg'),
-  ('jack10',  'passJ0!', 'jack10@example.com',  '한승우',   'dreamy.skater',  24, 'M', 19, 11, 'https://cdn.example.com/profiles/jack10.jpg')
+  ('fiona06', 'passF6!', 'fiona06@example.com', '김하루',   'h.infin',        23, 'F', 25, 18, 'upload/u6.jpg'),
+  ('george07','passG7!','george07@example.com','이도윤',   'hrs._.1013',    31, 'M', 30, 20, 'upload/u7.jpg'),
+  ('henry08', 'passH8!', 'henry08@example.com', '박수현',   'luv._.sun',      26, 'F', 22, 17, 'upload/u8.jpg'),
+  ('irene09', 'passI9!', 'irene09@example.com', '장서연',   'moon.child_07', 29, 'F', 16, 14, 'upload/u2.jpg'),
+  ('jack10',  'passJ0!', 'jack10@example.com',  '한승우',   'dreamy.skater',  24, 'M', 19, 11, 'upload/u3.jpg')
 ;
+
 
 -- ========================================
 -- 2) user_file 더미 10건 삽입
@@ -409,28 +410,28 @@ INSERT INTO participant_challenge(challenge_board_id, participant) VALUES
 
 
 
+ 
 INSERT INTO challenge_file (challenge_board_id, file_upload_name, file_original_name, file_url, writer) VALUES
-(1, 'plank_001.jpg', '플랭크 이미지.jpg', '/files/challenge/plank_001.jpg', '별난거북이'),
-(2, 'pullup_001.jpg', '턱걸이 이미지.jpg', '/files/challenge/pullup_001.jpg', '반짝토끼'),
-(3, 'squat50_001.jpg', '스쿼트50 이미지.jpg', '/files/challenge/squat50_001.jpg', '씩씩호랑이'),
-(4, 'squat100_001.jpg', '스쿼트100 이미지.jpg', '/files/challenge/squat100_001.jpg', '달콤여우'),
-(5, 'lunge_001.jpg', '런지 이미지.jpg', '/files/challenge/lunge_001.jpg', '차분펭귄'),
-(6, 'pushup_001.jpg', '팔굽혀펴기 이미지.jpg', '/files/challenge/pushup_001.jpg', 'h.infin'),
-(7, 'dumbbell_001.jpg', '덤벨 이미지.jpg', '/files/challenge/dumbbell_001.jpg', 'hrs._.1013'),
-(8, 'arm_dumbbell_001.jpg', '팔뚝 아령 이미지.jpg', '/files/challenge/arm_dumbbell_001.jpg', 'luv._.sun'),
-(9, 'foamroller_back_001.jpg', '폼롤러 등 이미지.jpg', '/files/challenge/foamroller_back_001.jpg', 'moon.child_07'),
-(10, 'dumbbell_back_001.jpg', '아령 등운동 이미지.jpg', '/files/challenge/dumbbell_back_001.jpg', '별난거북이'),
-(11, 'kettlebell_001.jpg', '케틀벨 이미지.jpg', '/files/challenge/kettlebell_001.jpg', '반짝토끼'),
-(12, 'foamroller_full_001.jpg', '폼롤러 전신 이미지.jpg', '/files/challenge/foamroller_full_001.jpg', '씩씩호랑이'),
-(13, 'jumprope_001.jpg', '줄넘기 이미지.jpg', '/files/challenge/jumprope_001.jpg', '달콤여우'),
-(14, 'indoor_bike_001.jpg', '실내자전거 이미지.jpg', '/files/challenge/indoor_bike_001.jpg', '차분펭귄'),
-(15, 'commute_bike_001.jpg', '출퇴근 자전거 이미지.jpg', '/files/challenge/commute_bike_001.jpg', 'h.infin'),
-(16, 'walk_10000_001.jpg', '만보 걷기 이미지.jpg', '/files/challenge/walk_10000_001.jpg', 'hrs._.1013'),
-(17, 'morning_walk_001.jpg', '출근 전 걷기 이미지.jpg', '/files/challenge/morning_walk_001.jpg', 'luv._.sun'),
-(18, 'commute_walk_001.jpg', '출퇴근 걷기 이미지.jpg', '/files/challenge/commute_walk_001.jpg', 'moon.child_07'),
-(19, 'reformer_001.jpg', '리포머 이미지.jpg', '/files/challenge/reformer_001.jpg', '별난거북이'),
-(20, 'barrel_001.jpg', '바렐 이미지.jpg', '/files/challenge/barrel_001.jpg', '반짝토끼');
-
+(1, 'plank.jpg', 'plank.jpg', 'upload/plank.jpg', '별난거북이'),
+(2, 'pull-up.jpg', 'pull-up.jpg', 'upload/pull-up.jpg', '반짝토끼'),
+(3, 'squat.jpg', 'squat.jpg', 'upload/squat.jpg', '씩씩호랑이'),
+(4, 'squat2.jpg', 'squat2.jpg', 'upload/squat2.jpg', '달콤여우'),
+(5, 'lunge.jpg', 'lunge.jpg', 'upload/lunge.jpg', '차분펭귄'),
+(6, 'push-up.jpg', 'push-up.jpg', 'upload/push-up.jpg', 'h.infin'),
+(7, 'dumbell.jpg', 'dumbell.png', 'upload/dumbell.png', 'hrs._.1013'),
+(8, 'dumbell2.jpg', 'dumbell2.jpg', 'upload/dumbell2.jpg', 'luv._.sun'),
+(9, 'stretching_foamRoller2.jpg', 'stretching_foamRoller2.jpg', 'upload/stretching_foamRoller2.jpg', 'moon.child_07'),
+(10, 'dumbell3.png', 'dumbell3.png', 'upload/dumbell3.png', '별난거북이'),
+(11, 'kettlebell2.jpg', 'kettlebell2.jpg', 'upload/kettlebell2.jpg', '반짝토끼'),
+(12, 'stretching_foamRoller1.jpg', 'stretching_foamRoller1.jpg', 'upload/stretching_foamRoller1.jpg', '씩씩호랑이'),
+(13, 'jump_rope.jpg', 'jump_rope.jpg', 'upload/jump_rope.jpg', '달콤여우'),
+(14, 'cycle.jpg', 'cycle.jpg', 'upload/cycle.jpg', '차분펭귄'),
+(15, 'bicycle.jpg', 'bicycle.jpg', 'upload/bicycle.jpg', 'h.infin'),
+(16, 'walking2.jpg', 'walking2.jpg', 'upload/walking2.jpg', 'hrs._.1013'),
+(17, 'walking1.jpg', 'walking1.jpg', 'upload/walking1.jpg', 'luv._.sun'),
+(18, 'walking5.jpg', 'walking5.jpg', 'upload/walking5.jpg', 'moon.child_07'),
+(19, 'pilates_reformer1.jpg', 'pilates_reformer1.jpg', 'upload/pilates_reformer1.jpg', '별난거북이'),
+(20, 'pilates_barrel1.jpg', 'pilates_barrel1.jpg', 'upload/pilates_barrel1.jpg', '반짝토끼');
 
 
 
