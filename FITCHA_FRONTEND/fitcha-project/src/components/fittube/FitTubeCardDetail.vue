@@ -66,19 +66,34 @@
       <!-- 댓글 영역 -->
       <div class="comment-list">
         <div class="challenge-detail__comment-form">
-          <input type="text" placeholder="댓글을 남기세요..." v-model="comment" />
+          <input
+            type="text"
+            placeholder="댓글을 남기세요..."
+            v-model="comment"
+          />
           <button @click="requestVideoCommentRegist">작성</button>
         </div>
 
-        <div class="comment-card" v-for="comment in comments" :key="comment.videoId">
-          <img class="comment-profile" src="../assets/images/user1.jpg" alt="프로필" />
+        <div
+          class="comment-card"
+          v-for="comment in comments"
+          :key="comment.videoId"
+        >
+          <img
+            class="comment-profile"
+            src="../assets/images/user1.jpg"
+            alt="프로필"
+          />
           <div class="comment-body">
             <div class="comment-header">
               <span class="comment-author">{{ comment.writer }}</span>
 
               <template v-if="comment.writer === nickName">
-                <div class="challenge-detail__options" @click="openCommentModal(comment.commentId, comment.content)">
-                  <i class="fas fa-ellipsis-v"></i>
+                <div
+                  class="challenge-detail__options"
+                  @click="openCommentModal(comment.commentId, comment.content)"
+                >
+                  <i style="cursor: pointer" class="fas fa-ellipsis-v"></i>
                 </div>
               </template>
             </div>
@@ -98,12 +113,22 @@
       </div>
 
       <!-- 댓글 수정/삭제 모달 -->
-      <div v-if="showCommentModal" class="modal-overlay" @click.self="closeCommentModal(false)">
+      <div
+        v-if="showCommentModal"
+        class="modal-overlay"
+        @click.self="closeCommentModal(false)"
+      >
         <div class="modal-box">
-          <button class="modal-close-button" @click="closeCommentModal(false)">×</button>
+          <button class="modal-close-button" @click="closeCommentModal(false)">
+            ×
+          </button>
           <div class="modal-title">댓글 관리</div>
-          <button class="modal-button" @click="closeCommentModal(true)">수정하기</button>
-          <button class="modal-button delete" @click="requestDeleteComment">삭제하기</button>
+          <button class="modal-button" @click="closeCommentModal(true)">
+            수정하기
+          </button>
+          <button class="modal-button delete" @click="requestDeleteComment">
+            삭제하기
+          </button>
         </div>
       </div>
     </div>
@@ -111,11 +136,11 @@
 </template>
 
 <script setup>
-import api from '@/api/api';
-import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import axios from 'axios';
-import { useUserStore } from '@/stores/user';
+import api from "@/api/api";
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
+import axios from "axios";
+import { useUserStore } from "@/stores/user";
 
 const { userId, nickName } = useUserStore();
 const route = useRoute();
@@ -123,9 +148,9 @@ const videoId = route.params.id;
 const videoInfo = ref(null);
 
 const editVideoCommentId = ref(-1);
-const editCommentContent = ref('');
+const editCommentContent = ref("");
 const comments = ref({});
-const comment = ref('');
+const comment = ref("");
 
 const videoUrl = computed(() => `https://www.youtube.com/embed/${videoId}`);
 // tags 중 앞 5개만 안전하게 꺼내는 computed
@@ -142,7 +167,7 @@ onMounted(async () => {
     requestVideoCommentList();
     requestVideoLike();
   } catch (e) {
-    console.error('영상 요청 실패', e);
+    console.error("영상 요청 실패", e);
   }
 });
 
@@ -159,36 +184,41 @@ async function requestVideoCommentRegist() {
     content: comment.value,
     writer: nickName,
   });
-  comment.value = '';
+  comment.value = "";
 
   //성공시 전체 댓글 불러오기
   if (status === axios.HttpStatusCode.Created) {
     requestVideoCommentList();
   } else {
-    console.log('댓글불러오기 실패..');
+    console.log("댓글불러오기 실패..");
   }
 }
 //댓글 수정
 async function requestVideoCommentUpdate() {
-  const { status } = await api.put(`/youtube/${videoId}/comment/${editVideoCommentId.value}`, {
-    videoId: videoId,
-    commentId: editVideoCommentId.value,
-    content: editCommentContent.value,
-  });
+  const { status } = await api.put(
+    `/youtube/${videoId}/comment/${editVideoCommentId.value}`,
+    {
+      videoId: videoId,
+      commentId: editVideoCommentId.value,
+      content: editCommentContent.value,
+    }
+  );
 
   editVideoCommentId.value = -1;
-  editCommentContent.value = '';
+  editCommentContent.value = "";
 
   //성공시 전체 댓글 불러오기
   if (status === axios.HttpStatusCode.Ok) {
     requestVideoCommentList();
   } else {
-    console.log('댓글수정 실패..');
+    console.log("댓글수정 실패..");
   }
 }
 //댓글 삭제
 const requestDeleteComment = async () => {
-  const { status } = await api.delete(`/youtube/${videoId}/comment/${editVideoCommentId.value}`);
+  const { status } = await api.delete(
+    `/youtube/${videoId}/comment/${editVideoCommentId.value}`
+  );
   requestVideoCommentList();
   closeCommentModal(false);
 };
@@ -200,10 +230,10 @@ const openCommentModal = (commentId, content) => {
   editVideoCommentId.value = commentId;
   editCommentContent.value = content;
 };
-const closeCommentModal = isContinue => {
+const closeCommentModal = (isContinue) => {
   showCommentModal.value = false;
   if (!isContinue) {
-    editVideoCommentId.value = '';
+    editVideoCommentId.value = "";
   }
 };
 
