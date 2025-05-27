@@ -2,8 +2,10 @@ package com.ssafy.fitcha.model.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -141,12 +143,19 @@ public class ChallengeServiceImpl implements ChallengeService {
 	public boolean registChallenge(Challenge challenge, List<MultipartFile> files) throws Exception {
 
 		// GPT를 호출해서 소제목 받아오기
-		String subhead = openaiService.getSubheadFromGPT(challenge.getTitle(), challenge.getContent());
-		challenge.setSubhead(subhead);
-		System.out.println("지피티 소제목");
+//      String subhead = openaiService.getSubheadFromGPT(challenge.getTitle(), challenge.getContent());
+//      if(subhead!=null)challenge.setSubhead(subhead);
+//      else {
+		List<String> fallbackSubheads = Arrays.asList("오늘도 움직이는 나, 내일 더 멋진 나를 만든다", "가벼운 운동이 쌓여 무거운 피로를 밀어낸다",
+				"내 몸을 아끼는 첫걸음, 지금 바로 시작해요", "반복이 쌓이면 변화가 된다, 운동 루틴 만들기", "땀은 배신하지 않는다, 하루 한 번 나와의 약속",
+				"천천히, 하지만 확실하게 건강을 채워가요", "지치지 않게, 매일 가볍게, 꾸준히 운동하기", "오늘의 땀 한 방울이 내일의 활력 한 스푼", "어제보다 나은 나를 위한 작은 실천",
+				"몸도 마음도 가볍게, 내일을 위한 움직임");
 
-		System.out.println(subhead);
-		System.out.println("=======");
+		// 랜덤으로 하나 선택
+		Random random = new Random();
+		String randomSubhead = fallbackSubheads.get(random.nextInt(fallbackSubheads.size()));
+		challenge.setSubhead(randomSubhead);
+//      }
 
 		boolean isOk = challengeDao.insertChallengeBoard(challenge) == 1;
 		fileService.insertChallengeFile(files, challenge.getChallengeBoardId(), challenge.getWriter());

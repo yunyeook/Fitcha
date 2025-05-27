@@ -395,12 +395,12 @@ const profileImgWithCache = computed(() => {
 
 /* 강수 아이콘 색상 변경 */
 .weather-data .rain-icon {
-  color: #60a5fa; /* 연한 파란색 빗방울 */
+  color: #8694a7; /* 연한 파란색 빗방울 */
 }
 
 /* 하늘 상태 아이콘 색상 */
 .weather-data .sky-icon {
-  color: #64748b; /* 무채색 톤 */
+  color: rgb(143, 240, 227); /* 무채색 톤 */
 }
 
 /* 에러 메시지 폰트 굵게 */
@@ -561,5 +561,64 @@ const profileImgWithCache = computed(() => {
 .stat-label {
   font-size: 0.75rem;
   color: #64748b;
+}
+@keyframes floatEffect {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.05);
+  }
+}
+
+.weather-icon {
+  animation: floatEffect 2.5s ease-in-out infinite;
+}
+
+/* 햇빛 반짝이는 효과 */
+@keyframes sunPulse {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.1);
+    filter: brightness(1.3);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+.weather-icon.sunny {
+  animation: sunPulse 2s ease-in-out infinite;
+}
+
+/* 구름 흔들리는 효과 */
+@keyframes cloudDrift {
+  0%,
+  100% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+.weather-icon.cloudy {
+  animation: cloudDrift 3s ease-in-out infinite;
+}
+
+/* 반짝임 효과 */
+@keyframes sparkle {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+  }
 }
 </style>

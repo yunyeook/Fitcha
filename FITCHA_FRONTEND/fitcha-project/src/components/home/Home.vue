@@ -76,11 +76,16 @@
             v-for="(challenger, index) in top5Challengers"
             :key="challenger.participant"
           >
-            <span :class="`rank rank-${index + 1}`">{{ index + 1 }}위</span>
-            {{ challenger.participant }}
-            <span class="score"
-              >{{ challenger.participationCount }}개 참여</span
+            <router-link
+              :to="`/myfit/${challenger.participant}`"
+              style="text-decoration: none; color: #2e6f44"
             >
+              <span :class="`rank rank-${index + 1}`">{{ index + 1 }}위</span>
+              {{ challenger.participant }}
+              <span class="score"
+                >{{ challenger.participationCount }}개 참여</span
+              >
+            </router-link>
           </li>
         </ol>
       </section>
@@ -136,10 +141,19 @@ import { ref, onMounted, onUnmounted } from "vue";
 import api, { BASE_URL } from "@/api/api";
 import { useUserStore } from "@/stores/user";
 
-import img1 from "@/assets/images/run.jpg";
-import img2 from "@/assets/images/2.jpg";
-import img3 from "@/assets/images/3.jpg";
+// import img1 from "@/assets/images/home/run.jpg";
+// import img2 from "@/assets/images/home/2.jpg";
+// import img3 from "@/assets/images/home/3.jpg";
 
+// 히어로 이미지
+// const images = [img1, img2, img3];
+
+const images = Object.values(
+  import.meta.glob("@/assets/images/home/*.jpg", {
+    eager: true,
+    import: "default",
+  })
+);
 const proofImages = ref([]);
 
 const challenges = ref({});
@@ -165,7 +179,6 @@ async function getTop5Challengers() {
   top5Challengers.value = data;
 }
 
-const images = [img1, img2, img3];
 const currentIndex = ref(0);
 let intervalId;
 
