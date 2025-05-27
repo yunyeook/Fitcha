@@ -66,10 +66,11 @@ public class ProofServiceImpl implements ProofService {
 			// 유저 프로필 이미지
 			String nickName = proof.getWriter();
 			User user = userService.getUserInfo(nickName);
-			proof.setUserProfileImgUrl(user.getProfileImgUrl());
+			if(user != null) {
+				proof.setUserProfileImgUrl(user.getProfileImgUrl());
+			}
 
 		}
-
 		return proofList;
 	}
 	
