@@ -5,7 +5,7 @@ USE fitcha;
 CREATE TABLE user_board(
 user_board_id INT PRIMARY KEY AUTO_INCREMENT,
 user_id VARCHAR(300) NOT NULL UNIQUE, -- 회원가입시 아이디 --
-password VARCHAR(300) NOT NULL,
+password VARCHAR(300) DEFAULT NULL,
 email VARCHAR(300) NOT NULL,
 name VARCHAR(300) NOT NULL,
 nick_name VARCHAR(300) NOT NULL UNIQUE,

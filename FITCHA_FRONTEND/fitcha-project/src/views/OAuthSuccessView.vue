@@ -25,11 +25,12 @@ onMounted(async () => {
   }
 
   if (signup == 'true') {
-    router.replace({
+    router.push({
       name: 'Signup',
       query: {
         userId,
         nickName,
+        from: route.fullPath,
       },
     });
   } else {
