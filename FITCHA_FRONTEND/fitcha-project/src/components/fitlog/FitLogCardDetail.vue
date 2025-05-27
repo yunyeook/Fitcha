@@ -436,7 +436,7 @@ const deleteProof = async () => {
   try {
     await api.delete(`/proof/${proofBoardId.value}`);
     closeProofModal();
-    router.push({ name: "ProofList" });
+    router.push({ name: "FitLogView" });
   } catch (error) {
     console.error("인증글 삭제 실패:", error);
   }
