@@ -155,7 +155,7 @@ const isComplete = computed(() => {
   font-family: 'Arial', sans-serif;
   background-color: #ffffff;
   width: 280px;
-  height: 380px;
+  height: 420px;
   border-radius: 15px;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -183,6 +183,11 @@ const isComplete = computed(() => {
   font-weight: bold;
   margin-bottom: 10px;
   color: #222;
+   display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-content .card-badges {
