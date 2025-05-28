@@ -60,7 +60,7 @@ FITCHA는 챌린지 참여 → 기록 인증(FitLog) → 커뮤니티 소통 →
 ### 🖱 Backend
 - **Core**: Java 17, Spring Boot 3.4.5
 - **Security**: Spring Security, OAuth 2.0 (Google/Kakao), JWT
-- **Database**: MySQL (MyBatis), Redis (Rate Limiting)
+- **Database**: MySQL (MyBatis)
 - **Real-time**: WebSocket & STOMP
 - **API Support**: Springdoc OpenAPI (Swagger)
 
