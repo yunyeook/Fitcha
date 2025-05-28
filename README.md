@@ -15,7 +15,6 @@ FITCHA는 챌린지 참여 → 기록 인증(FitLog) → 커뮤니티 소통 →
 ### 🌟 핵심 가치
 - **Keep Going**: 챌린지 기반 참여로 강력한 운동 지속성 부여
 - **Together**: 인증글과 실시간 채팅으로 동료들과 함께 성장
-- **Discover**: 개인화된 영상 탐색과 날씨 기반의 영리한 운동 환경 제안
 
 ---
 
@@ -25,32 +24,36 @@ FITCHA는 챌린지 참여 → 기록 인증(FitLog) → 커뮤니티 소통 →
 - 운동 계획을 실천으로 옮기는 **챌린지 생성 및 참여**
 - 운동 타입, 부위, 난이도별 필터링을 통한 맞춤형 탐색
 - 챌린지 기반의 커뮤니티 피드백 (댓글 및 좋아요)
+  
+![ChallengeFit](https://github.com/user-attachments/assets/f2dbc1ed-2838-4427-9acb-170b22158f61)
 
-<video src="img/ChallengeFit.mp4" width="100%" controls></video>
 
 ### 📸 FitLog (기록 및 인증)
 - 오늘의 운동 완료(오운완) **사진 인증 시스템**
 - 타임라인 형식의 기록 관리 및 사용자 간 응원 문화 형성
+  
+![Fitlog](https://github.com/user-attachments/assets/3183c846-c1fe-48f8-bc15-a5eed61bec9f)
 
-<video src="img/Fitlog.mp4" width="100%" controls></video>
 
 ### 🎬 FitTube (운동 영상 탐색)
 - **YouTube Data API** 연동을 통한 키워드 맞춤형 홈트 영상 검색
 - 운동 영상에 특화된 커뮤니티 기능 제공
+  
+![FitTube](https://github.com/user-attachments/assets/310afd78-e4cf-4dfc-9077-075c42c6b700)
 
-<video src="img/FitTube.mp4" width="100%" controls></video>
 
 ### 💬 FitTalk (실시간 소통)
 - **WebSocket + STOMP** 기반의 실시간 공개 채팅 시스템
 - 운동 고민이나 정보를 공유할 수 있는 역동적인 소통 공간
 
-<video src="img/FitTalk.mp4" width="100%" controls></video>
+![FitTalk](https://github.com/user-attachments/assets/2f3eb827-477c-40cf-a63f-ebea8d583129)
+
 
 ### 🏠 Home & Dashboard
 - **OpenWeatherMap API** 기반의 실시간 날씨 위젯 (실외 운동 적합도 안내)
 - 인기 챌린지 및 추천 영상 큐레이션
-
-<video src="img/Home.mp4" width="100%" controls></video>
+  
+![Home](https://github.com/user-attachments/assets/3550a581-ffed-4175-8c68-8c5ec687d29e)
 
 ---
 
