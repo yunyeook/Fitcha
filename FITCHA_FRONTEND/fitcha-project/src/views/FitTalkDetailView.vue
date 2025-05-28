@@ -9,8 +9,8 @@
         </div>
         <div class="chat-messages" ref="messageBox">
           <div
-            v-for="(msg, index) in messages"
-            :key="index"
+            v-for="msg in messages"
+            :key="msg.id"
             :class="[
               'chat-message',
               msg.sender === userStore.nickName ? 'self' : 'other',
@@ -19,7 +19,7 @@
             <strong v-if="msg.sender !== userStore.nickName">{{
               msg.sender
             }}</strong>
-            {{ msg.message }}
+            {{ msg.content }}
           </div>
         </div>
         <div class="chat-input">
@@ -54,6 +54,10 @@ const router = useRouter();
 const roomId = route.params.roomId;
 const roomTitle = ref("");
 const messages = ref([]);
+const receivedMessageIds = new Set(); // 이미 받은 메시지 ID 저장
+const messageBuffer = ref([]); // 임시 버퍼
+let updateTimer = null;
+
 const input = ref("");
 const messageBox = ref(null);
 const userStore = useUserStore();
@@ -74,10 +78,46 @@ const fetchRoomTitle = async () => {
 const fetchMessages = async () => {
   try {
     const res = await api.get(`/api/chat/messages/${roomId}`);
-    messages.value = res.data;
+    // 초기 로드 시에도 중복 제거 및 ID 기록
+    const msgs = res.data;
+    msgs.forEach((msg) => {
+      if (!receivedMessageIds.has(msg.id)) {
+        receivedMessageIds.add(msg.id);
+        messages.value.push(msg);
+      }
+    });
+    // 시간순 정렬
+    messages.value.sort((a, b) => a.timestamp - b.timestamp);
   } catch (err) {
     console.error("메시지 불러오기 실패:", err);
   }
+};
+
+// 버퍼의 메시지를 화면에 반영
+const flushMessageBuffer = () => {
+  // 중복 제거
+  const uniqueMessages = messageBuffer.value.filter(
+    (msg) => !receivedMessageIds.has(msg.id)
+  );
+
+  // ID 기록
+  uniqueMessages.forEach((msg) => receivedMessageIds.add(msg.id));
+
+  // 한 번에 화면 업데이트 (리렌더링 1회)
+  if (uniqueMessages.length > 0) {
+    messages.value.push(...uniqueMessages);
+    // 시간순으로 정렬
+    messages.value.sort((a, b) => a.timestamp - b.timestamp);
+
+    // 스크롤 맨 아래로
+    nextTick(() => {
+      if (messageBox.value) {
+        messageBox.value.scrollTop = messageBox.value.scrollHeight;
+      }
+    });
+  }
+
+  messageBuffer.value = [];
 };
 
 // STOMP/WebSocket 연결 및 구독
@@ -86,28 +126,26 @@ const connectSocket = () => {
   const socket = new SockJS(`${BASE_URL}/ws?token=${token}`);
 
   stompClient = new Client({
-    // webSocketFactory OR brokerURL 중 하나는 반드시 제공해야 합니다
     webSocketFactory: () => socket,
-    // brokerURL: `ws://localhost:8080/ws?token=${token}`,
-
     connectHeaders: {
       Authorization: `Bearer ${token}`,
     },
     debug: (msg) => console.log("[STOMP DEBUG]", msg),
     reconnectDelay: 5000,
     onConnect: () => {
-      console.log("✅ STOMP 연결 성공! 구독을 시작합니다.");
+      console.log(" STOMP 연결 성공! 구독을 시작합니다.");
       stompClient.subscribe(`/topic/chat/${roomId}`, (frame) => {
-        console.log("📥 GOT FRAME:", frame);
         const parsed = JSON.parse(frame.body);
-        console.log("📨 PARSED MSG:", parsed);
-        messages.value.push(parsed);
-        // 스크롤 맨 아래로
-        nextTick(() => {
-          if (messageBox.value) {
-            messageBox.value.scrollTop = messageBox.value.scrollHeight;
-          }
-        });
+        console.log("📨 RECEIVED MSG:", parsed);
+
+        // 즉시 화면 업데이트하지 않고 버퍼에 저장
+        messageBuffer.value.push(parsed);
+
+        // 디바운싱: 100ms 동안 추가 메시지 대기
+        if (updateTimer) clearTimeout(updateTimer);
+        updateTimer = setTimeout(() => {
+          flushMessageBuffer();
+        }, 100);
       });
     },
     onStompError: (frame) => {
@@ -135,7 +173,7 @@ function sendMessage() {
     body: JSON.stringify({
       roomId: Number(roomId),
       sender: userStore.nickName,
-      message: input.value,
+      message: input.value, // DTO matches 'message' for input
     }),
   });
 
@@ -156,6 +194,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   if (stompClient) stompClient.deactivate();
+  if (updateTimer) clearTimeout(updateTimer);
 });
 function goBack() {
   router.back(); // 이전 페이지로 이동

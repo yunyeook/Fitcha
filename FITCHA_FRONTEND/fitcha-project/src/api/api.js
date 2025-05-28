@@ -1,7 +1,7 @@
 import axios from 'axios';
 import router from '@/router';
-// baseURL을 상수로 정의
-export const BASE_URL = 'http://localhost:8080';
+// baseURL을 환경 변수에서 가져오거나 기본값 사용
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 // axios 인스턴스 생성
 const api = axios.create({
