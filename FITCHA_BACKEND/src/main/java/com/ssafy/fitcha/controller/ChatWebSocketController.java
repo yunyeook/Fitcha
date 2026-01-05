@@ -28,10 +28,11 @@ public class ChatWebSocketController {
 	public void handleMessage(@DestinationVariable Long roomId, ChatMessageDto dto) {
 		// 1) DB에 저장
 		ChatMessage msg = new ChatMessage();
+		msg.setId(java.util.UUID.randomUUID().toString()); //  고유 ID 부여
 		msg.setRoomId(roomId);
 		msg.setSender(dto.getSender());
-		msg.setMessage(dto.getMessage());
-		msg.setTimestamp(LocalDateTime.now());
+		msg.setContent(dto.getMessage());
+		msg.setTimestamp(System.currentTimeMillis()); // 시간 정보 추가
 		chatService.sendMessage(msg);
 
 		// 2) 구독자들에게 브로드캐스트

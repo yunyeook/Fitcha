@@ -1,20 +1,18 @@
 package com.ssafy.fitcha.model.dto;
 
-import java.time.LocalDateTime;
-
 public class ChatMessage {
-	private Long id;
+	private String id;
 	private Long roomId;
 	private String sender;
-	private String message;
-	private LocalDateTime timestamp;
+	private String content;
+	private Long timestamp;
 
 	// Getter/Setter
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -34,19 +32,19 @@ public class ChatMessage {
 		this.sender = sender;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getContent() {
+		return content;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
-	public LocalDateTime getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(LocalDateTime timestamp) {
+	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
 }
